@@ -1,0 +1,274 @@
+package com.demo.controller;
+
+import com.demo.bean.VersionInfo;
+import com.demo.common.AppConfig;
+import com.demo.common.HttpResult;
+import com.demo.common.MessageBody;
+import com.demo.mqtt.MqttSubscriber;
+import com.demo.tools.HttpServletUtils;
+import com.demo.tools.JsonUtils;
+import com.demo.tools.SignUtils;
+import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundValueOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+@ResponseBody
+@Controller
+public class VersionController {
+    @Autowired
+    AppConfig appConfig;
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+    @Autowired
+    MqttSubscriber mqttSubscriber;
+
+    @RequestMapping("/version.html")
+    public ModelAndView versionHtml() throws Exception {
+        ModelAndView mv = new ModelAndView("/web/views/page/version");
+
+        VersionInfo versionInfo = getVersionInfo();
+
+        mv.addObject("data", versionInfo);
+
+        Map map = new HashMap();
+        map.put("appUuid", versionInfo.getUuid());
+        map.put("deviceUuid", "");
+        String sign = SignUtils.getSign(map);
+        mv.addObject("sign", sign);
+
+
+        return mv;
+    }
+
+    private VersionInfo getVersionInfo(){
+        BoundValueOperations valueOps = redisTemplate.boundValueOps("versionInfo");
+        VersionInfo versionInfo = (VersionInfo) valueOps.get();
+        if(versionInfo == null){
+            versionInfo = new VersionInfo();
+        }
+        return versionInfo;
+    }
+
+    @RequestMapping("/version/update")
+    public HttpResult versionUpdate(VersionInfo versionInfo, HttpServletResponse response) throws Exception {
+        HttpResult httpResult = new HttpResult();
+        try {
+            BoundValueOperations valueOps = redisTemplate.boundValueOps("versionInfo");
+            valueOps.set(versionInfo);
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+        }
+        return httpResult;
+    }
+
+    @RequestMapping("/version/clear")
+    public HttpResult versionClear(HttpServletResponse response) throws Exception {
+        HttpResult httpResult = new HttpResult();
+        try {
+            BoundValueOperations valueOps = redisTemplate.boundValueOps("versionInfo");
+            valueOps.expire(-2, TimeUnit.SECONDS);
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+        }
+        return httpResult;
+    }
+
+    /**
+     * 返回最新版本
+     * @return 新版本地址
+     */
+    @RequestMapping("/api/iot/app/version/publish")
+    public HttpResult iotAppVersion(@RequestParam String appUuid,
+                                    @RequestParam(defaultValue = "") String deviceUuid,
+                                    @RequestParam String sign,
+                                    HttpServletResponse response){
+        HttpResult httpResult = new HttpResult();
+        MessageBody messageBody = new MessageBody();
+
+        try {
+            //TEST LOG
+            String url = HttpServletUtils.getRealUrl(true);
+            messageBody.setMessageId("version/publish");
+            messageBody.setMessageType("http");
+            messageBody.setTopic("GET：" + url);
+            messageBody.setTimestamp(System.currentTimeMillis() / 1000);
+
+            Map map = new HashMap();
+            map.put("appUuid",appUuid);
+            map.put("deviceUuid",deviceUuid);
+            map.put("sign",sign);
+            this.checkSign(map, sign);
+
+            VersionInfo versionInfo = getVersionInfo();
+            Object data = JsonUtils.toObject(versionInfo.getAndroidRelease(), Object.class);
+            httpResult.setData(data);
+            messageBody.setPayload(JsonUtils.toJson(httpResult));
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+            messageBody.setPayload(e.toString());
+        }
+        finally {
+            mqttSubscriber.putMessageBody(messageBody);
+        }
+        return httpResult;
+    }
+
+    /**
+     * 返回最测试版本信息
+     * @return 新版本地址
+     */
+    @RequestMapping("/api/iot/app/version/test")
+    public HttpResult iotAppVersionTest(@RequestParam String appUuid,
+                                        @RequestParam(defaultValue = "") String deviceUuid,
+                                        @RequestParam String sign,
+                                        HttpServletResponse response){
+        HttpResult httpResult = new HttpResult();
+        MessageBody messageBody = new MessageBody();
+        try {
+            //TEST LOG
+            String url = HttpServletUtils.getRealUrl(true);
+            messageBody.setMessageId("version/test");
+            messageBody.setMessageType("http");
+            messageBody.setTopic("GET：" + url);
+            messageBody.setTimestamp(System.currentTimeMillis() / 1000);
+
+            Map map = new HashMap();
+            map.put("appUuid",appUuid);
+            map.put("deviceUuid",deviceUuid);
+            map.put("sign",sign);
+            this.checkSign(map, sign);
+
+            VersionInfo versionInfo = getVersionInfo();
+            Object data = JsonUtils.toObject(versionInfo.getAndroidTest(), Object.class);
+            httpResult.setData(data);
+            messageBody.setPayload(JsonUtils.toJson(httpResult));
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+            messageBody.setPayload(e.toString());
+        }
+        finally {
+            mqttSubscriber.putMessageBody(messageBody);
+        }
+        return httpResult;
+    }
+
+    /**
+     * 返回最新版本(MCU)
+     * @return 新版本地址
+     */
+    @RequestMapping("/api/iot/app/version/publish/mcu")
+    public HttpResult iotAppVersionPublichMcu(@RequestParam String appUuid,
+                                              @RequestParam(defaultValue = "") String deviceUuid,
+                                              @RequestParam String sign,
+                                              HttpServletResponse response){
+        HttpResult httpResult = new HttpResult();
+        MessageBody messageBody = new MessageBody();
+        try {
+            //TEST LOG
+            String url = HttpServletUtils.getRealUrl(true);
+            messageBody.setMessageId("publish/mcu");
+            messageBody.setMessageType("http");
+            messageBody.setTopic("GET：" + url);
+            messageBody.setTimestamp(System.currentTimeMillis() / 1000);
+
+            Map map = new HashMap();
+            map.put("appUuid",appUuid);
+            map.put("deviceUuid",deviceUuid);
+            map.put("sign",sign);
+            this.checkSign(map, sign);
+
+            VersionInfo versionInfo = getVersionInfo();
+            httpResult.setData(versionInfo.getMcuRelease());
+            messageBody.setPayload(JsonUtils.toJson(httpResult));
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+            messageBody.setPayload(e.toString());
+        }
+        finally {
+            mqttSubscriber.putMessageBody(messageBody);
+        }
+        return httpResult;
+    }
+
+    /**
+     * 返回最测试版本信息(MCU)
+     * @return 新版本地址
+     */
+    @RequestMapping("/api/iot/app/version/test/mcu")
+    public HttpResult iotAppVersionTestMcu(@RequestParam String appUuid,
+                                           @RequestParam(defaultValue = "") String deviceUuid,
+                                           @RequestParam String sign,
+                                           HttpServletResponse response){
+        HttpResult httpResult = new HttpResult();
+        MessageBody messageBody = new MessageBody();
+
+        try {
+            //TEST LOG
+            String url = HttpServletUtils.getRealUrl(true);
+            messageBody.setMessageId("test/mcu");
+            messageBody.setMessageType("http");
+            messageBody.setTopic("GET：" + url);
+            messageBody.setTimestamp(System.currentTimeMillis() / 1000);
+
+            Map map = new HashMap();
+            map.put("appUuid",appUuid);
+            map.put("deviceUuid",deviceUuid);
+            map.put("sign",sign);
+            this.checkSign(map, sign);
+
+            VersionInfo versionInfo = getVersionInfo();
+            httpResult.setData(versionInfo.getMcuTest());
+            messageBody.setPayload(JsonUtils.toJson(httpResult));
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+            messageBody.setPayload(e.toString());
+        }
+        finally {
+            mqttSubscriber.putMessageBody(messageBody);
+        }
+        return httpResult;
+    }
+
+    /**
+     * Check the signature
+     * @param valid
+     * @param sign
+     */
+    protected void checkSign(Object valid, String sign) throws Exception {
+        if(!SignUtils.getSign(valid).equals(sign)){
+            throw new Exception("ERROR SIGN");
+        }
+    }
+
+}

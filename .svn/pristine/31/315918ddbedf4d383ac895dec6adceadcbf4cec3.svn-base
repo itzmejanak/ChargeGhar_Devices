@@ -1,0 +1,154 @@
+package com.demo.controller;
+
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.iot.model.v20170420.BatchGetDeviceStateResponse;
+import com.demo.aliyun.DeviceOnline;
+import com.demo.aliyun.IotUtils;
+import com.demo.aliyun.MessageBody;
+import com.demo.aliyun.MnsUtils;
+import com.demo.bean.DeviceInfo;
+import com.demo.common.AppConfig;
+import com.demo.common.HttpResult;
+import com.demo.serialport.SerialPortData;
+import com.demo.tools.BeanToMapUtils;
+import com.demo.tools.ByteUtils;
+import com.demo.tools.HttpServletUtils;
+import com.demo.tools.SignUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundValueOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.*;
+
+@ResponseBody
+@Controller
+public class IndexController {
+    @Autowired
+    AppConfig appConfig;
+
+    @Autowired
+    MnsUtils mnsUtils;
+
+    @Autowired
+    IotUtils iotUtils;
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+
+    @RequestMapping("/index.html")
+    public ModelAndView indexHtml() throws ClientException {
+        ModelAndView mv = new ModelAndView("/web/views/page/index");
+        mv.addObject("data", appConfig);
+
+        List<DeviceInfo> deviceInfos = new ArrayList<>();
+
+        String[] machines = appConfig.getMachines();
+
+        //online status
+        Map<String, DeviceOnline> onlineMap = new HashMap<>();
+        try {
+            onlineMap = iotUtils.getDeviceStatusMap(appConfig.getProductKey(), machines);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        //hardware version
+        Set<String> hardwareKeys = redisTemplate.keys("hardware:*");
+        List<String> hardwareValues = redisTemplate.opsForValue().multiGet(hardwareKeys);
+
+        for(String machine : machines){
+            DeviceInfo deviceInfo = new DeviceInfo();
+            deviceInfo.setDeviceName(machine);
+            deviceInfo.setDeviceOnline(onlineMap.get(machine));
+
+            //hardware version
+            int i = 0;
+            for(String hardwareKey : hardwareKeys){
+                if(hardwareKey.equals("hardware:" + machine)){
+                    deviceInfo.setHardware(hardwareValues.get(i));
+                    break;
+                }
+                i++;
+            }
+
+            //MQTT CONNECT API
+            String contextPath = HttpServletUtils.getRealContextpath();
+            String url = (contextPath + "/api/iot/client/con?simUUID=&simMobile=&uuid=" + machine + "&deviceId=" + 0 + "&sign=");
+            url += SignUtils.getSign(url);
+            deviceInfo.setConnectUrl(url);
+
+            deviceInfos.add(deviceInfo);
+        }
+
+
+        mv.addObject("deviceInfos", deviceInfos);
+        mv.addObject("mns", "http://" + appConfig.getMnsEndpoint());
+
+        //VERY IMPORT KEYID
+        String accessKeyId =  appConfig.getAccessKeyId();
+        accessKeyId = accessKeyId.substring(0, 5);
+        accessKeyId = StringUtils.rightPad(accessKeyId, 30, "*");
+        mv.addObject("accessKeyId", accessKeyId);
+
+        //VERY IMPORT KEYSECRET
+        String accessKeySecret =  appConfig.getAccessKeySecret();
+        accessKeySecret = accessKeySecret.substring(0, 5);
+        accessKeySecret = StringUtils.rightPad(accessKeySecret, 30, "*");
+        mv.addObject("accessKeySecret", accessKeySecret);
+        return mv;
+    }
+
+    @RequestMapping("/device/create")
+    public HttpResult deviceCreate(HttpServletResponse response,  @RequestParam String deviceName) throws ClientException {
+        HttpResult httpResult = new HttpResult();
+        try {
+            String path = HttpServletUtils.getHttpServletRequest().getServletContext().
+                    getRealPath("/WEB-INF/classes/machines.properties");
+
+            FileOutputStream fos = null;
+            OutputStreamWriter osw = null;
+            BufferedWriter  bw = null;
+            try {
+                fos=new FileOutputStream(new File(path), true);
+                osw=new OutputStreamWriter(fos, "UTF-8");
+                bw=new BufferedWriter(osw);
+                bw.write("\n\r" + deviceName);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            finally {
+                if(bw != null) bw.close();
+                if(osw != null) osw.close();
+                if(fos != null) fos.close();;
+            }
+
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+        }
+        return httpResult;
+    }
+
+    @RequestMapping("/")
+    public void root(HttpServletResponse response) throws IOException {
+        String url = HttpServletUtils.getRealContextpath();
+        url += "/index.html";
+        response.sendRedirect(url);
+
+    }
+}

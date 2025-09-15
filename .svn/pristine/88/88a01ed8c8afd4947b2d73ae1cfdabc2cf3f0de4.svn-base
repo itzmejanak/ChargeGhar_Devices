@@ -1,0 +1,100 @@
+package com.demo.common;
+
+import com.demo.tools.HttpServletUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+
+@Component
+public class AppConfig {
+    @Value("#{appconfig['accessKeyId']}")
+    private String accessKeyId;
+
+    @Value("#{appconfig['accessKeySecret']}")
+    private String accessKeySecret;
+
+    @Value("#{appconfig['productKey']}")
+    private String productKey;
+
+    @Value("#{appconfig['regionId']}")
+    private String regionId;
+
+    @Value("#{appconfig['mnsEndpoint']}")
+    private String mnsEndpoint;
+
+    @Value("#{appconfig['iotInstanceId']}")
+    private String iotInstanceId;
+
+    @Value("#{appconfig['topicType']}")
+    private boolean topicType;
+
+    public String getAccessKeyId() {
+        return accessKeyId;
+    }
+
+    public String getAccessKeySecret() {
+        return accessKeySecret;
+    }
+
+    public String getProductKey() {
+        return productKey;
+    }
+
+    public String getRegionId() {
+        return regionId;
+    }
+
+    public String getMnsEndpoint() {
+        return mnsEndpoint;
+    }
+
+    public String getIotInstanceId() {
+        return iotInstanceId;
+    }
+
+    public boolean isTopicType() {
+        return topicType;
+    }
+
+    public String[] getMachines(){
+        String path = HttpServletUtils.getHttpServletRequest().getServletContext().
+                getRealPath("/WEB-INF/classes/machines.properties");
+
+        List<String> machines = new ArrayList<>();
+        BufferedReader bufferedReader = null;
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
+            String str = null;
+            while((str = bufferedReader.readLine()) != null){
+                if(StringUtils.isNotBlank(str)){
+                    machines.add(str);
+                }
+            }
+            bufferedReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(bufferedReader != null){
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        String[] data = machines.toArray(new String[machines.size()]);
+        ArrayUtils.reverse(data);
+        return data;
+    }
+}

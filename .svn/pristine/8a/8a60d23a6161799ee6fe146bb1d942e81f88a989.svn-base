@@ -1,0 +1,14 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.min.js?v=${_config.appConfig.version}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js?v=$${_config.appConfig.version}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.0/jquery.contextMenu.min.js?v=${_config.appConfig.version}"></script>
+
+<script src="${_contextPath}/web/resource/js/format.js?v=${_config.appConfig.version}"></script>
+<script src="${_contextPath}/web/resource/js/jquery.extend.js?v=${_config.appConfig.version}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.2.2/vue.min.js?v=${_config.appConfig.version}"></script>
+<script src="${_contextPath}/web/layuiadmin/layui/layui.js?v=${_config.appConfig.version}"></script>
+
+
+
+
+

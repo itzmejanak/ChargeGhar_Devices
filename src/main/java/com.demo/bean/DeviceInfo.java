@@ -1,0 +1,45 @@
+package com.demo.bean;
+
+import com.demo.common.DeviceOnline;
+
+public class DeviceInfo {
+    private String deviceName;
+
+    private DeviceOnline deviceOnline;
+
+    private String connectUrl;
+
+    private String hardware;
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public DeviceOnline getDeviceOnline() {
+        return deviceOnline;
+    }
+
+    public void setDeviceOnline(DeviceOnline deviceOnline) {
+        this.deviceOnline = deviceOnline;
+    }
+
+    public String getConnectUrl() {
+        return connectUrl;
+    }
+
+    public void setConnectUrl(String connectUrl) {
+        this.connectUrl = connectUrl;
+    }
+
+    public String getHardware() {
+        return hardware;
+    }
+
+    public void setHardware(String hardware) {
+        this.hardware = hardware;
+    }
+}

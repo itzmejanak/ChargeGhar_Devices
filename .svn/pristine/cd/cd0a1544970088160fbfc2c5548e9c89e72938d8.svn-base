@@ -1,0 +1,223 @@
+package com.demo.controller;
+
+import com.aliyuncs.exceptions.ClientException;
+import com.demo.aliyun.*;
+import com.demo.bean.ApiIotClientConValid;
+import com.demo.bean.ApiRentboxOrderReturnValid;
+import com.demo.common.AppConfig;
+import com.demo.common.HttpResult;
+import com.demo.message.ReceiveUpload;
+import com.demo.serialport.SerialPortException;
+import com.demo.tools.ByteUtils;
+import com.demo.tools.HttpServletUtils;
+import com.demo.tools.JsonUtils;
+import com.demo.tools.SignUtils;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundValueOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+@ResponseBody
+@Controller
+public class ApiController {
+    @Autowired
+    AppConfig appConfig;
+
+    @Autowired
+    IotUtils iotUtils;
+
+    @Autowired
+    MnsUtils mnsUtils;
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+    @RequestMapping("/api/iot/client/con")
+    public HttpResult iotClientCon(ApiIotClientConValid valid, HttpServletResponse response, HttpServletRequest request) throws Exception {
+        HttpResult httpResult = new HttpResult();
+        MessageBody messageBody = new MessageBody();
+        try {
+            //TEST LOG
+            String url = HttpServletUtils.getRealUrl(true);
+            messageBody.setMessageId("client_con");
+            messageBody.setMessageType("http");
+            messageBody.setTopic("GET：" + url);
+            messageBody.setTimestamp(System.currentTimeMillis() / 1000);
+
+            //POST数据处理
+            String hardwareVersion = null;
+            if(request.getContentLength() > 0){
+                byte[] bytes = IOUtils.readFully(request.getInputStream(), request.getContentLength());
+                String body = new String(bytes, StandardCharsets.UTF_8);
+                List<NameValuePair> params = URLEncodedUtils.parse(body, Charset.forName("UTF-8"));
+                for(NameValuePair param : params){
+                    //MCU硬件版本号
+                    if("hardware".equals(param.getName())){
+                        hardwareVersion = param.getValue();
+
+                        String key = "hardware:" + valid.getUuid();
+                        BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
+                        boundValueOps.set(hardwareVersion);
+                    }
+                }
+                messageBody.setTopic("POST：" + url + "  POSTDATA:" + body);
+            }
+
+
+
+            this.checkSign(valid,valid.getSign());
+
+            //MQTT PARAMS AND CACHE 1 DAY
+            String key = "clientConect:" + valid.getUuid();
+            BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
+            DeviceConfig config = (DeviceConfig) boundValueOps.get();
+            if(config == null){
+                config = iotUtils.getIotDeviceConfig(appConfig.getProductKey(), valid.getUuid());
+                boundValueOps.set(config, 1, TimeUnit.DAYS);
+            }
+            if(config == null){
+                throw new Exception("clientConect is Null");
+            }
+
+            String[] arrStr = new String[]{config.getDeviceName(),
+                    config.getProductKey(),
+                    config.getHost(), String.valueOf(config.getPort()),
+                    config.getIotId(), config.getIotToken(),
+                    String.valueOf(System.currentTimeMillis())};
+            String data = StringUtils.join(arrStr, ",");
+            httpResult.setData(data);
+            messageBody.setPayload(JsonUtils.toJson(httpResult));
+
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+            messageBody.setPayload(e.toString());
+            e.printStackTrace();
+        }
+        finally {
+            mnsUtils.putMessageBody(messageBody);
+        }
+        return httpResult;
+    }
+
+    @RequestMapping("/api/iot/client/clear")
+    public HttpResult deviceCreate(HttpServletResponse response,  @RequestParam String deviceName) throws ClientException {
+        HttpResult httpResult = new HttpResult();
+        try {
+            String key = "clientConect:" + deviceName;
+            BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
+            boundValueOps.expire(-2, TimeUnit.SECONDS);
+
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+        }
+        return httpResult;
+    }
+
+
+    @RequestMapping("/api/rentbox/order/return")
+    public HttpResult powerbankReturn(ApiRentboxOrderReturnValid valid, HttpServletResponse response) throws Exception {
+        HttpResult httpResult = new HttpResult();
+        MessageBody messageBody = new MessageBody();
+        try {
+            //TEST LOG
+            String url = HttpServletUtils.getRealUrl(true);
+            messageBody.setMessageId("return powerbank");
+            messageBody.setMessageType("http");
+            messageBody.setTopic("GET：" + url);
+            messageBody.setTimestamp(System.currentTimeMillis() / 1000);
+
+            this.checkSign(valid,valid.getSign());
+            messageBody.setPayload(JsonUtils.toJson(httpResult));
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+            messageBody.setPayload(e.toString());
+        }
+        finally {
+            mnsUtils.putMessageBody(messageBody);
+        }
+        return httpResult;
+    }
+
+
+    @RequestMapping("/api/rentbox/upload/data")
+    public HttpResult rentboxOrderReturnEnd(@RequestBody byte[] bytes,
+                                            @RequestParam String rentboxSN,
+                                            @RequestParam String sign,
+                                            @RequestParam(defaultValue = "0") String signal,
+                                            HttpServletResponse response) throws Exception {
+
+        HttpResult httpResult = new HttpResult();
+        MessageBody messageBody = new MessageBody();
+        try {
+            //TEST LOG
+            String data = ByteUtils.to16Hexs(bytes);
+            String url = HttpServletUtils.getRealUrl(true);
+            messageBody.setMessageId("upload data");
+            messageBody.setMessageType("http");
+            messageBody.setTopic("POST：" + url);
+            messageBody.setPayload(data);
+            messageBody.setTimestamp(System.currentTimeMillis() / 1000);
+
+
+            Map params = new HashMap<>();
+            params.put("rentboxSN", rentboxSN);
+            params.put("signal", signal);
+            this.checkSign(params, sign);
+
+            ReceiveUpload receiveUpload = new ReceiveUpload(bytes);
+            messageBody.setPayload(JsonUtils.toJson(httpResult));
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+            messageBody.setPayload(e.toString());
+
+        }
+        finally {
+            mnsUtils.putMessageBody(messageBody);
+        }
+        return httpResult;
+    }
+
+    /**
+     * Check the signature
+     * @param valid
+     * @param sign
+     */
+    protected void checkSign(Object valid, String sign) throws Exception {
+        if(!SignUtils.getSign(valid).equals(sign)){
+            throw new Exception("ERROR SIGN");
+        }
+    }
+
+}

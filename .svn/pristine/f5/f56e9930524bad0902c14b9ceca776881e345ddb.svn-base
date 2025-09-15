@@ -1,0 +1,10 @@
+accessKeyId=LTAIxHxKf5rr1Buf
+accessKeySecret=WFaEp1CmYf2b1Rw2KlLndP15rHHhaD
+productKey=a3BdaOfQTNp
+regionId=us-west-1
+mnsEndpoint=5891864545150541.mns.us-west-1.aliyuncs.com
+
+#------------------------- redis ----------------------------
+redis.host=47.254.80.251
+redis.port=6379
+redis.pass=usuario125

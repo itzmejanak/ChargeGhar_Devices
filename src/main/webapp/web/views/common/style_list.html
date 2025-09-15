@@ -1,0 +1,77 @@
+<style>
+    .layui-form-label{
+        width: auto;
+        padding: 9px 8px;
+    }
+
+    .layui-input-inline{
+        width: 120px;
+        margin-right: 0;
+    }
+    .layui-input-inline.id{
+        width: 65px;
+    }
+
+    .list-search{
+        display: block;
+        height: auto;
+        clear: both;
+    }
+    .list-search:after{
+        content: " ";
+        display: block;
+        height: 0px;
+        padding: 10px 0 0 0;
+        margin: 0 0 10px 0;
+        border-bottom: 1px solid #e6e6e6;
+        clear: both;
+        overflow: hidden;
+    }
+    .layui-inline{
+        margin-top: 10px;
+    }
+    .list-search-left{
+        float: left;
+    }
+    .list-search-right{
+        float: right;
+    }
+
+    .table-item-link{
+        display: block;
+        cursor: pointer;
+    }
+
+    .layui-table-cell {
+        height: auto;
+        line-height:inherit;
+        padding:3px 15px; !important;
+    }
+
+    .layui-table-cell, .layui-table-tool-panel li{
+        word-wrap:break-word !important;
+        white-space: normal !important;
+    }
+
+    .context-menu-list{
+        padding: 0.35em 0 !important;
+    }
+    .context-menu-item{
+        padding: 0.45em 2em !important;
+        font-size: 13px;
+    }
+</style>
+<script type="text/javascript">
+    function fixTable() {
+        //右侧菜单高度重置
+        $(".layui-table-fixed .layui-table-header tr").height($('.layui-table-header tr').eq(0).height());
+        $(".layui-table-main  tr").each(function (index ,val) {
+            $($(".layui-table-fixed .layui-table-body tbody tr")[index]).height($(val).height());
+        });
+
+        //点击换行颜色
+        layui.table.on('row(table1)', function(obj){
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+        });
+    }
+</script>

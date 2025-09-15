@@ -1,0 +1,235 @@
+package com.demo.aliyun;
+
+/**
+ * Created by zheng on 2018/4/8.
+ */
+
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.iot.model.v20180120.*;
+import com.aliyuncs.profile.DefaultProfile;
+import com.aliyuncs.profile.IClientProfile;
+import com.demo.common.AppConfig;
+import com.demo.tools.HmacCoder;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static org.apache.commons.codec.binary.Base64.encodeBase64String;
+
+
+/**
+ * https://help.aliyun.com/document_detail/30581.html?spm=a2c4g.11174283.6.671.3a8b1668tcpdPk
+ */
+@Component
+public class IotUtils {
+    static DefaultAcsClient client = null;
+
+    private AppConfig appConfig;
+
+    @Autowired
+    MnsUtils mnsUtils;
+
+    @Autowired
+    public IotUtils(AppConfig appConfig) throws ClientException {
+        this.appConfig = appConfig;
+        String domain = "iot." + appConfig.getRegionId() + ".aliyuncs.com";
+        DefaultProfile.addEndpoint(appConfig.getRegionId(), appConfig.getRegionId(), "Iot", domain);
+        IClientProfile profile = DefaultProfile.getProfile(appConfig.getRegionId(), appConfig.getAccessKeyId(), appConfig.getAccessKeySecret());
+        client = new DefaultAcsClient(profile);
+    }
+
+
+    /**
+     * getDeviceStatusList
+     * @param productKey
+     * @param deviceNames
+     * @return
+     * @throws ClientException
+     */
+    public Map<String, DeviceOnline> getDeviceStatusMap(String productKey, String... deviceNames) throws ClientException{
+        Map<String, DeviceOnline> map = new LinkedHashMap<String, DeviceOnline>();
+
+        BatchGetDeviceStateRequest request = new BatchGetDeviceStateRequest();
+        request.setProductKey(productKey);
+        request.setIotInstanceId(appConfig.getIotInstanceId());
+
+        List<String> devices = new ArrayList<String>();
+        for (String deviceName : deviceNames) {
+            if(!StringUtils.isBlank(deviceName)){
+                devices.add(deviceName);
+                map.put(deviceName, DeviceOnline.NO_DEVICE);
+            }
+        }
+        if(devices.size() == 0){
+            return map;
+        }
+        request.setDeviceNames(devices);
+
+        BatchGetDeviceStateResponse response = client.getAcsResponse(request);
+        List<BatchGetDeviceStateResponse.DeviceStatus> data = response.getDeviceStatusList();
+
+        for(String key : map.keySet()){
+            for(BatchGetDeviceStateResponse.DeviceStatus deviceStatus : data) {
+                if (key.equals(deviceStatus.getDeviceName())) {
+                    DeviceOnline online = DeviceOnline.getByName(deviceStatus.getStatus());
+                    map.put(key, online);
+                    break;
+                }
+            }
+        }
+
+        return map;
+    }
+
+    /**
+     * getDeviceStatusList
+     * @param productKey
+     * @param deviceName
+     * @return
+     * @throws ClientException
+     */
+    public DeviceOnline getDeviceStatus(String productKey, String deviceName) throws ClientException {
+        DeviceOnline online = DeviceOnline.NO_DEVICE;
+        Map<String, DeviceOnline> map = getDeviceStatusMap(productKey, deviceName);
+        if (map.size() > 0) {
+            return map.get(deviceName);
+        }
+        return online;
+    }
+
+    /**
+     * 获取设备信息
+     *
+     * @param deviceName
+     * @return
+     * @throws ClientException
+     */
+    public QueryDeviceDetailResponse getDeviceInfo(String productKey, String deviceName) throws ClientException {
+        QueryDeviceDetailRequest request = new QueryDeviceDetailRequest();
+
+        request.setProductKey(productKey);
+        request.setDeviceName(deviceName);
+        request.setIotInstanceId(appConfig.getIotInstanceId());
+
+        QueryDeviceDetailResponse response = client.getAcsResponse(request);
+        return response;
+    }
+
+    /**
+     * 注册设备
+     *
+     * @param productKey 产品pk
+     * @param deviceName 设备名称 非必须
+     * @return 设备名称
+     */
+    public RegisterDeviceResponse registDevice(String productKey, String deviceName) throws ClientException {
+        RegisterDeviceRequest request = new RegisterDeviceRequest();
+        request.setProductKey(productKey);
+        request.setDeviceName(deviceName);
+        request.setIotInstanceId(appConfig.getIotInstanceId());
+        RegisterDeviceResponse response = client.getAcsResponse(request);
+
+        if (!response.getSuccess()) {
+            throw new ClientException(response.getErrorMessage());
+        }
+
+        return response;
+    }
+
+
+
+    /**
+     * 获取MQTT鉴权地址
+     * https://help.aliyun.com/document_detail/73742.html?spm=a2c4g.11186623.6.587.69fa1bb8kGHsBc
+     * 使用HTTPS认证再连接
+     *
+     * @param uuid 设备名称
+     * @return 阿里云返回设备的登录MQTT的账号和密码
+     * @throws Exception 异常
+     */
+    public DeviceConfig getIotDeviceConfig(String productKey, String uuid) throws Exception {
+        DeviceConfig iotDeviceConfig = new DeviceConfig();
+        //设备详细信息
+        QueryDeviceDetailResponse query = getDeviceInfo(productKey, uuid);
+
+        //阿里云注册设备
+        if (!query.getSuccess() && "iot.device.NotExistedDevice".equals(query.getCode())) {
+            registDevice(productKey, uuid);
+            //新激活的设备
+            query = getDeviceInfo(productKey, uuid);
+        }
+        //设备详细信息
+        QueryDeviceDetailResponse.Data deviceInfo = query.getData();
+
+        //获取新的账号，密码
+        iotDeviceConfig.setSn(uuid);
+        iotDeviceConfig.setProductKey(productKey);
+        iotDeviceConfig.setDeviceName(iotDeviceConfig.getSn());
+        iotDeviceConfig.setDeviceSecret(deviceInfo.getDeviceSecret());
+        iotDeviceConfig.setHost(iotDeviceConfig.getProductKey() + ".iot-as-mqtt." + appConfig.getRegionId() + ".aliyuncs.com");
+        iotDeviceConfig.setPort(1883);
+        iotDeviceConfig.setCreatedTime(new Date());
+
+        //七天过期，这里保险设置6天
+        iotDeviceConfig.setOverdueTime(DateUtils.addDays(new Date(), 6));
+        iotDeviceConfig.setTimeStamp(String.valueOf(System.currentTimeMillis()));
+
+        StringBuffer sb = new StringBuffer();
+        sb.append("clientId" + iotDeviceConfig.getDeviceName());
+        sb.append("deviceName" + iotDeviceConfig.getDeviceName());
+        sb.append("productKey" + iotDeviceConfig.getProductKey());
+        sb.append("timestamp"+iotDeviceConfig.getTimeStamp());
+
+        //公共参数签名
+        String sign = HmacCoder.encrypt(sb.toString(), iotDeviceConfig.getDeviceSecret(), HmacCoder.TYPE_HMAC_MD5);
+        String iotId = uuid+"&"+productKey;
+        String iotToken = sign;
+        iotDeviceConfig.setIotId(iotId);
+        iotDeviceConfig.setIotToken(iotToken);
+        return iotDeviceConfig;
+    }
+
+    /**
+     * 发送异步消息
+     */
+    public PubResponse sendMsgAsync(String productKey, String topicFullName, String messageContent, int qos) throws ClientException {
+        byte[] bytes = messageContent.getBytes(StandardCharsets.UTF_8);
+        PubResponse response = sendMsgAsync(productKey, topicFullName, bytes, qos);
+        return response;
+    }
+
+    /**
+     * 发送异步消息
+     */
+    public PubResponse sendMsgAsync(String productKey, String topicFullName, byte[] bytes, int qos) throws ClientException {
+        PubRequest request = new PubRequest();
+
+        String base64 = encodeBase64String(bytes);
+
+        request.setProductKey(productKey);
+        request.setMessageContent(base64);
+        request.setTopicFullName(topicFullName);
+        request.setIotInstanceId(appConfig.getIotInstanceId());
+
+        request.setQos(qos > 1 ? 1 : qos); //目前支持QoS0和QoS1
+
+        PubResponse response = client.getAcsResponse(request);
+
+        //TEST
+        MessageBody messageBody = new MessageBody();
+        messageBody.setMessageId("send_message");
+        messageBody.setMessageType("send");
+        messageBody.setTopic(topicFullName);
+        messageBody.setPayload(new String(bytes, StandardCharsets.UTF_8));
+        messageBody.setTimestamp(System.currentTimeMillis() / 1000);
+        mnsUtils.putMessageBody(messageBody);
+
+        return response;
+    }
+
+}

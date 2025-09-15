@@ -1,0 +1,12 @@
+accessKeyId=***********
+accessKeySecret=***********
+productKey=********
+regionId=cn-shanghai
+mnsEndpoint=***************.mns.cn-shanghai.aliyuncs.com
+iotInstanceId=
+#\u81EA\u5B9A\u4E49Topic\u8DEF\u5F84\u5E26/user\u4E3Atrue \u4E0D\u5E26/user\u4E3Afalse
+topicType=true
+#------------------------- redis ----------------------------
+redis.host=127.0.0.1
+redis.port=6379
+redis.pass=********

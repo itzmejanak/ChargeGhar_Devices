@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CONTROL-${_params.deviceName}</title>
+  <#include "/web/views/common/header.html" />
+</head>
+<style>
+    .layui-form-label{
+        width: 120px !important;
+    }
+    .layui-table-cell {
+        height: auto;
+        line-height:inherit;
+        padding:3px 15px; !important;
+    }
+
+    .layui-table-cell, .layui-table-tool-panel li{
+        word-wrap:break-word !important;
+        white-space: normal !important;
+    }
+</style>
+<body>
+<div class="layui-fluid" id="vue1">
+    <div class="layui-card">
+        <div class="layui-card-body" style="padding: 50px 15px">
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">DeviceName</label>
+                    <div class="layui-col-xs3">
+                        <input readonly="readonly" type="text" value="${_params.deviceName}" lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">DeviceOnline</label>
+                    <div class="layui-col-xs3">
+                        <input readonly="readonly" type="text" value="${deviceOnline}" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">hardware Version</label>
+                    <div class="layui-col-xs3">
+                        <input readonly="readonly" type="text" value="${hardware!'UNKONW'}" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Topic<br/>(device receive)</label>
+                    <div class="layui-col-xs3">
+                        <input readonly="readonly" type="text" value="${getTopic}" lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Topic<br/>(device upload)</label>
+                    <div class="layui-col-xs3">
+                        <input readonly="readonly" type="text" value="${updateTopic}" lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Http API<br/>(return powerbank)</label>
+                    <div class="layui-col-xs3">
+                        <input readonly="readonly" type="text" value="${__contextPath}/api/rentbox/order/return?rentboxSN=***&singleSN=***&hole=***&sign=***" lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Http API<br/>(mqtt Connect)</label>
+                    <div class="layui-col-xs3">
+                        <input readonly="readonly" type="text" value="${connectUrl}" lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid"></div>
+                    <div class="layui-input-block">
+                        <a href="${connectUrl}" target="_blank" class="layui-btn ">OEPN WINDOW</a>
+                        <a href="javascript:vue1.clearCache('${_params.deviceName}')" target="_blank" class="layui-btn ">CLEAR CACHE</a>
+                    </div>
+                </div>
+                <fieldset class="layui-elem-field">
+                    <legend>Chargeing Box</legend>
+                    <div class="layui-field-box">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">Send Sync</label>
+                            <div class="layui-input-block">
+                                <a class="layui-btn" v-on:click="check('check')">Check</a>
+                                <a class="layui-btn" v-on:click="check('check_all')">Check all</a>
+                                <a class="layui-btn" v-on:click="popupRandom(0)">Random popup(minPower:0%)</a>
+                                <a class="layui-btn" v-on:click="popupRandom(50)">Random popup(minPower:50%)</a>
+                                <a class="layui-btn" v-on:click="popupRandom(80)">Random popup(minPower:80%)</a>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">Send Aynch</label>
+                            <div class="layui-input-block">
+                                <a class="layui-btn" v-on:click="sendCommand('push_version_publish')">Check last version(HTTP)</a>
+                                <a class="layui-btn" href=javascript:$('#stringText').val('{\"cmd\":\"popup_sn\",\"data\":\"123456\"}')>popup by powerbank SN</a>
+                                <a class="layui-btn" v-on:click="sendCommand('reboot')">Reboot Machine</a>
+                                <a class="layui-btn" v-on:click="sendCommand('upload_all')">Upload rentbox info（HTTP）</a>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">Popup by IO0</label>
+                            <div class="layui-input-block">
+                                <#list 1..13 as i>
+                                    <a style="width: 50px" class="layui-btn" onclick="vue1.sendCommand('popup','${i}', '0')">${i}</a>
+                                </#list>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label"></label>
+                            <div class="layui-input-block">
+                                <#list 14..25 as i>
+                                    <a style="width: 50px"  class="layui-btn" onclick="vue1.sendCommand('popup','${i}','0')">${i}</a>
+                                </#list>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">Popup by IO1</label>
+                            <div class="layui-input-block">
+                                <#list 1..13 as i>
+                                    <a style="width: 50px" class="layui-btn" onclick="vue1.sendCommand('popup','${i}', '1')">${i}</a>
+                                </#list>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label"></label>
+                            <div class="layui-input-block">
+                                <#list 14..25 as i>
+                                    <a style="width: 50px"  class="layui-btn" onclick="vue1.sendCommand('popup','${i}','1')">${i}</a>
+                                </#list>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="layui-elem-field">
+                    <legend>Advisement Powerbank</legend>
+                    <div class="layui-field-box">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">Send commond</label>
+                            <div class="layui-input-block">
+                                <a class="layui-btn" v-on:click="sendCommand('check')">Upload Data</a>
+                                <a class="layui-btn" v-on:click="sendCommand('open', '3600')">Open Power</a>
+                                <a class="layui-btn" v-on:click="sendCommand('close')">Close Power</a>
+                                <a class="layui-btn" v-on:click="sendCommand('close')">Reboot Machine</a>
+                                <a class="layui-btn" v-on:click="sendCommand('check_log')">Upload MCU logs</a>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <hr>
+                <div class="layui-form-item layui-form-text layui-row">
+                    <label class="layui-form-label">Send Message</label>
+                    <div class="layui-col-xs3">
+                        <textarea maxlength="200" id="stringText" placeholder="Whatever text" class="layui-textarea"></textarea>
+                    </div>
+                    <div class="layui-form-mid">&nbsp;</div>
+                    <div class="layui-form-mid">
+                        <a class="layui-btn" href="javascript:vue1.send($('#stringText').val(), false)">SEND</a>
+                    </div>
+                </div>
+            </form>
+
+            <hr>
+
+            <!--表格显示-->
+            <table id="table1" lay-filter="table1"></table>
+        </div>
+    </div>
+</div>
+
+<#include "/web/views/common/script.html" />
+<script>
+    var vue1 = new Vue({
+        el: '#vue1',
+        data: {},
+        methods: {
+            //发送命令
+            sendCommand: function (cmd, data, io) {
+                var map = {};
+                map.cmd = cmd;
+
+                map.data = data || "";
+                if(io){
+                    map.io = io;
+                }
+                var json = JSON.stringify(map);
+                $('#stringText').val(json);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '${_contextPath}/send',
+                    data: {
+                        deviceName: '${_params.deviceName}',
+                        data: json
+                    },
+                    cache: false,
+                    errorMsg: true,
+                    dataType: 'json',
+                    loading:true,
+                    success: function (result) {
+                        layer.msg(json);
+                    }
+                });
+            },
+            //发送命令
+            send: function (data) {
+                if(!data){
+                    layer.msg('Please Input the string ');
+                    return;
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '${_contextPath}/send',
+                    data: {
+                        deviceName: '${_params.deviceName}',
+                        data: data
+                    },
+                    cache: false,
+                    errorMsg: true,
+                    dataType: 'json',
+                    loading:true,
+                    success: function (result) {
+                        layer.msg(data);
+                    }
+                });
+            },
+            //查询
+            check: function (cmd) {
+                $.ajax({
+                    type: 'GET',
+                    url: '${_contextPath}/' + cmd,
+                    data: {
+                        deviceName: '${_params.deviceName}',
+                    },
+                    cache: false,
+                    errorMsg: true,
+                    dataType: 'json',
+                    loading:true,
+                    success: function (result) {
+                        var data = result.data;
+                        vue1.showTable(data);
+                    }
+                });
+
+                var data = {cmd: cmd, data: ""};
+                var json = $.toJSON(data);
+                $('#stringText').val(json);
+            },
+            //显示表格
+            showTable: function(data){
+                for(var i in data){
+                    data[i].data = JSON.stringify(data[i].data);
+                    data[i].sn = JSON.stringify(data[i].sn);
+
+                    data[i]._snAsString = data[i].snAsInt ? data[i].snAsString : '-';
+                    data[i]._power = (data[i].power == 255) ? 0 : data[i].power;
+                    data[i]._current = (data[i].current == 255) ? 0 : data[i].current;
+                    data[i]._voltage = (data[i].voltage == 255) ? 0 : (data[i].voltage / 10).toFixed(1);
+                    data[i]._pinboardIndex = '0X' + data[i].pinboardIndex.toString(16);
+
+                    data[i]._status = '0X0' + data[i].status.toString(16);
+                    if(data[i].status > 1){
+                        data[i]._status += '<span style="color:blue">&nbsp;ERROR</span>';
+                    }
+                }
+                layer.open({
+                    title: 'Upload:' + data.length, area: ['80%', '70%'],
+                    content: '<table class="layui-hide" id="test"></table>',
+                    shadeClose: true,
+                    anim: -1,
+                    isOutAnim: false,
+                    btn: ['Close'],
+                    success: function () {
+                        layui.table.render({
+                            elem: '#test',
+                            cellMinWidth: 120, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                            data: data,
+                            limit: 100
+                            ,cols: [[
+                                {title: 'ROWS', templet: function (d) {
+                                        return d.LAY_TABLE_INDEX + 1;
+                                    }},
+                                {field:'_snAsString', title: 'PowerbankSN'},
+                                {field:'_power', title: 'Power'},
+                                {field:'_current',title: 'Current'},
+                                {field:'_voltage',  title: 'Voltage'},
+                                {field:'_pinboardIndex', title: 'PinboardIndex'},
+                                {field:'index', title: 'Hole'},
+                                {field:'_status', title: 'Status'}
+                            ]]
+                        });
+
+                    }
+                });
+            },
+            //查询
+            popupRandom: function (minPower) {
+                $.ajax({
+                    type: 'GET',
+                    url: '${_contextPath}/popup_random',
+                    data: {
+                        deviceName: '${_params.deviceName}',
+                        minPower: minPower
+                    },
+                    cache: false,
+                    errorMsg: true,
+                    dataType: 'json',
+                    loading:true,
+                    success: function (result) {
+                        var sn = result.data;
+
+                        layer.open({
+                            title: 'Popup Result',
+                            content: ('Succeed SN:' +sn),
+                            btn: ['Close']
+                        });
+
+                        var data = {cmd: 'popup_sn', data: sn};
+                        var json = $.toJSON(data);
+                        $('#stringText').val(json);
+                    }
+                });
+            },
+            //查询
+            clearCache: function (deviceName) {
+                $.ajax({
+                    type: 'GET',
+                    url: '${_contextPath}/api/iot/client/clear',
+                    data: {
+                        deviceName: '${_params.deviceName}',
+                    },
+                    cache: false,
+                    errorMsg: true,
+                    dataType: 'json',
+                    loading:true,
+                    success: function (result) {
+                        layer.msg('Succeed');
+                    }
+                });
+            },
+        },
+        mounted : function () {
+
+        }
+    });
+
+</script>
+
+<script>
+    layui.config({base: '${_contextPath}/web/layuiadmin/'});
+    layui.extend({index: 'lib/index'});
+    layui.use(['index','form','table'], function () {
+
+    });
+</script>
+</body>
+</html>

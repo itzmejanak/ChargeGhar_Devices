@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- freemarker全局配置 -->
+    <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/" />
+        <property name="defaultEncoding" value="UTF-8" />
+        <property name="freemarkerSettings">
+            <props>
+                <!--缓存时间n秒-->
+                <prop key="template_update_delay">0</prop>
+                <prop key="whitespace_stripping">true</prop>
+                <prop key="default_encoding">UTF-8</prop>
+                <prop key="locale">UTF-8</prop><!-- 本地化设置 -->
+                <prop key="url_escaping_charset">UTF-8</prop>
+                <prop key="locale">UTF-8</prop>
+                <prop key="number_format">0.##########</prop>
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+                <prop key="classic_compatible">true</prop>
+                <prop key ="template_exception_handler">com.demo.common.FreemarkerExceptionHandler</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- freemarker视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <!-- 自定义FreeMarkerView -->
+        <property name="viewClass" value="com.demo.common.MyFreeMarkerView" />
+        <property name="suffix" value=".html" />
+        <property name="contentType" value="text/html;charset=UTF-8"/>
+        <property name="cache" value="true" />
+        <property name="order" value="0"/>
+    </bean>
+</beans>

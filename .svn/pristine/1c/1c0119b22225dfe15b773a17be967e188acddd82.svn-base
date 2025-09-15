@@ -1,0 +1,10 @@
+accessKeyId=LTAI4Fe3WjiEALNySAgv8Spd
+accessKeySecret=oRI6kfWErM5IB4L2SOXtiZbbLNQZUN
+productKey=a1iB5G5ZIiZ
+regionId=cn-shanghai
+mnsEndpoint=1606090314288549.mns.cn-shanghai.aliyuncs.com
+
+#------------------------- redis ----------------------------
+redis.host=119.23.63.185
+redis.port=6379
+redis.pass=KeYpZrZx

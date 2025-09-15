@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MNS-LISTEN</title>
+  <#include "/web/views/common/header.html" />
+</head>
+<style>
+    .layui-form-label{
+        width: 120px !important;
+    }
+
+    .layui-table-cell {
+        height: auto;
+        line-height:inherit;
+        padding:3px 15px; !important;
+    }
+
+    .layui-table-cell, .layui-table-tool-panel li{
+        word-wrap:break-word !important;
+        white-space: normal !important;
+    }
+    .link{
+        color: blue;
+        text-decoration: underline;
+    }
+
+
+</style>
+<body>
+<div class="layui-fluid" id="vue1">
+    <div class="layui-card">
+        <div class="layui-card-body" style="padding: 50px 15px">
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">MNS HOST</label>
+                    <div class="layui-col-xs3">
+                        <input readonly="readonly" type="text" value="${mns}" placeholder="请输入" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid"></div>
+                    <div class="layui-input-block">
+                        <a href="javascript:" v-on:click="start" class="layui-btn ">OPEN</a>
+                        <a href="javascript:" v-on:click="stop" class="layui-btn ">CLOSE</a>
+                        <a href="javascript:" v-on:click="clear" class="layui-btn ">CLEAR</a>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Thread Running</label>
+                    <div class="layui-col-xs3">
+                        <input readonly="readonly" type="text" value="${mnsUtils.running?string('TRUE', 'FALSE')}" lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Last Exception</label>
+                    <div class="layui-col-xs3">
+                        <input readonly="readonly" type="text" value="${lastException}" lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+                <hr>
+
+                <!--表格显示-->
+                <table id="table1" lay-filter="table1"></table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<#include "/web/views/common/script.html" />
+<script type="text/html" id="tools">
+    <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="{{d.connectUrl}}" target="_blank">CONNECT API</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="${_contextPath}/show.html?deviceName={{d.deviceName}}" target="_blank">CONTROL</a>
+</script>
+
+<script>
+    var list = [];
+    <#list deviceInfos as item>
+        list.push({'deviceName': '${item.deviceName}', 'status' : '${item.deviceOnline}', 'connectUrl' : '${item.connectUrl}'});
+    </#list>
+
+    var vue1 = new Vue({
+        el: '#vue1',
+        data: {
+            data: list
+        },
+        methods: {
+            //初始化数据
+            init: function () {
+
+            },
+            start: function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '${_contextPath}/listen/start',
+                    data: {},
+                    cache: false,
+                    errorMsg: true,
+                    dataType: 'json',
+                    loading:true,
+                    success: function (result) {
+                        setTimeout(function () {
+                            window.location.reload();
+                        },1000);
+                    }
+                });
+            },
+            stop: function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '${_contextPath}/listen/stop',
+                    data: {},
+                    cache: false,
+                    errorMsg: true,
+                    dataType: 'json',
+                    loading:true,
+                    success: function (result) {
+                        window.location.reload();
+                    }
+                });
+            },
+            clear: function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '${_contextPath}/listen/clear',
+                    data: {},
+                    cache: false,
+                    errorMsg: true,
+                    dataType: 'json',
+                    loading:true,
+                    success: function (result) {
+
+                    }
+                });
+            },
+            listen: function(){
+                $.ajax({
+                    type: 'GET',
+                    url: '${_contextPath}/listen',
+                    cache: false,
+                    errorMsg: false,
+                    dataType: 'json',
+                    loading:false,
+                    success: function (result) {
+                        var data = result.data || [];
+                        var cache = layui.table.cache.table1 || [];
+
+                        if(data.length > 0 && cache.length > 0 && cache[0].messageId == data[0].messageId){
+                            return;
+                        }
+
+                        vue1.showTable(result.data);
+                    },
+                    complete: function(XMLHttpRequest, textStatus) {
+                        setTimeout(function () {
+                            vue1.listen();
+                        }, 1000);
+                    }
+                });
+            },
+            showTable: function (list) {
+                layui.table.render({
+                    elem: '#table1',
+                    height: 'full',
+                    data : list,
+                    limit:100,
+                    cols: [[
+                        {field: 'messageId', title: 'MessageId', width: 200},
+                        {field: 'topic', title: 'Topic', width: 200},
+                        {field: 'messageType', title: 'MessageType', width: 150},
+                        {field: 'data', title: 'DATA（HEXS）',  templet: function (d) {
+                            var temp = '<a href="javascript:vue1.get0x10(\'{0}\')" target="_blank" class="link">{1}</a>';
+                            if('0x10' == d.cmd){
+                                temp = temp.format(d.data, d.data);
+                            }
+                            else {
+                                temp = d.data;
+                            }
+                            return temp;
+                        }},
+                        {field: 'cmd', title: 'CMD', width: 80, templet: function (d) {
+                            var temp = '<a href="{0}" target="_blank" class="link">{1}</a>';
+                            if('0x10' == d.cmd){
+                                temp = temp.format('https://www.yuque.com/dudubox/hvgqor/wztcxc', d.cmd);
+                            }
+                            else if('0x21' == d.cmd){
+                                temp = temp.format('https://www.yuque.com/dudubox/hvgqor/tia4p7', d.cmd);
+                            }
+                            else if('0x31' == d.cmd){
+                                temp = temp.format('https://www.yuque.com/dudubox/hvgqor/dda2ym', d.cmd);
+                            }
+                            else if('0x40' == d.cmd){
+                                temp = temp.format('https://www.yuque.com/dudubox/hvgqor/ka2uby', d.cmd);
+                            }
+                            else {
+                                temp = d.cmd;
+                            }
+                            return temp;
+                        }},
+                        {field: 'timestamp', title: 'Timestamp', width: 150,  templet: function (d) {
+                            var time = new Date(d.timestamp * 1000).format('yyyy-MM-dd hh:mm:ss');
+                            return time;
+                        }}
+                    ]],
+                    //skin: 'line'
+                });
+            },
+            get0x10: function (hexs) {
+                $.ajax({
+                    type: 'GET',
+                    url: '${_contextPath}/listen/0x10',
+                    data: {hexs: hexs},
+                    cache: false,
+                    errorMsg: false,
+                    dataType: 'json',
+                    loading:true,
+                    success: function (result) {
+                        var data = result.data || [];
+                        console.log(data);
+                        vue1.show0x10(data);
+                    }
+                });
+            },
+            //显示表格
+            show0x10: function(data){
+                for(var i in data){
+                    data[i].data = JSON.stringify(data[i].data);
+                    data[i].sn = JSON.stringify(data[i].sn);
+
+                    data[i]._snAsString = data[i].snAsInt ? data[i].snAsString : '-';
+                    data[i]._power = (data[i].power == 255) ? 0 : data[i].power;
+                    data[i]._current = (data[i].current == 255) ? 0 : data[i].current;
+                    data[i]._voltage = (data[i].voltage == 255) ? 0 : (data[i].voltage / 10).toFixed(1);
+                    data[i]._pinboardIndex = '0X' + data[i].pinboardIndex.toString(16);
+
+                    data[i]._status = '0X0' + data[i].status.toString(16);
+                    if(data[i].status > 1){
+                        data[i]._status += '<span style="color:blue">&nbsp;ERROR</span>';
+                    }
+                }
+
+                layer.open({
+                    title: 'Upload:' + data.length, area: ['80%', '70%'],
+                    content: '<table class="layui-hide" id="test"></table>',
+                    shadeClose: true,
+                    anim: -1,
+                    isOutAnim: false,
+                    btn: ['Close'],
+                    success: function () {
+                        layui.table.render({
+                            elem: '#test',
+                            cellMinWidth: 120, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                            data: data,
+                            limit: 100
+                            ,cols: [[
+                                {title: 'ROWS', templet: function (d) {
+                                        return d.LAY_TABLE_INDEX + 1;
+                                    }},
+                                {field:'_snAsString', title: 'PowerbankSN'},
+                                {field:'_power', title: 'Power'},
+                                {field:'_current',title: 'Current'},
+                                {field:'_voltage',  title: 'Voltage'},
+                                {field:'_pinboardIndex', title: 'PinboardIndex'},
+                                {field:'index', title: 'Hole'},
+                                {field:'_status', title: 'Status'}
+                            ]]
+                        });
+
+                    }
+                });
+            },
+        }
+    });
+
+</script>
+
+
+<script>
+    layui.config({base: '${_contextPath}/web/layuiadmin/'});
+    layui.extend({index: 'lib/index'});
+    layui.use(['index','form','table'], function () {
+        vue1.listen();
+    });
+</script>
+</body>
+</html>
