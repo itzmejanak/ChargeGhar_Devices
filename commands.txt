@@ -1,0 +1,18 @@
+Project Analysis and Server Environment Check
+
+Commands
+
+1. Check system information:
+   ssh root@213.210.21.113 "uname -a && cat /etc/os-release"
+
+2. Check Docker and Java versions, and Maven location:
+   ssh root@213.210.21.113 "docker --version && java -version && which mvn"
+
+3. Check Docker version, Docker location, Maven location, and Tomcat processes:
+   ssh root@213.210.21.113 "docker --version ; which docker ; which mvn ; ps aux | grep -i tomcat"
+
+4. Establish SSH connection:
+   ssh root@213.210.21.113
+
+5. Check Docker version after connecting:
+   docker --version

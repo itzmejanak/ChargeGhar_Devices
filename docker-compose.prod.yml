@@ -1,0 +1,81 @@
+services:
+  # IoT Demo Application - Production
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: iotdemo-app-prod
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Redis connection
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=iotdemo123_prod
+      # Application settings
+      - SPRING_PROFILES_ACTIVE=production
+      # EMQX settings already in config.properties
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - iotdemo-prod-network
+    volumes:
+      - app-logs:/usr/local/tomcat/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+
+  # Redis Cache - Production
+  redis:
+    image: redis:7.2-alpine
+    container_name: iotdemo-redis-prod
+    restart: unless-stopped
+    command: >
+      redis-server 
+      --appendonly yes 
+      --requirepass iotdemo123_prod
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+      - /opt/iotdemo/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - iotdemo-prod-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
+# Production networks
+networks:
+  iotdemo-prod-network:
+    driver: bridge
+    name: iotdemo-prod-network
+
+# Persistent volumes
+volumes:
+  redis-data:
+    name: iotdemo-redis-prod-data
+  app-logs:
+    name: iotdemo-app-prod-logs
