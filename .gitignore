@@ -52,3 +52,6 @@ logs/
 *~
 *.swp
 *.swo
+
+# Credentials
+credentials.txt

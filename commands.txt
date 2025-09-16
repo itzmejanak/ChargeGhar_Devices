@@ -1,4 +1,7 @@
 Project Analysis and Server Environment Check
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y git curl vim
 
 Commands
 
@@ -16,3 +19,20 @@ Commands
 
 5. Check Docker version after connecting:
    docker --version
+
+Recommendations:
+Set Memory Overcommit:
+Run the following command to set the memory overcommit:
+
+bash```
+
+echo "vm.overcommit_memory = 1" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+Consider Rootless Mode:
+If you're concerned about security, consider setting up Docker in rootless mode using:
+
+bash```
+
+dockerd-rootless-setuptool.sh install
+```
