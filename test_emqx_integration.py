@@ -25,7 +25,7 @@ import redis
 class ChargeGharTester:
     def __init__(self):
         # Configuration from your config.properties
-        self.base_url = "http://localhost:8080/iotdemo_war"  # Local WAR deployment path
+        self.base_url = "http://localhost:8080"  # Now runs at root path
         
         # EMQX Configuration (from your config.properties)
         self.mqtt_broker = "l8288d7f.ala.asia-southeast1.emqxsl.com"

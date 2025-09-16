@@ -17,7 +17,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests -B -U
 
 # Verify WAR file was created
-RUN ls -la target/ && test -f target/home.war
+RUN ls -la target/ && test -f target/ROOT.war
 
 # Production stage
 FROM tomcat:8.5.93-jdk8-temurin
@@ -39,7 +39,7 @@ ENV CATALINA_OPTS="-server -Xmx512m -Xms256m -XX:+UseG1GC -XX:+UseStringDeduplic
 RUN groupadd -r iotdemo && useradd -r -g iotdemo iotdemo
 
 # Copy WAR file from build stage
-COPY --from=build /build/target/home.war /usr/local/tomcat/webapps/
+COPY --from=build /build/target/ROOT.war /usr/local/tomcat/webapps/
 
 # Set ownership and permissions
 RUN chown -R iotdemo:iotdemo /usr/local/tomcat && \
@@ -53,7 +53,7 @@ EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8080/home/health || exit 1
+    CMD curl -f http://localhost:8080/health || exit 1
 
 # Start Tomcat
 CMD ["catalina.sh", "run"]

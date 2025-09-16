@@ -155,7 +155,7 @@
   </dependencies>
 
   <build>
-    <finalName>home</finalName>
+    <finalName>ROOT</finalName>
     
     <plugins>
       <!-- Maven Compiler Plugin -->
