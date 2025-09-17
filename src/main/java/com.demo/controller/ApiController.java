@@ -5,6 +5,7 @@ import com.demo.common.DeviceConfig;
 import com.demo.common.MessageBody;
 import com.demo.mqtt.MqttPublisher;
 import com.demo.mqtt.MqttSubscriber;
+import com.demo.emqx.EmqxDeviceService;
 import com.demo.bean.ApiIotClientConValid;
 import com.demo.bean.ApiRentboxOrderReturnValid;
 import com.demo.common.AppConfig;
@@ -51,6 +52,9 @@ public class ApiController {
 
     @Autowired
     RedisTemplate redisTemplate;
+    
+    @Autowired
+    EmqxDeviceService emqxDeviceService;
 
     @RequestMapping("/api/iot/client/con")
     public HttpResult iotClientCon(ApiIotClientConValid valid, HttpServletResponse response, HttpServletRequest request) throws Exception {
@@ -87,17 +91,25 @@ public class ApiController {
 
             this.checkSign(valid,valid.getSign());
 
-            //EMQX MQTT PARAMS AND CACHE 1 DAY
+            //EMQX DEVICE REGISTRATION AND CONFIG
             String key = "clientConect:" + valid.getUuid();
             BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
             DeviceConfig config = (DeviceConfig) boundValueOps.get();
             if(config == null || StringUtils.isBlank(config.getTimeStamp())){
-                // *** CHANGED: Use EMQX instead of Alibaba ***
-                config = mqttPublisher.getIotDeviceConfig(appConfig.getProductKey(), valid.getUuid());
-                boundValueOps.set(config, 1, TimeUnit.DAYS);
+                try {
+                    // *** NEW: Register device with EMQX platform and get unique credentials ***
+                    config = emqxDeviceService.getOrCreateDeviceConfig(valid.getUuid());
+                    if(config != null) {
+                        boundValueOps.set(config, 1, TimeUnit.DAYS);
+                        System.out.println("Device registered successfully: " + valid.getUuid());
+                    }
+                } catch (Exception emqxError) {
+                    System.err.println("EMQX device registration failed for " + valid.getUuid() + ": " + emqxError.getMessage());
+                    throw new Exception("Device registration failed. Please try again later. Error: " + emqxError.getMessage());
+                }
             }
             if(config == null){
-                throw new Exception("clientConect is Null");
+                throw new Exception("Failed to get device configuration. EMQX service may be unavailable.");
             }
 
             // *** CHANGED: Return EMQX format instead of Alibaba format ***

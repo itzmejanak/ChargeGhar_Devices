@@ -6,6 +6,8 @@ import com.demo.mqtt.MqttSubscriber;
 import com.demo.bean.DeviceInfo;
 import com.demo.common.AppConfig;
 import com.demo.common.HttpResult;
+import com.demo.emqx.EmqxDeviceService;
+import com.demo.common.DeviceConfig;
 import com.demo.tools.HttpServletUtils;
 import com.demo.tools.SignUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +38,9 @@ public class IndexController {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    EmqxDeviceService emqxDeviceService;
 
 
     @RequestMapping("/index.html")
@@ -106,32 +111,69 @@ public class IndexController {
     public HttpResult deviceCreate(HttpServletResponse response,  @RequestParam String deviceName) throws Exception {
         HttpResult httpResult = new HttpResult();
         try {
+            // Step 1: Register device with EMQX platform first
+            DeviceConfig deviceConfig = null;
+            try {
+                deviceConfig = emqxDeviceService.getOrCreateDeviceConfig(deviceName);
+                System.out.println("✅ Device registered with EMQX: " + deviceName);
+                System.out.println("   Username: " + deviceConfig.getIotId());
+                System.out.println("   Host: " + deviceConfig.getHost() + ":" + deviceConfig.getPort());
+            } catch (Exception emqxError) {
+                System.err.println("❌ EMQX device registration failed for " + deviceName + ": " + emqxError.getMessage());
+                throw new Exception("Failed to register device with EMQX platform: " + emqxError.getMessage());
+            }
+
+            // Step 2: Add device to machines.properties file (only if EMQX registration succeeded)
             String path = HttpServletUtils.getHttpServletRequest().getServletContext().
                     getRealPath("/WEB-INF/classes/machines.properties");
 
-            FileOutputStream fos = null;
-            OutputStreamWriter osw = null;
-            BufferedWriter  bw = null;
-            try {
-                fos=new FileOutputStream(new File(path), true);
-                osw=new OutputStreamWriter(fos, "UTF-8");
-                bw=new BufferedWriter(osw);
-                bw.write("\n\r" + deviceName);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            finally {
-                if(bw != null) bw.close();
-                if(osw != null) osw.close();
-                if(fos != null) fos.close();;
+            // Check if device already exists in file
+            boolean deviceExists = false;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.trim().equals(deviceName)) {
+                        deviceExists = true;
+                        break;
+                    }
+                }
             }
 
-        }
-        catch (Exception e){
+            if (!deviceExists) {
+                FileOutputStream fos = null;
+                OutputStreamWriter osw = null;
+                BufferedWriter bw = null;
+                try {
+                    fos = new FileOutputStream(new File(path), true);
+                    osw = new OutputStreamWriter(fos, "UTF-8");
+                    bw = new BufferedWriter(osw);
+                    bw.write(System.lineSeparator() + deviceName);
+                    System.out.println("✅ Device added to machines.properties: " + deviceName);
+                } finally {
+                    if (bw != null) bw.close();
+                    if (osw != null) osw.close();
+                    if (fos != null) fos.close();
+                }
+            } else {
+                System.out.println("ℹ️ Device already exists in machines.properties: " + deviceName);
+            }
+
+            // Step 3: Return success with device information
+            Map<String, Object> result = new HashMap<>();
+            result.put("deviceName", deviceName);
+            result.put("emqxRegistered", true);
+            result.put("username", deviceConfig.getIotId());
+            result.put("host", deviceConfig.getHost());
+            result.put("port", deviceConfig.getPort());
+            result.put("message", "Device created successfully and registered with EMQX platform");
+            
+            httpResult.setData(result);
+
+        } catch (Exception e) {
             response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             httpResult.setCode(response.getStatus());
-            httpResult.setMsg(e.toString());
+            httpResult.setMsg("Device creation failed: " + e.getMessage());
+            e.printStackTrace();
         }
         return httpResult;
     }

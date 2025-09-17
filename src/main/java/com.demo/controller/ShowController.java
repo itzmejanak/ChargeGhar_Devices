@@ -46,11 +46,11 @@ public class ShowController {
     public ModelAndView showHtml(@RequestParam String deviceName) throws Exception {
         ModelAndView mv = new ModelAndView("/web/views/page/show");
 
-        String topicUrl=appConfig.isTopicType()?"/user":"";
         DeviceOnline deviceOnline = mqttPublisher.getDeviceStatus(appConfig.getProductKey(), deviceName);
         mv.addObject("deviceOnline", deviceOnline);
-        mv.addObject("getTopic", "/" + appConfig.getProductKey() + "/" + deviceName + topicUrl+"/get");
-        mv.addObject("updateTopic", "/" + appConfig.getProductKey() + "/" + deviceName + topicUrl+"/update");
+        // Use EMQX topic format
+        mv.addObject("getTopic", "device/" + deviceName + "/command");
+        mv.addObject("updateTopic", "device/" + deviceName + "/upload");
 
         //MQTT CONNECT API
         String contextPath = HttpServletUtils.getRealContextpath();
@@ -71,8 +71,8 @@ public class ShowController {
     public HttpResult send(@RequestParam String deviceName, @RequestParam String data, HttpServletResponse response) throws Exception {
         HttpResult httpResult = new HttpResult();
         try {
-            String topicUrl=appConfig.isTopicType()?"/user":"";
-            String topic = "/" + appConfig.getProductKey() + "/" + deviceName +topicUrl+"/get";
+            // Use EMQX topic format: device/{deviceName}/command
+            String topic = "device/" + deviceName + "/command";
             mqttPublisher.sendMsgAsync(appConfig.getProductKey(), topic, data, 1);
         }
         catch (Exception e){

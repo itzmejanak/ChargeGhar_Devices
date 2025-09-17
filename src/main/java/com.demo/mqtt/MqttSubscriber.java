@@ -84,9 +84,23 @@ public class MqttSubscriber implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         try {
-            // Extract device name from topic (device/{deviceName}/upload)
+            // Extract device name from topic (device/{deviceName}/upload or device/{deviceName}/status)
             String[] topicParts = topic.split("/");
             String deviceName = topicParts.length > 1 ? topicParts[1] : "unknown";
+            String messageType = topicParts.length > 2 ? topicParts[2] : "upload";
+            
+            // Track device activity for status checking
+            String activityKey = "device_activity:" + deviceName;
+            BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
+            activityOps.set(System.currentTimeMillis(), 10, TimeUnit.MINUTES);
+            
+            // Handle heartbeat messages specially
+            if ("status".equals(messageType)) {
+                String heartbeatKey = "device_heartbeat:" + deviceName;
+                BoundValueOperations heartbeatOps = redisTemplate.boundValueOps(heartbeatKey);
+                heartbeatOps.set(System.currentTimeMillis(), 5, TimeUnit.MINUTES);
+                System.out.println("Heartbeat received from device: " + deviceName);
+            }
             
             // Convert MQTT message to MessageBody format
             MessageBody messageBody = new MessageBody();
@@ -94,7 +108,7 @@ public class MqttSubscriber implements MqttCallback {
             messageBody.setDeviceName(deviceName);
             messageBody.setProductKey(appConfig.getProductKey());
             messageBody.setPayload(Base64.encodeBase64String(message.getPayload()));
-            messageBody.setMessageType("upload");
+            messageBody.setMessageType(messageType);
             messageBody.setTimestamp(System.currentTimeMillis() / 1000);
             messageBody.setMessageId(UUID.randomUUID().toString());
 

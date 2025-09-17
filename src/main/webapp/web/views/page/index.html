@@ -16,15 +16,21 @@
         <div class="layui-card-body" style="padding: 50px 15px">
             <form class="layui-form">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">MQTT Broker</label>
+                    <label class="layui-form-label">EMQX Broker</label>
                     <div class="layui-col-xs3">
                         <input readonly="readonly" type="text" value="${mqttBroker}" lay-verify="required" placeholder="EMQX Cloud Broker" class="layui-input">
                     </div>
+                    <div class="layui-form-mid">
+                        <span style="color: #5FB878;">✅ EMQX Cloud</span>
+                    </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">MQTT Username</label>
+                    <label class="layui-form-label">EMQX Username</label>
                     <div class="layui-col-xs3">
                         <input readonly="readonly" type="text" value="${mqttUsername}" placeholder="EMQX Username" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid">
+                        <span style="color: #666;">Server Credentials</span>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -43,6 +49,7 @@
                         <a href="${_contextPath}/listen.html" target="_blank" class="layui-btn ">MQTT LISTENER</a>
                         <a href="javascript:vue1.createDevice()" class="layui-btn ">CREATE DEVICE BY DEVICENAME</a>
                         <a href="${_contextPath}/version.html" target="_blank" class="layui-btn ">ONLINE UPDATE</a>
+                        <a href="${_contextPath}/emqx/test/connection" target="_blank" class="layui-btn layui-btn-normal">TEST EMQX API</a>
                     </div>
                 </div>
                 <div class="layui-form-item">

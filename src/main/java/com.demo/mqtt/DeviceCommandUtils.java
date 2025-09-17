@@ -82,11 +82,10 @@ public class DeviceCommandUtils {
         BoundValueOperations operations = redisTemplate.boundValueOps(key);
         operations.set(null, overSecond, TimeUnit.SECONDS);
 
-        // Use MQTT instead of Alibaba IoT
-        String topicUrl = appConfig.isTopicType() ? "/user" : "";
-        String topic = "/" + appConfig.getProductKey() + "/" + rentboxSN + topicUrl + "/get";
+        // Use EMQX topic format: device/{deviceName}/command
+        String emqxTopic = "device/" + rentboxSN + "/command";
         
-        mqttPublisher.sendMsgAsync(appConfig.getProductKey(), topic, message, 1);
+        mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message, 1);
 
         // Same waiting logic - no changes needed
         byte[] bytes = null;

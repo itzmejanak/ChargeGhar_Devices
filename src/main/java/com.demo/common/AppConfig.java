@@ -42,6 +42,16 @@ public class AppConfig {
     @Value("#{appconfig['topicType']}")
     private boolean topicType;
 
+    // EMQX API Configuration
+    @Value("#{appconfig['emqx.api.url']}")
+    private String emqxApiUrl;
+
+    @Value("#{appconfig['emqx.api.key']}")
+    private String emqxApiKey;
+
+    @Value("#{appconfig['emqx.api.secret']}")
+    private String emqxApiSecret;
+
     // EMQX Cloud Getters
     public String getMqttBroker() {
         return mqttBroker;
@@ -73,6 +83,18 @@ public class AppConfig {
 
     public boolean isTopicType() {
         return topicType;
+    }
+
+    public String getEmqxApiUrl() {
+        return emqxApiUrl;
+    }
+
+    public String getEmqxApiKey() {
+        return emqxApiKey;
+    }
+
+    public String getEmqxApiSecret() {
+        return emqxApiSecret;
     }
 
     public String[] getMachines(){

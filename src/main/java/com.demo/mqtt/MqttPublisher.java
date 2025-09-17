@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class MqttPublisher {
@@ -47,30 +48,65 @@ public class MqttPublisher {
         System.out.println("MQTT Publisher initialized successfully");
     }
 
-    // Replace Alibaba device status check with MQTT heartbeat
+    // Enhanced device status check with multiple indicators
     public DeviceOnline getDeviceStatus(String productKey, String deviceName) {
-        // Check last heartbeat in Redis
-        String key = "device_heartbeat:" + deviceName;
-        BoundValueOperations ops = redisTemplate.boundValueOps(key);
-        Long lastSeen = (Long) ops.get();
-
-        if (lastSeen == null) return DeviceOnline.NO_DEVICE;
-
+        // Check multiple indicators for device status
+        
+        // 1. Check last heartbeat in Redis
+        String heartbeatKey = "device_heartbeat:" + deviceName;
+        BoundValueOperations heartbeatOps = redisTemplate.boundValueOps(heartbeatKey);
+        Long lastSeen = (Long) heartbeatOps.get();
+        
+        // 2. Check if device has active connection config
+        String configKey = "clientConect:" + deviceName;
+        BoundValueOperations configOps = redisTemplate.boundValueOps(configKey);
+        Object deviceConfig = configOps.get();
+        
+        // 3. Check recent message activity
+        String activityKey = "device_activity:" + deviceName;
+        BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
+        Long lastActivity = (Long) activityOps.get();
+        
         long now = System.currentTimeMillis();
-        if (now - lastSeen < 60000) { // 1 minute threshold
+        
+        // Device is considered ONLINE if:
+        // - Has recent heartbeat (within 2 minutes) OR
+        // - Has recent activity (within 5 minutes) AND has valid config
+        if (lastSeen != null && (now - lastSeen < 120000)) { // 2 minute threshold for heartbeat
             return DeviceOnline.ONLINE;
-        } else {
+        }
+        
+        if (deviceConfig != null && lastActivity != null && (now - lastActivity < 300000)) { // 5 minute threshold for activity
+            return DeviceOnline.ONLINE;
+        }
+        
+        // If device has config but no recent activity, it's registered but offline
+        if (deviceConfig != null) {
             return DeviceOnline.OFFLINE;
         }
+        
+        // No device registration found
+        return DeviceOnline.NO_DEVICE;
     }
 
-    // Replace Alibaba MQTT publish with direct MQTT
+    // EMQX MQTT publish with standardized topic format
     public void sendMsgAsync(String productKey, String topicFullName, String messageContent, int qos) throws Exception {
-        // Convert Alibaba topic format to EMQX format
-        // "/productKey/deviceName/get" → "device/deviceName/command"
-        String[] parts = topicFullName.split("/");
-        String deviceName = parts.length > 2 ? parts[2] : parts[1];
-        String emqxTopic = "device/" + deviceName + "/command";
+        String emqxTopic;
+        String deviceName;
+        
+        // Handle both legacy and new topic formats
+        if (topicFullName.startsWith("device/")) {
+            // Already in EMQX format: device/{deviceName}/command
+            emqxTopic = topicFullName;
+            String[] parts = topicFullName.split("/");
+            deviceName = parts.length > 1 ? parts[1] : "unknown";
+        } else {
+            // Convert legacy format to EMQX format
+            // "/productKey/deviceName/get" → "device/deviceName/command"
+            String[] parts = topicFullName.split("/");
+            deviceName = parts.length > 2 ? parts[2] : (parts.length > 1 ? parts[1] : "unknown");
+            emqxTopic = "device/" + deviceName + "/command";
+        }
 
         MqttMessage message = new MqttMessage(messageContent.getBytes());
         message.setQos(qos);
@@ -78,6 +114,12 @@ public class MqttPublisher {
 
         if (mqttClient != null && mqttClient.isConnected()) {
             mqttClient.publish(emqxTopic, message);
+            System.out.println("Message sent to device " + deviceName + " on topic: " + emqxTopic);
+            
+            // Track message activity
+            String activityKey = "device_activity:" + deviceName;
+            BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
+            activityOps.set(System.currentTimeMillis(), 10, TimeUnit.MINUTES);
             
             // Keep same logging for compatibility
             MessageBody messageBody = new MessageBody();
@@ -90,7 +132,7 @@ public class MqttPublisher {
             messageBody.setTimestamp(System.currentTimeMillis() / 1000);
             mqttSubscriber.putMessageBody(messageBody);
         } else {
-            throw new Exception("MQTT client not connected");
+            throw new Exception("MQTT client not connected to EMQX broker");
         }
     }
 
@@ -111,23 +153,7 @@ public class MqttPublisher {
         }
     }
 
-    // Simplified device config - no complex Alibaba authentication
-    public DeviceConfig getIotDeviceConfig(String productKey, String deviceName) {
-        DeviceConfig config = new DeviceConfig();
-        config.setDeviceName(deviceName);
-        config.setProductKey(productKey);
-        config.setHost(appConfig.getMqttBroker());
-        config.setPort(appConfig.getMqttPort());
-        config.setCreatedTime(new Date());
-        config.setTimeStamp(String.valueOf(System.currentTimeMillis()));
 
-        // Simple authentication for EMQX
-        config.setIotId("device_" + deviceName);
-        config.setIotToken(appConfig.getMqttPassword());
-        config.setDeviceSecret(""); // Not used in EMQX
-
-        return config;
-    }
 
     // Compatibility methods for existing code
     public Map<String, DeviceOnline> getDeviceStatusMap(String productKey, String... deviceNames) {
@@ -138,14 +164,5 @@ public class MqttPublisher {
         return statusMap;
     }
 
-    // Mock methods for compatibility (not used in EMQX)
-    public Object getDeviceInfo(String productKey, String deviceName) {
-        // Return mock response for compatibility
-        return new Object();
-    }
 
-    public Object registDevice(String productKey, String deviceName) {
-        // Auto-registration in EMQX - return success
-        return new Object();
-    }
 }
