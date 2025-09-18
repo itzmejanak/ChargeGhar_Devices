@@ -82,8 +82,10 @@ public class DeviceCommandUtils {
         BoundValueOperations operations = redisTemplate.boundValueOps(key);
         operations.set(null, overSecond, TimeUnit.SECONDS);
 
-        // Use EMQX topic format: device/{deviceName}/command
-        String emqxTopic = "device/" + rentboxSN + "/command";
+        // Use consistent product key in topic format with topicType support
+        String topicPrefix = appConfig.getProductKey() + "/" + rentboxSN;
+        String userPath = appConfig.isTopicType() ? "/user" : "";
+        String emqxTopic = topicPrefix + userPath + "/command";
         
         mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message, 1);
 

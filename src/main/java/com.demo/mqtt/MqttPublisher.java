@@ -140,7 +140,9 @@ public class MqttPublisher {
     public void sendMsgAsync(String productKey, String topicFullName, byte[] bytes, int qos) throws Exception {
         String[] parts = topicFullName.split("/");
         String deviceName = parts.length > 2 ? parts[2] : parts[1];
-        String emqxTopic = "device/" + deviceName + "/command";
+        String topicPrefix = productKey + "/" + deviceName;
+        String userPath = appConfig.isTopicType() ? "/user" : "";
+        String emqxTopic = topicPrefix + userPath + "/command";
 
         MqttMessage message = new MqttMessage(bytes);
         message.setQos(qos);

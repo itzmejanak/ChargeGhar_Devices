@@ -45,13 +45,25 @@ public class MqttSubscriber implements MqttCallback {
         mqttClient.setCallback(this);
         mqttClient.connect(options);
 
-        // Subscribe to all device upload topics
-        String uploadTopic = "device/+/upload";
-        mqttClient.subscribe(uploadTopic, 1);
+        // Subscribe to product key based topics for consistency with topicType support
+        String productKey = appConfig.getProductKey();
+        String userPath = appConfig.isTopicType() ? "/user" : "";
         
-        // Subscribe to device status topics
-        String statusTopic = "device/+/status";
+        String uploadTopic = productKey + "/+" + userPath + "/upload";
+        String statusTopic = productKey + "/+" + userPath + "/status";
+        
+        mqttClient.subscribe(uploadTopic, 1);
         mqttClient.subscribe(statusTopic, 1);
+        
+        // Also subscribe to non-user path for backward compatibility when topicType=true
+        if (appConfig.isTopicType()) {
+            mqttClient.subscribe(productKey + "/+/upload", 1);
+            mqttClient.subscribe(productKey + "/+/status", 1);
+        }
+        
+        // Also subscribe to legacy device format for backward compatibility
+        mqttClient.subscribe("device/+/upload", 1);
+        mqttClient.subscribe("device/+/status", 1);
         
         isRunning = true;
         System.out.println("MQTT Subscriber started successfully");
@@ -84,10 +96,19 @@ public class MqttSubscriber implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         try {
-            // Extract device name from topic (device/{deviceName}/upload or device/{deviceName}/status)
+            // Extract device name from topic (productKey/{deviceName}/upload or device/{deviceName}/upload)
             String[] topicParts = topic.split("/");
-            String deviceName = topicParts.length > 1 ? topicParts[1] : "unknown";
-            String messageType = topicParts.length > 2 ? topicParts[2] : "upload";
+            String deviceName;
+            String messageType;
+            
+            if (topicParts.length >= 3) {
+                // Format: productKey/deviceName/messageType or device/deviceName/messageType
+                deviceName = topicParts[1];
+                messageType = topicParts[2];
+            } else {
+                deviceName = "unknown";
+                messageType = "upload";
+            }
             
             // Track device activity for status checking
             String activityKey = "device_activity:" + deviceName;

@@ -48,9 +48,11 @@ public class ShowController {
 
         DeviceOnline deviceOnline = mqttPublisher.getDeviceStatus(appConfig.getProductKey(), deviceName);
         mv.addObject("deviceOnline", deviceOnline);
-        // Use EMQX topic format
-        mv.addObject("getTopic", "device/" + deviceName + "/command");
-        mv.addObject("updateTopic", "device/" + deviceName + "/upload");
+        // Use consistent product key in topics with topicType support
+        String topicPrefix = appConfig.getProductKey() + "/" + deviceName;
+        String userPath = appConfig.isTopicType() ? "/user" : "";
+        mv.addObject("getTopic", topicPrefix + userPath + "/command");
+        mv.addObject("updateTopic", topicPrefix + userPath + "/upload");
 
         //MQTT CONNECT API
         String contextPath = HttpServletUtils.getRealContextpath();
@@ -71,8 +73,10 @@ public class ShowController {
     public HttpResult send(@RequestParam String deviceName, @RequestParam String data, HttpServletResponse response) throws Exception {
         HttpResult httpResult = new HttpResult();
         try {
-            // Use EMQX topic format: device/{deviceName}/command
-            String topic = "device/" + deviceName + "/command";
+            // Use consistent product key in topic format with topicType support
+            String topicPrefix = appConfig.getProductKey() + "/" + deviceName;
+            String userPath = appConfig.isTopicType() ? "/user" : "";
+            String topic = topicPrefix + userPath + "/command";
             mqttPublisher.sendMsgAsync(appConfig.getProductKey(), topic, data, 1);
         }
         catch (Exception e){
