@@ -181,8 +181,7 @@ public class IndexController {
     @RequestMapping("/")
     public void root(HttpServletResponse response) throws IOException {
         String url = HttpServletUtils.getRealContextpath();
-        url += "/index.html";
+        url += "/dashboard";
         response.sendRedirect(url);
-
     }
 }

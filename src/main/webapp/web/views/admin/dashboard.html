@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - IoT Demo</title>
+    <#include "/web/views/common/header.html" />
+</head>
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <!-- Header -->
+        <div class="layui-header">
+            <div class="layui-logo layui-hide-xs layui-bg-black">IoT Demo - Admin</div>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item layui-hide layui-show-md-inline-block">
+                    <a href="javascript:;">
+                        <img src="${_contextPath}/web/layuiadmin/images/head.jpg" class="layui-nav-img">
+                        ${username!'Admin'}
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="${_contextPath}/logout">Logout</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a class="" href="javascript:;">Admin Management</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="${_contextPath}/admin/list">View Admins</a></dd>
+                            <dd><a href="${_contextPath}/admin/add">Add Admin</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="${_contextPath}/index.html">IoT Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="layui-body">
+            <div style="padding: 15px;">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <h2>Welcome to Admin Dashboard</h2>
+                            </div>
+                            <div class="layui-card-body">
+                                <p>Manage your IoT Demo system from here. You have full administrative access.</p>
+                                <br>
+                                <div class="layui-row layui-col-space15">
+                                    <div class="layui-col-md4">
+                                        <div class="layui-card">
+                                            <div class="layui-card-header">Admin Management</div>
+                                            <div class="layui-card-body">
+                                                <p>View and manage system administrators. Add new admins or view existing ones.</p>
+                                                <br>
+                                                <a href="${_contextPath}/admin/list" class="layui-btn">Manage Admins</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="layui-col-md4">
+                                        <div class="layui-card">
+                                            <div class="layui-card-header">IoT System</div>
+                                            <div class="layui-card-body">
+                                                <p>Access the main IoT dashboard to monitor devices and system status.</p>
+                                                <br>
+                                                <a href="${_contextPath}/index.html" class="layui-btn layui-btn-normal">IoT Dashboard</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="layui-col-md4">
+                                        <div class="layui-card">
+                                            <div class="layui-card-header">System Status</div>
+                                            <div class="layui-card-body">
+                                                <p>Phase 1 Complete: Admin authentication and access control implemented.</p>
+                                                <br>
+                                                <span class="layui-badge layui-bg-green">✅ Authentication Active</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="layui-footer">
+            © 2024 IoT Demo - Phase 1 Admin System
+        </div>
+    </div>
+
+    <script src="${_contextPath}/web/layuiadmin/layui/layui.js"></script>
+    <script>
+        layui.use(['element', 'nav'], function(){
+            var element = layui.element;
+        });
+    </script>
+</body>
+</html>

@@ -12,10 +12,16 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=iotdemo123
+      # Database connection
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/iotdemo
+      - DATABASE_USERNAME=iotdemo
+      - DATABASE_PASSWORD=password
       # Application settings
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       redis:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
     networks:
       - iotdemo-network
@@ -52,6 +58,28 @@ services:
       timeout: 10s
       retries: 3
 
+  # PostgreSQL Database
+  postgres:
+    image: postgres:13-alpine
+    container_name: iotdemo-postgres
+    environment:
+      POSTGRES_DB: iotdemo
+      POSTGRES_USER: iotdemo
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database-setup.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - iotdemo-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iotdemo -d iotdemo"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 networks:
   iotdemo-network:
     driver: bridge
@@ -60,5 +88,7 @@ networks:
 volumes:
   redis-data:
     name: iotdemo-redis-data
+  postgres-data:
+    name: iotdemo-postgres-data
   app-logs:
     name: iotdemo-app-logs

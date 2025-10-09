@@ -33,12 +33,23 @@ cd $DEPLOY_DIR
 
 # Create production environment file
 echo "⚙️ Setting up production environment..."
+
+# Generate secure database password if not set
+if [ -z "$DB_PASSWORD" ]; then
+    DB_PASSWORD=$(openssl rand -base64 32)
+    echo "🔐 Generated secure database password"
+fi
+
 cat > .env.prod << EOF
 # Production Environment Variables
 REDIS_PASSWORD=iotdemo123_prod
+DB_PASSWORD=$DB_PASSWORD
 SPRING_PROFILES_ACTIVE=production
 COMPOSE_PROJECT_NAME=iotdemo-prod
 EOF
+
+# Secure the environment file
+chmod 600 .env.prod
 
 # Stop existing containers
 echo "🛑 Stopping existing deployment..."
@@ -50,11 +61,14 @@ docker system prune -f
 
 # Build and start services
 echo "🏗️ Building and starting services..."
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 
 # Wait for services to be healthy
 echo "⏳ Waiting for services to start..."
-sleep 30
+echo "   - PostgreSQL initializing..."
+sleep 45
+echo "   - Application starting..."
+sleep 15
 
 # Health check
 echo "🏥 Checking service health..."

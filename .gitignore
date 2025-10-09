@@ -45,6 +45,12 @@ logs/
 .env
 .env.local
 .env.*.local
+.env.prod
+
+# Database
+*.sql.gz
+postgres-backups/
+*.dump
 
 # Temporary files
 *.tmp
@@ -55,3 +61,8 @@ logs/
 
 # Credentials
 credentials.txt
+database-passwords.txt
+
+# Production
+/opt/iotdemo/
+production-config/

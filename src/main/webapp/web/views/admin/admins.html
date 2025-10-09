@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Management - IoT Demo</title>
+    <#include "/web/views/common/header.html" />
+</head>
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <!-- Header -->
+        <div class="layui-header">
+            <div class="layui-logo layui-hide-xs layui-bg-black">IoT Demo - Admin</div>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item layui-hide layui-show-md-inline-block">
+                    <a href="javascript:;">
+                        <img src="${_contextPath}/web/layuiadmin/images/head.jpg" class="layui-nav-img">
+                        ${username!'Admin'}
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="${_contextPath}/logout">Logout</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item">
+                        <a href="${_contextPath}/dashboard">Dashboard</a>
+                    </li>
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a class="" href="javascript:;">Admin Management</a>
+                        <dl class="layui-nav-child">
+                            <dd class="layui-this"><a href="${_contextPath}/admin/list">View Admins</a></dd>
+                            <dd><a href="${_contextPath}/admin/add">Add Admin</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="${_contextPath}/index.html">IoT Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="layui-body">
+            <div style="padding: 15px;">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h2>System Administrators</h2>
+                            <a href="${_contextPath}/admin/add" class="layui-btn layui-btn-normal">Add New Admin</a>
+                        </div>
+                    </div>
+                    <div class="layui-card-body">
+                        <#if successMsg??>
+                            <div class="layui-alert layui-alert-success" style="margin-bottom: 15px;">
+                                <i class="layui-icon layui-icon-ok-circle"></i> ${successMsg}
+                            </div>
+                        </#if>
+                        
+                        <#if errorMsg??>
+                            <div class="layui-alert layui-alert-danger" style="margin-bottom: 15px;">
+                                <i class="layui-icon layui-icon-close-circle"></i> ${errorMsg}
+                            </div>
+                        </#if>
+                        
+                        <#if admins?? && (admins?size > 0)>
+                            <table class="layui-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Username</th>
+                                        <th>Created At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <#list admins as admin>
+                                        <tr>
+                                            <td>${admin.id}</td>
+                                            <td>
+                                                ${admin.username}
+                                                <#if admin.username == username>
+                                                    <span class="layui-badge layui-bg-blue">You</span>
+                                                </#if>
+                                            </td>
+                                            <td>${admin.createdAtAsDate?string("yyyy-MM-dd HH:mm:ss")}</td>
+                                            <td>
+                                                <a href="${_contextPath}/admin/edit/${admin.id}" class="layui-btn layui-btn-xs layui-btn-normal">
+                                                    <i class="layui-icon layui-icon-edit"></i> Edit
+                                                </a>
+                                                <#if admin.username != username && (admins?size > 1)>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="confirmDelete(${admin.id}, '${admin.username}')">
+                                                        <i class="layui-icon layui-icon-delete"></i> Delete
+                                                    </button>
+                                                </#if>
+                                            </td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        <#else>
+                            <div style="text-align: center; padding: 50px; color: #666;">
+                                <i class="layui-icon layui-icon-face-cry" style="font-size: 60px; display: block; margin-bottom: 20px;"></i>
+                                <h3>No Administrators Found</h3>
+                                <p>There are currently no administrators in the system.</p>
+                                <br>
+                                <a href="${_contextPath}/admin/add" class="layui-btn layui-btn-normal">Add First Admin</a>
+                            </div>
+                        </#if>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="layui-footer">
+            © 2024 IoT Demo - Phase 1 Admin System
+        </div>
+    </div>
+
+    <script src="${_contextPath}/web/layuiadmin/layui/layui.js"></script>
+    <script>
+        layui.use(['element', 'table', 'layer'], function(){
+            var element = layui.element;
+            var layer = layui.layer;
+        });
+        
+        function confirmDelete(adminId, username) {
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                
+                layer.confirm('Are you sure you want to delete admin "' + username + '"?', {
+                    icon: 3,
+                    title: 'Confirm Delete',
+                    btn: ['Yes, Delete', 'Cancel']
+                }, function(index){
+                    // Create and submit form for delete
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '${_contextPath}/admin/delete/' + adminId;
+                    document.body.appendChild(form);
+                    form.submit();
+                    layer.close(index);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

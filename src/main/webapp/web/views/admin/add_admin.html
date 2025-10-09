@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Add Admin - IoT Demo</title>
+    <#include "/web/views/common/header.html" />
+</head>
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <!-- Header -->
+        <div class="layui-header">
+            <div class="layui-logo layui-hide-xs layui-bg-black">IoT Demo - Admin</div>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item layui-hide layui-show-md-inline-block">
+                    <a href="javascript:;">
+                        <img src="${_contextPath}/web/layuiadmin/images/head.jpg" class="layui-nav-img">
+                        ${username!'Admin'}
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="${_contextPath}/logout">Logout</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item">
+                        <a href="${_contextPath}/dashboard">Dashboard</a>
+                    </li>
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a class="" href="javascript:;">Admin Management</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="${_contextPath}/admin/list">View Admins</a></dd>
+                            <dd class="layui-this"><a href="${_contextPath}/admin/add">Add Admin</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="${_contextPath}/index.html">IoT Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="layui-body">
+            <div style="padding: 15px;">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <h2>Add New Administrator</h2>
+                    </div>
+                    <div class="layui-card-body">
+                        <#if errorMsg??>
+                            <div class="layui-alert layui-alert-danger" style="margin-bottom: 15px;">
+                                <i class="layui-icon layui-icon-close-circle"></i> ${errorMsg}
+                            </div>
+                        </#if>
+                        
+                        <form class="layui-form" action="${_contextPath}/admin/add" method="post" lay-filter="adminForm">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">Username:</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="username" required lay-verify="required" placeholder="Enter username" class="layui-input" value="${username!''}">
+                                </div>
+                            </div>
+                            
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">Password:</label>
+                                <div class="layui-input-block">
+                                    <input type="password" name="password" required lay-verify="required|pass" placeholder="Enter password (min 6 characters)" class="layui-input">
+                                    <div class="layui-form-mid layui-word-aux">Password must be at least 6 characters long</div>
+                                </div>
+                            </div>
+                            
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">Confirm Password:</label>
+                                <div class="layui-input-block">
+                                    <input type="password" name="confirmPassword" required lay-verify="required|confirmPass" placeholder="Confirm password" class="layui-input">
+                                </div>
+                            </div>
+                            
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button type="submit" class="layui-btn" lay-submit lay-filter="submitAdmin">Create Admin</button>
+                                    <a href="${_contextPath}/admin/list" class="layui-btn layui-btn-primary">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="layui-footer">
+            © 2024 IoT Demo - Phase 1 Admin System
+        </div>
+    </div>
+
+    <script src="${_contextPath}/web/layuiadmin/layui/layui.js"></script>
+    <script>
+        layui.use(['form', 'element'], function(){
+            var form = layui.form;
+            var element = layui.element;
+            
+            // Custom validation
+            form.verify({
+                pass: [
+                    /^[\S]{6,}$/,
+                    'Password must be at least 6 characters and cannot contain spaces'
+                ],
+                confirmPass: function(value){
+                    var password = document.getElementsByName('password')[0].value;
+                    if(value !== password){
+                        return 'Passwords do not match';
+                    }
+                }
+            });
+            
+            // Form submission
+            form.on('submit(submitAdmin)', function(data){
+                // Form validation passed, submit normally
+                return true;
+            });
+        });
+    </script>
+</body>
+</html>

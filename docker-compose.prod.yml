@@ -13,11 +13,17 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=iotdemo123_prod
+      # Database connection
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/iotdemo
+      - DATABASE_USERNAME=iotdemo
+      - DATABASE_PASSWORD=${DB_PASSWORD:-secure_password_change_me}
       # Application settings
       - SPRING_PROFILES_ACTIVE=production
       # EMQX settings already in config.properties
     depends_on:
       redis:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
     networks:
       - iotdemo-prod-network
@@ -67,6 +73,37 @@ services:
           memory: 512M
           cpus: '0.5'
 
+  # PostgreSQL Database - Production
+  postgres:
+    image: postgres:13-alpine
+    container_name: iotdemo-postgres-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: iotdemo
+      POSTGRES_USER: iotdemo
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secure_password_change_me}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database-setup.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - /opt/iotdemo/postgres-backups:/backups
+    networks:
+      - iotdemo-prod-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iotdemo -d iotdemo"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+
 # Production networks
 networks:
   iotdemo-prod-network:
@@ -77,5 +114,7 @@ networks:
 volumes:
   redis-data:
     name: iotdemo-redis-prod-data
+  postgres-data:
+    name: iotdemo-postgres-prod-data
   app-logs:
     name: iotdemo-app-prod-logs
