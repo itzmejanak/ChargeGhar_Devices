@@ -37,10 +37,6 @@ bash```
 dockerd-rootless-setuptool.sh install
 ```
 
-
-
-
-
 $headers = @{ Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("s2f08121:FMly9DXV6u!feyZR")) }; Invoke-WebRequest -Uri "https://l8288d7f.ala.asia-southeast1.emqxsl.com:8443/api/v5/clients" -Headers $headers -Method GET
 
 $headers = @{ Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("s2f08121:FMly9DXV6u!feyZR")); "Content-Type" = "application/json" }; $body = '{"user_id":"test001","password":"testpass123"}'; Invoke-WebRequest -Uri "https://l8288d7f.ala.asia-southeast1.emqxsl.com:8443/api/v5/authentication/password_based:built_in_database/users" -Headers $headers -Method POST -Body $body

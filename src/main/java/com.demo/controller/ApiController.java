@@ -68,26 +68,15 @@ public class ApiController {
             messageBody.setTopic("GET：" + url);
             messageBody.setTimestamp(System.currentTimeMillis() / 1000);
 
-            //POST数据处理
-            String hardwareVersion = null;
-            if(request.getContentLength() > 0){
-                byte[] bytes = IOUtils.readFully(request.getInputStream(), request.getContentLength());
-                String body = new String(bytes, StandardCharsets.UTF_8);
-                List<NameValuePair> params = URLEncodedUtils.parse(body, Charset.forName("UTF-8"));
-                for(NameValuePair param : params){
-                    //MCU硬件版本号
-                    if("hardware".equals(param.getName())){
-                        hardwareVersion = param.getValue();
-
-                        String key = "hardware:" + valid.getUuid();
-                        BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
-                        boundValueOps.set(hardwareVersion);
-                    }
-                }
-                messageBody.setTopic("POST：" + url + "  POSTDATA:" + body);
+            // Handle hardware version if provided
+            if(valid.getHardware() != null && !valid.getHardware().isEmpty()) {
+                String key = "hardware:" + valid.getUuid();
+                BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
+                boundValueOps.set(valid.getHardware());
             }
-
-
+            
+            // Log the request parameters
+            messageBody.setTopic("POST：" + url + "  UUID:" + valid.getUuid());
 
             this.checkSign(valid,valid.getSign());
 

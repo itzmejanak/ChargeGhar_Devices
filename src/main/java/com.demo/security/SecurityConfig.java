@@ -33,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
                 .antMatchers("/login", "/health", "/web/resource/**", "/css/**", "/js/**", "/images/**").permitAll()
+                .antMatchers("/api/**", "/emqx/**", "/test", "/version", "/welcome").permitAll() // Allow API endpoints
                 .anyRequest().authenticated()
             .and()
             .formLogin()
