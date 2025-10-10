@@ -5,6 +5,7 @@ public class ApiIotClientConValid {
     private int deviceId;
     private String simUUID;
     private String simMobile;
+    private String hardware;
     private String sign;
 
     public String getUuid() {
@@ -37,6 +38,14 @@ public class ApiIotClientConValid {
 
     public void setSimMobile(String simMobile) {
         this.simMobile = simMobile;
+    }
+
+    public String getHardware() {
+        return hardware;
+    }
+
+    public void setHardware(String hardware) {
+        this.hardware = hardware;
     }
 
     public String getSign() {

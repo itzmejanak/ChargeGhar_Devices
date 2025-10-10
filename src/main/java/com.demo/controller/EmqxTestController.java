@@ -135,4 +135,42 @@ public class EmqxTestController {
         }
         return result;
     }
+
+    /**
+     * Get complete device credentials including password (DEBUG ONLY)
+     */
+    @RequestMapping("/emqx/test/password")
+    public Map<String, Object> getDevicePassword(@RequestParam String deviceName) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            DeviceCredentials credentials = emqxDeviceService.getDeviceCredentials(deviceName);
+            if (credentials != null) {
+                result.put("status", "SUCCESS");
+                result.put("deviceName", credentials.getDeviceName());
+                result.put("username", credentials.getUsername());
+                result.put("password", credentials.getPassword()); // SHOWING PASSWORD FOR DEBUG
+                result.put("createdTime", credentials.getCreatedTime());
+                result.put("message", "Device credentials with password");
+                
+                // Also format as hardware expects
+                String hardwareFormat = String.format("%s,powerbank,%s,8883,%s,%s,%d",
+                    deviceName,
+                    "l8288d7f.ala.asia-southeast1.emqxsl.com",
+                    credentials.getUsername(),
+                    credentials.getPassword(),
+                    System.currentTimeMillis()
+                );
+                result.put("hardwareFormat", hardwareFormat);
+            } else {
+                result.put("status", "NOT_FOUND");
+                result.put("message", "Device credentials not found");
+            }
+            result.put("timestamp", System.currentTimeMillis());
+        } catch (Exception e) {
+            result.put("status", "ERROR");
+            result.put("message", "Failed to get password: " + e.getMessage());
+            result.put("timestamp", System.currentTimeMillis());
+        }
+        return result;
+    }
 }
