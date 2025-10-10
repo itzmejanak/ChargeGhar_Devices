@@ -68,13 +68,6 @@ public class ApiController {
             messageBody.setTopic("GET：" + url);
             messageBody.setTimestamp(System.currentTimeMillis() / 1000);
 
-            // Handle hardware version if provided
-            if(valid.getHardware() != null && !valid.getHardware().isEmpty()) {
-                String key = "hardware:" + valid.getUuid();
-                BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
-                boundValueOps.set(valid.getHardware());
-            }
-            
             // Log the request parameters
             messageBody.setTopic("POST：" + url + "  UUID:" + valid.getUuid());
 
