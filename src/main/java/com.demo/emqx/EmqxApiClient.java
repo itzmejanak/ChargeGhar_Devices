@@ -78,8 +78,9 @@ public class EmqxApiClient {
                 System.out.println("Device registered successfully: " + deviceId);
                 return true;
             } else if (statusCode == 409) {
-                System.out.println("Device already exists: " + deviceId);
-                return true; // Device already exists, consider it success
+                System.out.println("Device already exists, updating password: " + deviceId);
+                // Device exists, update password to ensure sync
+                return updateDevicePassword(deviceId, password);
             } else {
                 String responseBody = EntityUtils.toString(response.getEntity());
                 System.err.println("Failed to register device: " + statusCode + " - " + responseBody);
