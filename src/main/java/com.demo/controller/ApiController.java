@@ -129,9 +129,17 @@ public class ApiController {
     public HttpResult deviceCreate(HttpServletResponse response,  @RequestParam String deviceName) throws Exception {
         HttpResult httpResult = new HttpResult();
         try {
-            String key = "clientConect:" + deviceName;
-            BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
-            boundValueOps.expire(-2, TimeUnit.SECONDS);
+            // Clear API cache
+            String apiKey = "clientConect:" + deviceName;
+            BoundValueOperations apiBoundValueOps = redisTemplate.boundValueOps(apiKey);
+            apiBoundValueOps.expire(-2, TimeUnit.SECONDS);
+            
+            // Clear EMQX cache
+            String emqxKey = "device_credentials:" + deviceName;
+            BoundValueOperations emqxBoundValueOps = redisTemplate.boundValueOps(emqxKey);
+            emqxBoundValueOps.expire(-2, TimeUnit.SECONDS);
+            
+            System.out.println("Cleared both API and EMQX cache for device: " + deviceName);
 
         }
         catch (Exception e){
