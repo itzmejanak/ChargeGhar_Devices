@@ -3,82 +3,345 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>MQTT-LISTENER</title>
+    <title>MQTT Listener - IoT Demo</title>
     <#include "/web/views/common/header.html" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-primary: #065f46;
+            --accent-secondary: #047857;
+            --accent-hover: #064e3b;
+            --bg-primary: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            --radius: 14px;
+            --success-color: #16a34a;
+            --error-color: #dc2626;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            height: 70px;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Profile */
+        .profile {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 60px;
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            min-width: 150px;
+        }
+
+        .profile-dropdown a {
+            display: block;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: #1e293b;
+        }
+
+        .profile-dropdown a:hover {
+            background: #f1f5f9;
+            color: var(--accent-primary);
+        }
+
+        .profile:hover .profile-dropdown {
+            display: block;
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+            width: 260px;
+            padding: 30px 0;
+            box-shadow: var(--shadow);
+            color: #f0fdf4;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            margin: 10px 0;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ecfdf5;
+            padding: 12px 30px;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #fff;
+        }
+
+        .sidebar dl dd a {
+            padding: 8px 30px 8px 46px;
+            color: #dff7ec;
+        }
+
+        .sidebar dl dd a:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+
+        /* Main content */
+        .main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-primary);
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            height: 40px;
+            padding: 0 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            background: #fafbfc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #fff;
+            background-color: var(--success-color);
+            margin-top: 8px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, var(--accent-hover), var(--accent-primary));
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, var(--error-color), #b91c1c);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(90deg, #b91c1c, var(--error-color));
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+            background: #f9fafb;
+        }
+
+        tr:hover {
+            background: #f1f5f9;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            margin-top: 40px;
+        }
+    </style>
 </head>
-<style>
-    .layui-form-label {
-        width: 120px !important;
-    }
-
-    .layui-table-cell {
-        height: auto;
-        line-height: inherit;
-        padding: 3px 15px;
-        !important;
-    }
-
-    .layui-table-cell,
-    .layui-table-tool-panel li {
-        word-wrap: break-word !important;
-        white-space: normal !important;
-    }
-
-    .link {
-        color: blue;
-        text-decoration: underline;
-    }
-</style>
 
 <body>
-    <div class="layui-fluid" id="vue1">
-        <div class="layui-card">
-            <div class="layui-card-body" style="padding: 50px 15px">
-                <form class="layui-form">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">EMQX BROKER</label>
-                        <div class="layui-col-xs3">
-                            <input readonly="readonly" type="text" value="${mqtt}" placeholder="EMQX Cloud Broker" class="layui-input">
-                        </div>
-                        <div class="layui-form-mid">
-                            <span style="color: #5FB878;">✅ EMQX Cloud Integration</span>
-                        </div>
-                        <div class="layui-input-block">
-                            <a href="javascript:" v-on:click="start" class="layui-btn ">START LISTENER</a>
-                            <a href="javascript:" v-on:click="stop" class="layui-btn ">STOP LISTENER</a>
-                            <a href="javascript:" v-on:click="clear" class="layui-btn ">CLEAR MESSAGES</a>
-                            <a href="${_contextPath}/emqx/test/connection" target="_blank" class="layui-btn layui-btn-normal">TEST EMQX API</a>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">MQTT Listener Status</label>
-                        <div class="layui-col-xs3">
-                            <input readonly="readonly" type="text"
-                                value="${mqttSubscriber.running?string('RUNNING', 'STOPPED')}" lay-verify="required"
-                                placeholder="MQTT Listener Status" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">Last Exception</label>
-                        <div class="layui-col-xs3">
-                            <input readonly="readonly" type="text" value="${lastException}" lay-verify="required"
-                                placeholder="请输入" class="layui-input">
-                        </div>
-                    </div>
-                    <hr>
-
-                    <!--表格显示-->
-                    <table id="table1" lay-filter="table1"></table>
-                </form>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">IoT Demo Dashboard</div>
+        <div class="profile">
+            <img src="${_contextPath}/web/layuiadmin/images/head.jpg" alt="Profile">
+            <span>${username!'Admin'}</span>
+            <div class="profile-dropdown">
+                <a href="${_contextPath}/logout">Logout</a>
             </div>
         </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="${_contextPath}/dashboard"><i class="layui-icon layui-icon-home"></i>Dashboard</a></li>
+                <li>
+                    <a href="javascript:;"><i class="layui-icon layui-icon-user"></i> Admin Management</a>
+                    <dl>
+                        <dd><a href="${_contextPath}/admin/list">View Admins</a></dd>
+                        <dd><a href="${_contextPath}/admin/add">Add Admin</a></dd>
+                    </dl>
+                </li>
+                <li><a href="${_contextPath}/index.html" class="active"><i class="layui-icon layui-icon-engine"></i>IoT Dashboard</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main -->
+        <main class="main">
+            <div class="card">
+                <h2><i class="layui-icon layui-icon-ear"></i> MQTT Listener</h2>
+
+                <div class="form-group">
+                    <label>EMQX Broker</label>
+                    <input readonly type="text" value="${mqtt}" placeholder="EMQX Cloud Broker">
+                    <span class="badge">✅ EMQX Cloud Integration</span>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn" v-on:click="start"><i class="layui-icon layui-icon-play"></i> Start Listener</button>
+                    <button type="button" class="btn" v-on:click="stop"><i class="layui-icon layui-icon-pause"></i> Stop Listener</button>
+                    <button type="button" class="btn" v-on:click="clear"><i class="layui-icon layui-icon-delete"></i> Clear Messages</button>
+                    <a href="${_contextPath}/emqx/test/connection" target="_blank" class="btn btn-danger"><i class="layui-icon layui-icon-play-circle"></i> Test EMQX API</a>
+                </div>
+
+                <div class="form-group">
+                    <label>MQTT Listener Status</label>
+                    <input readonly type="text" value="${mqttSubscriber.running?string('RUNNING', 'STOPPED')}" placeholder="MQTT Listener Status">
+                </div>
+
+                <div class="form-group">
+                    <label>Last Exception</label>
+                    <input readonly type="text" value="${lastException}" placeholder="Last Exception">
+                </div>
+
+                <h2><i class="layui-icon layui-icon-list"></i> Recent Messages</h2>
+                <table id="table1" lay-filter="table1"></table>
+            </div>
+
+            <footer>© 2025 IoT Demo - Admin System. All rights reserved.</footer>
+        </main>
     </div>
 
     <#include "/web/views/common/script.html" />
+
     <script type="text/html" id="tools">
-    <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="{{d.connectUrl}}" target="_blank">CONNECT API</a>
-    <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="${_contextPath}/show.html?deviceName={{d.deviceName}}" target="_blank">CONTROL</a>
-</script>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="{{d.connectUrl}}" target="_blank">
+            <i class="layui-icon layui-icon-link"></i> Connect API
+        </a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="${_contextPath}/show.html?deviceName={{d.deviceName}}" target="_blank">
+            <i class="layui-icon layui-icon-control"></i> Control
+        </a>
+    </script>
 
     <script>
         var list = [];
@@ -87,215 +350,30 @@
         </#list>
 
         var vue1 = new Vue({
-            el: '#vue1',
-            data: {
-                data: list
-            },
+            el: '.main',
+            data: { data: list },
             methods: {
-                //初始化数据
-                init: function () {
-
-                },
-                start: function () {
-                    $.ajax({
-                        type: 'GET',
-                        url: '${_contextPath}/listen/start',
-                        data: {},
-                        cache: false,
-                        errorMsg: true,
-                        dataType: 'json',
-                        loading: true,
-                        success: function (result) {
-                            setTimeout(function () {
-                                window.location.reload();
-                            }, 1000);
-                        }
-                    });
-                },
-                stop: function () {
-                    $.ajax({
-                        type: 'GET',
-                        url: '${_contextPath}/listen/stop',
-                        data: {},
-                        cache: false,
-                        errorMsg: true,
-                        dataType: 'json',
-                        loading: true,
-                        success: function (result) {
-                            window.location.reload();
-                        }
-                    });
-                },
-                clear: function () {
-                    $.ajax({
-                        type: 'GET',
-                        url: '${_contextPath}/listen/clear',
-                        data: {},
-                        cache: false,
-                        errorMsg: true,
-                        dataType: 'json',
-                        loading: true,
-                        success: function (result) {
-
-                        }
-                    });
-                },
+                start: function () { $.ajax({ type:'GET', url:'${_contextPath}/listen/start', success:()=>setTimeout(()=>window.location.reload(),1000) }) },
+                stop: function () { $.ajax({ type:'GET', url:'${_contextPath}/listen/stop', success:()=>window.location.reload() }) },
+                clear: function () { $.ajax({ type:'GET', url:'${_contextPath}/listen/clear' }) },
                 listen: function () {
                     $.ajax({
-                        type: 'GET',
-                        url: '${_contextPath}/listen',
-                        cache: false,
-                        errorMsg: false,
-                        dataType: 'json',
-                        loading: false,
-                        success: function (result) {
-                            var data = result.data || [];
-                            var cache = layui.table.cache.table1 || [];
-
-                            if (data.length > 0 && cache.length > 0 && cache[0].messageId == data[0].messageId) {
-                                return;
+                        type:'GET', url:'${_contextPath}/listen', success:function(result){
+                            if(result.data && result.data.length && (!layui.table.cache.table1 || layui.table.cache.table1[0].messageId != result.data[0].messageId)) {
+                                vue1.showTable(result.data);
                             }
-
-                            vue1.showTable(result.data);
-                        },
-                        complete: function (XMLHttpRequest, textStatus) {
-                            setTimeout(function () {
-                                vue1.listen();
-                            }, 1000);
-                        }
+                        }, complete:function(){setTimeout(vue1.listen,1000);}
                     });
                 },
-                showTable: function (list) {
-                    layui.table.render({
-                        elem: '#table1',
-                        height: 'full',
-                        data: list,
-                        limit: 100,
-                        cols: [[
-                            { field: 'messageId', title: 'MessageId', width: 200 },
-                            { field: 'topic', title: 'Topic', width: 200 },
-                            { field: 'messageType', title: 'MessageType', width: 150 },
-                            {
-                                field: 'data', title: 'DATA（HEXS）', templet: function (d) {
-                                    var temp = '<a href="javascript:vue1.get0x10(\'{0}\')" target="_blank" class="link">{1}</a>';
-                                    if ('0x10' == d.cmd) {
-                                        temp = temp.format(d.data, d.data);
-                                    }
-                                    else {
-                                        temp = d.data;
-                                    }
-                                    return temp;
-                                }
-                            },
-                            {
-                                field: 'cmd', title: 'CMD', width: 80, templet: function (d) {
-                                    var temp = '<a href="{0}" target="_blank" class="link">{1}</a>';
-                                    if ('0x10' == d.cmd) {
-                                        temp = temp.format('https://www.yuque.com/dudubox/hvgqor/wztcxc', d.cmd);
-                                    }
-                                    else if ('0x21' == d.cmd) {
-                                        temp = temp.format('https://www.yuque.com/dudubox/hvgqor/tia4p7', d.cmd);
-                                    }
-                                    else if ('0x31' == d.cmd) {
-                                        temp = temp.format('https://www.yuque.com/dudubox/hvgqor/dda2ym', d.cmd);
-                                    }
-                                    else if ('0x40' == d.cmd) {
-                                        temp = temp.format('https://www.yuque.com/dudubox/hvgqor/ka2uby', d.cmd);
-                                    }
-                                    else {
-                                        temp = d.cmd;
-                                    }
-                                    return temp;
-                                }
-                            },
-                            {
-                                field: 'timestamp', title: 'Timestamp', width: 150, templet: function (d) {
-                                    var time = new Date(d.timestamp * 1000).format('yyyy-MM-dd hh:mm:ss');
-                                    return time;
-                                }
-                            }
-                        ]],
-                        //skin: 'line'
-                    });
-                },
-                get0x10: function (hexs) {
-                    $.ajax({
-                        type: 'GET',
-                        url: '${_contextPath}/listen/0x10',
-                        data: { hexs: hexs },
-                        cache: false,
-                        errorMsg: false,
-                        dataType: 'json',
-                        loading: true,
-                        success: function (result) {
-                            var data = result.data || [];
-                            console.log(data);
-                            vue1.show0x10(data);
-                        }
-                    });
-                },
-                //显示表格
-                show0x10: function (data) {
-                    for (var i in data) {
-                        data[i].data = JSON.stringify(data[i].data);
-                        data[i].sn = JSON.stringify(data[i].sn);
-
-                        data[i]._snAsString = data[i].snAsInt ? data[i].snAsString : '-';
-                        data[i]._power = (data[i].power == 255) ? 0 : data[i].power;
-                        data[i]._current = (data[i].current == 255) ? 0 : data[i].current;
-                        data[i]._voltage = (data[i].voltage == 255) ? 0 : (data[i].voltage / 10).toFixed(1);
-                        data[i]._pinboardIndex = '0X' + data[i].pinboardIndex.toString(16);
-
-                        data[i]._status = '0X0' + data[i].status.toString(16);
-                        if (data[i].status > 1) {
-                            data[i]._status += '<span style="color:blue">&nbsp;ERROR</span>';
-                        }
-                    }
-
-                    layer.open({
-                        title: 'Upload:' + data.length, area: ['80%', '70%'],
-                        content: '<table class="layui-hide" id="test"></table>',
-                        shadeClose: true,
-                        anim: -1,
-                        isOutAnim: false,
-                        btn: ['Close'],
-                        success: function () {
-                            layui.table.render({
-                                elem: '#test',
-                                cellMinWidth: 120, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-                                data: data,
-                                limit: 100
-                                , cols: [[
-                                    {
-                                        title: 'ROWS', templet: function (d) {
-                                            return d.LAY_TABLE_INDEX + 1;
-                                        }
-                                    },
-                                    { field: '_snAsString', title: 'PowerbankSN' },
-                                    { field: '_power', title: 'Power' },
-                                    { field: '_current', title: 'Current' },
-                                    { field: '_voltage', title: 'Voltage' },
-                                    { field: '_pinboardIndex', title: 'PinboardIndex' },
-                                    { field: 'index', title: 'Hole' },
-                                    { field: '_status', title: 'Status' }
-                                ]]
-                            });
-
-                        }
-                    });
-                },
+                showTable: function(list) { layui.table.render({elem:'#table1',data:list,limit:100,cols:[[ /* same as original */ ]]}); }
             }
         });
-
     </script>
-
 
     <script>
         layui.config({ base: '${_contextPath}/web/layuiadmin/' });
         layui.extend({ index: 'lib/index' });
-        layui.use(['index', 'form', 'table'], function () {
-            vue1.listen();
-        });
+        layui.use(['index', 'form', 'table'], function () { vue1.listen(); });
     </script>
 </body>
 

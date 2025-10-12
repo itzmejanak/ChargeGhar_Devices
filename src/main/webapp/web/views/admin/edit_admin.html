@@ -4,129 +4,345 @@
     <meta charset="UTF-8">
     <title>Edit Admin - IoT Demo</title>
     <#include "/web/views/common/header.html" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-primary: #065f46;
+            --accent-secondary: #047857;
+            --accent-hover: #064e3b;
+            --bg-primary: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            --radius: 14px;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            height: 70px;
+            box-shadow: var(--shadow);
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* Profile dropdown */
+        .profile {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 60px;
+            background: #ffffff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            min-width: 150px;
+            overflow: hidden;
+        }
+
+        .profile-dropdown a {
+            display: block;
+            padding: 12px 16px;
+            color: #1e293b;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .profile-dropdown a:hover {
+            background: #f1f5f9;
+            color: var(--accent-primary);
+        }
+
+        .profile:hover .profile-dropdown {
+            display: block;
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+            width: 260px;
+            padding: 30px 0;
+            box-shadow: var(--shadow);
+            color: #f0fdf4;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            margin: 10px 0;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ecfdf5;
+            padding: 12px 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+            border-radius: 8px;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #ffffff;
+            padding-left: 26px;
+        }
+
+        .sidebar i {
+            font-size: 18px;
+        }
+
+        /* Admin-management child links */
+        .sidebar dl dd a {
+            display: block;
+            color: #dff7ec;
+            padding: 8px 30px 8px 46px;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        .sidebar dl dd a:hover {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+
+        .sidebar dl dd .active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: var(--accent-primary);
+        }
+
+        .layui-form-item {
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .layui-form-label {
+            width: 140px;
+            color: #1e293b;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 12px 0;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .layui-input-block {
+            flex: 1;
+        }
+
+        .layui-input {
+            height: 48px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            padding: 0 16px;
+            font-size: 15px;
+            background: #fafbfc;
+        }
+
+        .layui-input:focus {
+            border-color: var(--accent-primary);
+            outline: none;
+            background: #ffffff;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, var(--accent-hover), var(--accent-primary));
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            margin-top: auto;
+        }
+    </style>
 </head>
-<body class="layui-layout-body">
-    <div class="layui-layout layui-layout-admin">
-        <!-- Header -->
-        <div class="layui-header">
-            <div class="layui-logo layui-hide-xs layui-bg-black">IoT Demo - Admin</div>
-            <ul class="layui-nav layui-layout-right">
-                <li class="layui-nav-item layui-hide layui-show-md-inline-block">
-                    <a href="javascript:;">
-                        <img src="${_contextPath}/web/layuiadmin/images/head.jpg" class="layui-nav-img">
-                        ${username!'Admin'}
-                    </a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="${_contextPath}/logout">Logout</a></dd>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">IoT Demo - Admin</div>
+        <div class="profile">
+            <img src="${_contextPath}/web/layuiadmin/images/head.jpg" alt="Profile">
+            <span>${username!'Admin'}</span>
+            <div class="profile-dropdown">
+                <a href="${_contextPath}/logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="${_contextPath}/dashboard" <#if page == "dashboard">class="active"</#if>><i class="layui-icon layui-icon-home"></i>Dashboard</a></li>
+                <li>
+                    <dl>
+                        <dd><a href="${_contextPath}/admin/list" <#if page == "adminList">class="active"</#if>>View Admins</a></dd>
+                        <dd><a href="${_contextPath}/admin/add" <#if page == "adminAdd">class="active"</#if>>Add Admin</a></dd>
+                        <dd><a href="${_contextPath}/admin/edit/${admin.id}" <#if page == "adminEdit">class="active"</#if>>Edit Admin</a></dd>
                     </dl>
                 </li>
+                <li><a href="${_contextPath}/index.html" <#if page == "iotDashboard">class="active"</#if>><i class="layui-icon layui-icon-engine"></i>IoT System</a></li>
             </ul>
-        </div>
-        
-        <!-- Sidebar -->
-        <div class="layui-side layui-bg-black">
-            <div class="layui-side-scroll">
-                <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                    <li class="layui-nav-item">
-                        <a href="${_contextPath}/dashboard">Dashboard</a>
-                    </li>
-                    <li class="layui-nav-item layui-nav-itemed">
-                        <a class="" href="javascript:;">Admin Management</a>
-                        <dl class="layui-nav-child">
-                            <dd><a href="${_contextPath}/admin/list">View Admins</a></dd>
-                            <dd><a href="${_contextPath}/admin/add">Add Admin</a></dd>
-                        </dl>
-                    </li>
-                    <li class="layui-nav-item">
-                        <a href="${_contextPath}/index.html">IoT Dashboard</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- Content -->
-        <div class="layui-body">
-            <div style="padding: 15px;">
-                <div class="layui-card">
-                    <div class="layui-card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h2>Edit Administrator</h2>
-                            <a href="${_contextPath}/admin/list" class="layui-btn layui-btn-primary">Back to List</a>
+        </aside>
+
+        <!-- Main -->
+        <main class="main">
+            <div class="card">
+                <h2>Edit Administrator</h2>
+
+                <#if successMsg??>
+                    <div style="color: #16a34a; margin-bottom: 15px;">${successMsg}</div>
+                </#if>
+
+                <#if errorMsg??>
+                    <div style="color: #dc2626; margin-bottom: 15px;">${errorMsg}</div>
+                </#if>
+
+                <form class="layui-form" action="${_contextPath}/admin/edit/${admin.id}" method="post" style="max-width: 500px;">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">Admin ID</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="${admin.id}" readonly class="layui-input layui-disabled">
                         </div>
                     </div>
-                    <div class="layui-card-body">
-                        <#if successMsg??>
-                            <div class="layui-alert layui-alert-success" style="margin-bottom: 15px;">
-                                <i class="layui-icon layui-icon-ok-circle"></i> ${successMsg}
-                            </div>
-                        </#if>
-                        
-                        <#if errorMsg??>
-                            <div class="layui-alert layui-alert-danger" style="margin-bottom: 15px;">
-                                <i class="layui-icon layui-icon-close-circle"></i> ${errorMsg}
-                            </div>
-                        </#if>
-                        
-                        <form class="layui-form" action="${_contextPath}/admin/edit/${admin.id}" method="post" style="max-width: 500px;">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">Admin ID</label>
-                                <div class="layui-input-block">
-                                    <input type="text" value="${admin.id}" readonly class="layui-input layui-disabled">
-                                </div>
-                            </div>
-                            
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">Username</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="username" value="${admin.username}" required lay-verify="required" placeholder="Enter username" class="layui-input">
-                                </div>
-                            </div>
-                            
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">New Password</label>
-                                <div class="layui-input-block">
-                                    <input type="password" name="password" placeholder="Leave empty to keep current password" class="layui-input">
-                                    <div class="layui-form-mid layui-word-aux">Minimum 6 characters (optional)</div>
-                                </div>
-                            </div>
-                            
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">Confirm Password</label>
-                                <div class="layui-input-block">
-                                    <input type="password" name="confirmPassword" placeholder="Confirm new password" class="layui-input">
-                                </div>
-                            </div>
-                            
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">Created At</label>
-                                <div class="layui-input-block">
-                                    <input type="text" value="${admin.createdAtAsDate?string('yyyy-MM-dd HH:mm:ss')}" readonly class="layui-input layui-disabled">
-                                </div>
-                            </div>
-                            
-                            <div class="layui-form-item">
-                                <div class="layui-input-block">
-                                    <button class="layui-btn" lay-submit lay-filter="editAdmin">Update Admin</button>
-                                    <a href="${_contextPath}/admin/list" class="layui-btn layui-btn-primary">Cancel</a>
-                                </div>
-                            </div>
-                        </form>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">Username</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="username" value="${admin.username}" required lay-verify="required" placeholder="Enter username" class="layui-input">
+                        </div>
                     </div>
-                </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">New Password</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="password" placeholder="Leave empty to keep current password" class="layui-input">
+                            <div class="layui-form-mid layui-word-aux">Minimum 6 characters (optional)</div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">Confirm Password</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="confirmPassword" placeholder="Confirm new password" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">Created At</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="${admin.createdAtAsDate?string('yyyy-MM-dd HH:mm:ss')}" readonly class="layui-input layui-disabled">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="btn" lay-submit lay-filter="editAdmin">Update Admin</button>
+                            <a href="${_contextPath}/admin/list" class="btn" style="background:#f1f5f9;color:#065f46;margin-left:10px;">Cancel</a>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </div>
-        
-        <!-- Footer -->
-        <div class="layui-footer">
-            © 2024 IoT Demo - Phase 1 Admin System
-        </div>
+            <footer>© 2025 IoT Demo - Phase 1 Admin System</footer>
+        </main>
     </div>
 
     <script src="${_contextPath}/web/layuiadmin/layui/layui.js"></script>
     <script>
         layui.use(['form'], function(){
             var form = layui.form;
-            
+
             // Custom validation for password confirmation
             form.verify({
                 confirmPass: function(value, item) {
@@ -139,7 +355,7 @@
                     }
                 }
             });
-            
+
             // Add confirm password validation
             document.querySelector('input[name="confirmPassword"]').setAttribute('lay-verify', 'confirmPass');
         });

@@ -1,33 +1,305 @@
-<meta charset="utf-8">
+<!-- <meta charset="utf-8">
 <title>${title}</title>
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <link rel="stylesheet" href="${_contextPath}/web/layuiadmin/layui/css/layui.css">
 <link rel="stylesheet" href="${_contextPath}/web/layuiadmin/style/admin.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style type="text/css">
-    .radio-red .layui-form-radioed:last-child div{
-        color: red;
+    :root {
+        --bg-primary: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        --bg-card: #ffffff;
+        --bg-card-hover: #f1f5f9;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --accent-primary: #3b82f6;
+        --accent-secondary: #1d4ed8;
+        --accent-hover: #2563eb;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --border-radius: 12px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .layui-footer{
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Enhanced Radio Styling */
+    .radio-red .layui-form-radioed:last-child div {
+        color: #dc2626;
+        font-weight: 600;
+    }
+
+    .layui-form-radio i:hover {
+        color: var(--accent-primary);
+    }
+
+    /* Footer Enhancement */
+    .layui-footer {
         z-index: 9999;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-color);
+        text-align: center;
+        padding: 20px;
+        color: var(--text-muted);
+        font-size: 14px;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        font-weight: 500;
     }
-    .context-menu-list{
-        padding: 0.35em 0 !important;
+
+    /* Context Menu Enhancement */
+    .context-menu-list {
+        padding: 0.5em 0 !important;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        font-family: inherit;
+        min-width: 180px;
     }
-    .context-menu-item{
-        padding: 0.45em 2em !important;
+
+    .context-menu-item {
+        padding: 0.75em 2em !important;
+        font-size: 14px;
+        color: var(--text-primary);
+        transition: var(--transition);
+        border-radius: 8px;
+        margin: 2px 8px;
+        font-weight: 500;
+    }
+
+    .context-menu-item:hover {
+        background-color: var(--bg-card-hover);
+        color: var(--accent-primary);
+        transform: translateX(4px);
+    }
+
+    .context-menu-item:active {
+        background-color: var(--accent-primary);
+        color: #ffffff;
+    }
+
+    /* Search Title Enhancement */
+    .search-title {
         font-size: 13px;
+        color: var(--text-muted);
+        padding: 0 0 0 4px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
-    .search-title{
+
+    /* Layer Dialog Enhancement */
+    .layui-layer-dialog .layui-layer-content {
+        overflow: visible !important;
+        background: var(--bg-card);
+        border-radius: var(--border-radius);
+        color: var(--text-primary);
+        padding: 24px;
+        box-shadow: var(--shadow-lg);
+        font-family: inherit;
+    }
+
+    .layui-layer-title {
+        background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 16px;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+
+    .layui-layer-btn {
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-color);
+        padding: 16px 20px;
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+    }
+
+    .layui-layer-btn a {
+        background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+        color: #ffffff;
+        border-radius: 8px;
+        transition: var(--transition);
+        font-weight: 500;
+        padding: 10px 20px;
+    }
+
+    .layui-layer-btn a:hover {
+        background: linear-gradient(90deg, var(--accent-hover) 0%, var(--accent-primary) 100%);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    /* General Layui Enhancements */
+    .layui-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        transition: var(--transition);
+        overflow: hidden;
+    }
+
+    .layui-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+    }
+
+    .layui-card-header {
+        background: linear-gradient(90deg, var(--bg-card-hover) 0%, #e2e8f0 100%);
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        letter-spacing: -0.025em;
+    }
+
+    .layui-input, .layui-textarea, .layui-select {
+        background-color: #fafbfc;
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 14px;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .layui-input:focus, .layui-textarea:focus, .layui-form-select .layui-input:focus {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        background: #ffffff;
+        outline: none;
+    }
+
+    .layui-btn {
+        background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-weight: 500;
+        font-size: 14px;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+        letter-spacing: 0.025em;
+    }
+
+    .layui-btn:hover {
+        background: linear-gradient(90deg, var(--accent-hover) 0%, var(--accent-primary) 100%);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    .layui-btn-primary {
+        background: #ffffff;
+        color: var(--accent-primary);
+        border: 1px solid var(--border-color);
+    }
+
+    .layui-btn-primary:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--accent-primary);
+        color: var(--accent-hover);
+    }
+
+    .layui-table {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        color: var(--text-primary);
+    }
+
+    .layui-table th {
+        background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
+        color: var(--text-primary);
+        font-weight: 600;
+        border-bottom: 2px solid var(--border-color);
+        padding: 16px 12px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .layui-table td {
+        padding: 16px 12px;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .layui-table tbody tr:hover {
+        background-color: var(--bg-card-hover);
+    }
+
+    .layui-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
         font-size: 12px;
-        color: #666666;
-        padding:0 0 0 2px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
-    /*.layui-layer-dialog .layui-layer-content{*/
-        /*overflow: visible !important;*/
-        /*overflow-x: visible !important;*/
-        /*overflow-y: visible !important;*/
-    /*}*/
-</style>
+
+    .layui-badge-green {
+        background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+        color: #ffffff;
+    }
+
+    .layui-badge-gray {
+        background: #e2e8f0;
+        color: #64748b;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .layui-card-body {
+            padding: 16px;
+        }
+
+        .context-menu-item {
+            font-size: 13px;
+            padding: 0.6em 1.5em !important;
+        }
+
+        .layui-table th, .layui-table td {
+            padding: 12px 8px;
+            font-size: 13px;
+        }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-primary);
+    }
+</style> -->

@@ -2,155 +2,434 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IOT DEMO</title>
-  <#include "/web/views/common/header.html" />
+    <title>IoT Demo</title>
+    <#include "/web/views/common/header.html" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-primary: #065f46;
+            --accent-secondary: #047857;
+            --accent-hover: #064e3b;
+            --bg-primary: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            --card-bg: #ffffff;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            font-size: 16px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            height: 70px;
+            box-shadow: var(--shadow);
+            font-size: 18px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .profile {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 60px;
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            min-width: 150px;
+        }
+
+        .profile-dropdown a {
+            display: block;
+            padding: 12px 16px;
+            color: #1e293b;
+            text-decoration: none;
+        }
+
+        .profile-dropdown a:hover {
+            background: #f1f5f9;
+            color: var(--accent-primary);
+        }
+
+        .profile:hover .profile-dropdown {
+            display: block;
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+            width: 260px;
+            padding: 30px 0;
+            box-shadow: var(--shadow);
+            color: #f0fdf4;
+            overflow-y: auto;
+            flex-shrink: 0;
+            height: calc(100vh - 70px);
+            position: sticky;
+            top: 70px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            margin: 10px 0;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ecfdf5;
+            padding: 12px 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+            border-radius: 8px;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.15);
+            border-left: 4px solid #fff;
+            padding-left: 26px;
+        }
+
+        .sidebar dl dd a {
+            display: block;
+            color: #dff7ec;
+            padding: 8px 30px 8px 46px;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+
+        .sidebar dl dd a:hover {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+
+        .sidebar dl dd .active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Main content */
+        .main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: var(--accent-primary);
+            font-size: 22px;
+        }
+
+        /* Labels */
+        .layui-form-label {
+            width: 140px;
+            font-weight: 700; /* bold labels only */
+            font-size: 16px;
+            padding: 12px 20px 12px 0;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .layui-input {
+            font-size: 18px;
+            font-weight: 400;
+            height: 40px;
+            border-radius: 6px;
+            border: 1.5px solid #e2e8f0;
+            padding: 0 12px;
+            background: #fafbfc;
+        }
+
+        .layui-input-block {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            color: #fff;
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, var(--accent-hover), var(--accent-primary));
+        }
+
+        /* Connected Devices Header */
+        .layui-card-header {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .layui-card-header i {
+            font-size: 32px;
+            line-height: 1;
+        }
+
+        .layui-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+
+        .layui-table th, .layui-table td {
+            border: 1px solid #000000;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .layui-table th {
+           
+            color: #060606;
+            font-weight: 700;
+        }
+
+        .layui-table tr:nth-child(even) {
+            background: #f0fdf4;
+        }
+
+        .layui-table tr:hover {
+            background: #d1fae5;
+        }
+
+        .layui-badge-green, .layui-badge-gray {
+            font-size: 14px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        footer {
+            font-size: 16px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar { width: 220px; }
+            .layui-form-label { width: 120px; }
+        }
+    </style>
 </head>
-<style>
-    .layui-form-label{
-        width: 120px !important;
-    }
-</style>
 <body>
-<div class="layui-fluid" id="vue1">
-    <div class="layui-card">
-        <div class="layui-card-body" style="padding: 50px 15px">
+<header class="header">
+    <div class="logo">IoT Demo Dashboard</div>
+    <div class="profile">
+        <img src="${_contextPath}/web/layuiadmin/images/head.jpg" alt="Profile">
+        <span>${username!'Admin'}</span>
+        <div class="profile-dropdown">
+            <a href="${_contextPath}/logout">Logout</a>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <ul>
+            <li><a href="${_contextPath}/dashboard" <#if page == "dashboard">class="active"</#if>><i class="layui-icon layui-icon-home"></i>Dashboard</a></li>
+            <li>
+                <dl>
+                    <dd><a href="${_contextPath}/admin/list" <#if page == "adminList">class="active"</#if>>View Admins</a></dd>
+                    <dd><a href="${_contextPath}/admin/add" <#if page == "adminAdd">class="active"</#if>>Add Admin</a></dd>
+                </dl>
+            </li>
+            <li><a href="${_contextPath}/index.html" <#if page == "iotDashboard">class="active"</#if>><i class="layui-icon layui-icon-engine"></i>IoT System</a></li>
+        </ul>
+    </aside>
+
+    <main class="main" id="vue1">
+        <div class="card">
+            <h2>System Configuration & Device Management</h2>
             <form class="layui-form">
                 <div class="layui-form-item">
                     <label class="layui-form-label">EMQX Broker</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${mqttBroker}" lay-verify="required" placeholder="EMQX Cloud Broker" class="layui-input">
-                    </div>
-                    <div class="layui-form-mid">
-                        <span style="color: #5FB878;">✅ EMQX Cloud</span>
-                    </div>
+                    <input readonly type="text" value="${mqttBroker}" placeholder="EMQX Cloud Broker" class="layui-input">
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">EMQX Username</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${mqttUsername}" placeholder="EMQX Username" class="layui-input">
-                    </div>
-                    <div class="layui-form-mid">
-                        <span style="color: #666;">Server Credentials</span>
-                    </div>
+                    <input readonly type="text" value="${mqttUsername}" placeholder="EMQX Username" class="layui-input">
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">ProductKey</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${data.productKey}" placeholder="Product Key" class="layui-input">
-                    </div>
+                    <label class="layui-form-label">Product Key</label>
+                    <input readonly type="text" value="${data.productKey}" placeholder="Product Key" class="layui-input">
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">MQTT Connection</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${mqtt}" placeholder="MQTT Connection String" class="layui-input">
-                    </div>
-                    <div class="layui-form-mid"></div>
-                    <div class="layui-input-block">
-                        <a href="${_contextPath}/listen.html" target="_blank" class="layui-btn ">MQTT LISTENER</a>
-                        <a href="javascript:vue1.createDevice()" class="layui-btn ">CREATE DEVICE BY DEVICENAME</a>
-                        <a href="${_contextPath}/version.html" target="_blank" class="layui-btn ">ONLINE UPDATE</a>
-                        <a href="${_contextPath}/emqx/test/connection" target="_blank" class="layui-btn layui-btn-normal">TEST EMQX API</a>
-                    </div>
+                    <input readonly type="text" value="${mqtt}" placeholder="MQTT Connection String" class="layui-input">
                 </div>
+
+                <div class="layui-input-block">
+                    <a href="${_contextPath}/listen.html" target="_blank" class="btn">MQTT Listener</a>
+                    <a href="javascript:vue1.createDevice()" class="btn">Create Device</a>
+                    <a href="${_contextPath}/version.html" target="_blank" class="btn">Online Update</a>
+                    <a href="${_contextPath}/emqx/test/connection" target="_blank" class="btn">Test EMQX API</a>
+                </div>
+
                 <div class="layui-form-item">
-                    <label class="layui-form-label">Document</label>
-                    <div>
-                        <a class="layui-btn layui-btn-normal" href="https://www.yuque.com/books/share/d7c5925d-2986-467f-afa9-3f951ceda881" target="_blank">About this demo</a>
-                        <a class="layui-btn layui-btn-normal" href="https://www.yuque.com/books/share/e0c78792-9c1c-4a6c-896e-7e2e25722fc6" target="_blank">Chargeing Box API</a>
-                        <a class="layui-btn layui-btn-normal" href="https://www.yuque.com/books/share/726cdd6c-a6cc-40ea-8e03-15d5beaf24f7" target="_blank">共享充电柜API</a>
-                        <a class="layui-btn layui-btn-normal" href="https://www.yuque.com/books/share/e153414b-d778-4239-9971-151d7cd949e5" target="_blank">桌面式广告充电API</a>
+                    <label class="layui-form-label">Documentation</label>
+                    <div class="layui-input-block">
+                        <a class="btn" href="https://www.yuque.com/books/share/d7c5925d-2986-467f-afa9-3f951ceda881" target="_blank">Yuque Docs</a>
+                        <a class="btn" href="https://www.emqx.com/en/docs" target="_blank">EMQX Docs</a>
                     </div>
                 </div>
 
-                <hr>
+                <div class="layui-card-header">
+                    <i class="layui-icon layui-icon-list"></i>
+                    Connected Devices
+                </div>
 
-                <!--表格显示-->
-                <table id="table1" lay-filter="table1"></table>
-
+                <table id="table1" lay-filter="table1" class="layui-table"></table>
             </form>
         </div>
-    </div>
+    </main>
 </div>
 
+<footer>
+    &copy; 2025 IoT Demo Dashboard. All rights reserved.
+</footer>
+
 <#include "/web/views/common/script.html" />
+
 <script type="text/html" id="tools">
-    <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="{{d.connectUrl}}" target="_blank">CONNECT API</a>
-    <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="${_contextPath}/show.html?deviceName={{d.deviceName}}" target="_blank">CONTROL</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="{{d.connectUrl}}" target="_blank"><i class="layui-icon layui-icon-link"></i>Connect API</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="${_contextPath}/show.html?deviceName={{d.deviceName}}" target="_blank"><i class="layui-icon layui-icon-control"></i>Control</a>
 </script>
 
 <script>
     var list = [];
     <#list deviceInfos as item>
-        list.push({'deviceName': '${item.deviceName}', 'status' : '${item.deviceOnline}', 'connectUrl' : '${item.connectUrl}', 'hardware' : '${item.hardware}'});
+        list.push({
+            'deviceName': '${item.deviceName}',
+            'status': '${item.deviceOnline}',
+            'connectUrl': '${item.connectUrl}',
+            'hardware': '${item.hardware}'
+        });
     </#list>
 
     var vue1 = new Vue({
         el: '#vue1',
-        data: {
-            data: list
-        },
+        data: { data: list },
         methods: {
-            //初始化数据
             init: function () {
                 layui.table.render({
                     elem: '#table1',
                     height: 'full-250',
-                    data : vue1.data,
-                    limit:100,
+                    data: vue1.data,
+                    limit: 100,
+                    even: true,
+                    border: true, 
                     cols: [[
-                        {type:'numbers', width:50},
-                        {field: 'deviceName', title: 'DeviceName', sort: true},
-                        {field: 'hardware', title: 'hardware', sort: true, templet: function (d) {
-                                return d.hardware || 'UNKNOW';
+                        {type:'numbers', width:60, title:'S.N'},
+                        {field:'deviceName', title:'Device Name', sort:true, width:200},
+                        {field:'hardware', title:'Hardware', sort:true, templet: d => d.hardware || 'UNKNOWN', width:150},
+                        {field:'status', title:'Status', sort:true, width:120, templet: d => {
+                            const style = d.status === 'ONLINE' ? 'layui-badge-green' : 'layui-badge-gray';
+                            return `<span class="layui-badge ${style}">${d.status}</span>`;
                         }},
-                        {field: 'status', title: 'Status', sort: true, templet: function (d) {
-                            var temp = '<span class="layui-badge {0}">{1}</span>';
-                            var style = d.status == 'ONLINE' ? 'layui-bg-green' : 'layui-bg-gray';
-                            temp = temp.format(style, d.status);
-                            return temp;
-                        }},
-                        {title: 'Menu', align : 'center', toolbar : '#tools', fixed: 'right'}
-                    ]],
-                    //skin: 'line'
+                        {title:'Actions', align:'center', toolbar:'#tools', width:180}
+                    ]]
                 });
             },
             createDevice: function () {
-                layer.prompt({title: 'Create deivce by UUID/IMEI/SN', formType: 0, btn: ['CREATE', 'CANCEL']}, function (value, index) {
+                layer.prompt({title: 'Create device by UUID/IMEI/SN', formType: 0, btn: ['CREATE', 'CANCEL']}, function(value, index){
                     if(value.length < 5){
-                        layer.msg('DeviceName should be 5—20 length', {anim: 6});
+                        layer.msg('DeviceName should be 5—20 length', {anim:6, icon: 2});
                         layer.close(index);
                         return;
                     }
                     $.ajax({
                         type: 'POST',
                         url: '${_contextPath}/device/create',
-                        data: {
-                            deviceName: value
-                        },
-                        cache: false,
-                        errorMsg: true,
+                        data: { deviceName: value },
                         dataType: 'json',
-                        loading:true,
-                        success: function (result) {
+                        success: function(){
+                            layer.msg('Device created successfully!', {icon: 1});
                             window.location.reload();
+                        },
+                        error: function() {
+                            layer.msg('Failed to create device. Please try again.', {icon: 2});
                         }
                     });
                     layer.close(index);
                 });
-
             }
         }
     });
 
-</script>
-
-
-<script>
-    layui.config({base: '${_contextPath}/web/layuiadmin/'});
-    layui.extend({index: 'lib/index'});
-    layui.use(['index','form','table'], function () {
-        vue1.init();
-    });
+    layui.config({base: '${_contextPath}/web/layuiadmin/'}).extend({index:'lib/index'});
+    layui.use(['index','form','table'], function(){ vue1.init(); });
 </script>
 </body>
 </html>

@@ -1,110 +1,271 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard - IoT Demo</title>
-    <#include "/web/views/common/header.html" />
-</head>
-<body class="layui-layout-body">
-    <div class="layui-layout layui-layout-admin">
-        <!-- Header -->
-        <div class="layui-header">
-            <div class="layui-logo layui-hide-xs layui-bg-black">IoT Demo - Admin</div>
-            <ul class="layui-nav layui-layout-right">
-                <li class="layui-nav-item layui-hide layui-show-md-inline-block">
-                    <a href="javascript:;">
-                        <img src="${_contextPath}/web/layuiadmin/images/head.jpg" class="layui-nav-img">
-                        ${username!'Admin'}
-                    </a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="${_contextPath}/logout">Logout</a></dd>
-                    </dl>
-                </li>
-            </ul>
-        </div>
-        
-        <!-- Sidebar -->
-        <div class="layui-side layui-bg-black">
-            <div class="layui-side-scroll">
-                <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                    <li class="layui-nav-item layui-nav-itemed">
-                        <a class="" href="javascript:;">Admin Management</a>
-                        <dl class="layui-nav-child">
-                            <dd><a href="${_contextPath}/admin/list">View Admins</a></dd>
-                            <dd><a href="${_contextPath}/admin/add">Add Admin</a></dd>
-                        </dl>
-                    </li>
-                    <li class="layui-nav-item">
-                        <a href="${_contextPath}/index.html">IoT Dashboard</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- Content -->
-        <div class="layui-body">
-            <div style="padding: 15px;">
-                <div class="layui-row layui-col-space15">
-                    <div class="layui-col-md12">
-                        <div class="layui-card">
-                            <div class="layui-card-header">
-                                <h2>Welcome to Admin Dashboard</h2>
-                            </div>
-                            <div class="layui-card-body">
-                                <p>Manage your IoT Demo system from here. You have full administrative access.</p>
-                                <br>
-                                <div class="layui-row layui-col-space15">
-                                    <div class="layui-col-md4">
-                                        <div class="layui-card">
-                                            <div class="layui-card-header">Admin Management</div>
-                                            <div class="layui-card-body">
-                                                <p>View and manage system administrators. Add new admins or view existing ones.</p>
-                                                <br>
-                                                <a href="${_contextPath}/admin/list" class="layui-btn">Manage Admins</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="layui-col-md4">
-                                        <div class="layui-card">
-                                            <div class="layui-card-header">IoT System</div>
-                                            <div class="layui-card-body">
-                                                <p>Access the main IoT dashboard to monitor devices and system status.</p>
-                                                <br>
-                                                <a href="${_contextPath}/index.html" class="layui-btn layui-btn-normal">IoT Dashboard</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="layui-col-md4">
-                                        <div class="layui-card">
-                                            <div class="layui-card-header">System Status</div>
-                                            <div class="layui-card-body">
-                                                <p>Phase 1 Complete: Admin authentication and access control implemented.</p>
-                                                <br>
-                                                <span class="layui-badge layui-bg-green">✅ Authentication Active</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Footer -->
-        <div class="layui-footer">
-            © 2024 IoT Demo - Phase 1 Admin System
-        </div>
-    </div>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - IoT Demo</title>
+  <#include "/web/views/common/header.html" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent-primary: #065f46;
+      --accent-secondary: #047857;
+      --accent-hover: #064e3b;
+      --bg-primary: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      --radius: 14px;
+    }
 
-    <script src="${_contextPath}/web/layuiadmin/layui/layui.js"></script>
-    <script>
-        layui.use(['element', 'nav'], function(){
-            var element = layui.element;
-        });
-    </script>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: var(--bg-primary);
+      color: #1e293b;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      height: 70px;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* Profile dropdown */
+    .profile {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 60px;
+      background: #ffffff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      min-width: 150px;
+      overflow: hidden;
+    }
+
+    .profile-dropdown a {
+      display: block;
+      padding: 12px 16px;
+      color: #1e293b;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .profile-dropdown a:hover {
+      background: #f1f5f9;
+      color: var(--accent-primary);
+    }
+
+    .profile:hover .profile-dropdown {
+      display: block;
+    }
+
+    /* Layout */
+    .layout {
+      display: flex;
+      height: calc(100vh - 70px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+      width: 260px;
+      padding: 30px 0;
+      box-shadow: var(--shadow);
+      color: #f0fdf4;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar li {
+      margin: 10px 0;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #ecfdf5;
+      padding: 12px 30px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+      border-radius: 8px;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-left: 4px solid #ffffff;
+      padding-left: 26px;
+    }
+
+    .sidebar i {
+      font-size: 18px;
+    }
+
+    /* Admin-management child links (dropdown items) */
+    .sidebar dl {
+      margin: 6px 0 0 0;
+      padding: 0;
+    }
+
+    .sidebar dl dd {
+      margin: 0;
+      list-style: none;
+    }
+
+    .sidebar dl dd a {
+      display: block;
+      color: #dff7ec;
+      padding: 8px 30px 8px 46px; /* indented for child items */
+      text-decoration: none;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+
+    .sidebar dl dd a:hover {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      margin-bottom: 30px;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: var(--accent-primary);
+    }
+
+    .btn {
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      color: #ffffff;
+      font-weight: 600;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn:hover {
+      background: linear-gradient(90deg, var(--accent-hover), var(--accent-primary));
+      transform: translateY(-2px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">IoT Demo - Admin</div>
+    <div class="profile">
+      <img src="${_contextPath}/web/layuiadmin/images/head.jpg" alt="Profile">
+      <span>${username!'Admin'}</span>
+      <div class="profile-dropdown">
+        <a href="${_contextPath}/logout">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layout -->
+  <div class="layout">
+    <aside class="sidebar">
+      <ul>
+        <li><a href="${_contextPath}/dashboard"><i class="layui-icon layui-icon-home"></i>Dashboard</a></li>
+
+        <!-- Admin Management (with child items) -->
+        <li>
+          
+          <dl>
+            <dd><a href="${_contextPath}/admin/list">View Admins</a></dd>
+            <dd><a href="${_contextPath}/admin/add">Add Admin</a></dd>
+          </dl>
+        </li>
+
+        <li><a href="${_contextPath}/index.html"><i class="layui-icon layui-icon-engine"></i>IoT System</a></li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <section id="dashboard" class="card">
+        <h2>Welcome, ${username!'Admin'}</h2>
+        <p>Manage your IoT Demo system from a single, unified dashboard. Monitor devices, control admins, and view system stats — all in one place.</p>
+      </section>
+
+      <section id="admins" class="card">
+        <h2>Admin Management</h2>
+        <p>View and manage system administrators. Add, update, or remove admins with full control.</p>
+        <button class="btn" onclick="location.href='${_contextPath}/admin/list'">Manage Admins</button>
+      </section>
+
+      <section id="iot" class="card">
+        <h2>IoT System</h2>
+        <p>Access real-time IoT data, monitor connected devices, and manage their configurations efficiently.</p>
+        <button class="btn" onclick="location.href='${_contextPath}/index.html'">Open IoT Dashboard</button>
+      </section>
+
+      <footer>© 2025 IoT Demo - Phase 1 Admin System</footer>
+    </main>
+  </div>
+
+  <script src="${_contextPath}/web/layuiadmin/layui/layui.js"></script>
 </body>
 </html>
