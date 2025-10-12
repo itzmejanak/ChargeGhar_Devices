@@ -23,8 +23,6 @@
       background: var(--bg-primary);
       color: #1e293b;
     }
-
-    /* Header */
     .header {
       background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
       color: white;
@@ -41,8 +39,6 @@
       font-weight: 700;
       letter-spacing: -0.02em;
     }
-
-    /* Profile dropdown */
     .profile {
       position: relative;
       cursor: pointer;
@@ -87,13 +83,10 @@
       display: block;
     }
 
-    /* Layout */
     .layout {
       display: flex;
       height: calc(100vh - 70px);
     }
-
-    /* Sidebar */
     .sidebar {
       background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
       width: 260px;
@@ -134,7 +127,6 @@
       font-size: 18px;
     }
 
-    /* Admin-management child links (dropdown items) */
     .sidebar dl {
       margin: 6px 0 0 0;
       padding: 0;
@@ -148,7 +140,7 @@
     .sidebar dl dd a {
       display: block;
       color: #dff7ec;
-      padding: 8px 30px 8px 46px; /* indented for child items */
+      padding: 8px 30px 8px 46px;
       text-decoration: none;
       font-weight: 500;
       border-radius: 6px;
@@ -159,8 +151,6 @@
       background: rgba(255,255,255,0.06);
       color: #fff;
     }
-
-    /* Main */
     .main {
       flex: 1;
       padding: 40px;
@@ -213,7 +203,6 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header class="header">
     <div class="logo">IoT Demo - Admin</div>
     <div class="profile">
@@ -224,14 +213,11 @@
       </div>
     </div>
   </header>
-
-  <!-- Layout -->
   <div class="layout">
     <aside class="sidebar">
       <ul>
         <li><a href="${_contextPath}/dashboard"><i class="layui-icon layui-icon-home"></i>Dashboard</a></li>
 
-        <!-- Admin Management (with child items) -->
         <li>
           
           <dl>

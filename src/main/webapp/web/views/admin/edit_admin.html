@@ -26,8 +26,6 @@
             display: flex;
             flex-direction: column;
         }
-
-        /* Header */
         .header {
             background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
             color: white;
@@ -45,8 +43,6 @@
             font-weight: 700;
             letter-spacing: -0.02em;
         }
-
-        /* Profile dropdown */
         .profile {
             position: relative;
             cursor: pointer;
@@ -90,15 +86,11 @@
         .profile:hover .profile-dropdown {
             display: block;
         }
-
-        /* Layout */
         .layout {
             display: flex;
             flex: 1;
             min-height: 0;
         }
-
-        /* Sidebar */
         .sidebar {
             background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
             width: 260px;
@@ -140,8 +132,6 @@
         .sidebar i {
             font-size: 18px;
         }
-
-        /* Admin-management child links */
         .sidebar dl dd a {
             display: block;
             color: #dff7ec;
@@ -160,8 +150,6 @@
         .sidebar dl dd .active {
             background: rgba(255,255,255,0.2);
         }
-
-        /* Main */
         .main {
             flex: 1;
             padding: 40px;
@@ -247,7 +235,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="logo">IoT Demo - Admin</div>
         <div class="profile">
@@ -258,10 +245,7 @@
             </div>
         </div>
     </header>
-
-    <!-- Layout -->
     <div class="layout">
-        <!-- Sidebar -->
         <aside class="sidebar">
             <ul>
                 <li><a href="${_contextPath}/dashboard" <#if page == "dashboard">class="active"</#if>><i class="layui-icon layui-icon-home"></i>Dashboard</a></li>
@@ -275,8 +259,6 @@
                 <li><a href="${_contextPath}/index.html" <#if page == "iotDashboard">class="active"</#if>><i class="layui-icon layui-icon-engine"></i>IoT System</a></li>
             </ul>
         </aside>
-
-        <!-- Main -->
         <main class="main">
             <div class="card">
                 <h2>Edit Administrator</h2>
@@ -355,8 +337,6 @@
                     }
                 }
             });
-
-            // Add confirm password validation
             document.querySelector('input[name="confirmPassword"]').setAttribute('lay-verify', 'confirmPass');
         });
     </script>
