@@ -1,166 +1,421 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>ONLINE UPDATE</title>
-  <#include "/web/views/common/header.html" />
-</head>
-<style>
-    .layui-form-label{
-        width: 120px !important;
-    }
-    .layui-table-cell {
-        height: auto;
-        line-height:inherit;
-        padding:3px 15px; !important;
-    }
+    <#include "/web/views/common/header.html" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-primary: #065f46;
+            --accent-secondary: #047857;
+            --accent-hover: #064e3b;
+            --bg-primary: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            --radius: 14px;
+            --success-color: #16a34a;
+            --error-color: #dc2626;
+        }
 
-    .layui-table-cell, .layui-table-tool-panel li{
-        word-wrap:break-word !important;
-        white-space: normal !important;
-    }
-</style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            height: 70px;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .profile {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 60px;
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            min-width: 150px;
+        }
+
+        .profile-dropdown a {
+            display: block;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: #1e293b;
+        }
+
+        .profile-dropdown a:hover {
+            background: #f1f5f9;
+            color: var(--accent-primary);
+        }
+
+        .profile:hover .profile-dropdown {
+            display: block;
+        }
+        .layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+            width: 260px;
+            padding: 30px 0;
+            box-shadow: var(--shadow);
+            color: #f0fdf4;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            margin: 10px 0;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ecfdf5;
+            padding: 12px 30px;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #fff;
+        }
+
+        .sidebar dl dd a {
+            padding: 8px 30px 8px 46px;
+            color: #dff7ec;
+        }
+
+        .sidebar dl dd a:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+
+        /* Main content */
+        .main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-primary);
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            height: 40px;
+            padding: 0 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            background: #fafbfc;
+        }
+
+        .form-group textarea {
+            height: auto;
+        }
+
+        .btn-group-inline,
+        .btn-inline {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, var(--accent-hover), var(--accent-primary));
+        }
+
+        .btn-primary {
+            background: #64748b;
+        }
+
+        .btn-primary:hover {
+            background: #475569;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            margin-top: 40px;
+        }
+.btn-group-inline .layui-btn {
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-group-inline .layui-btn:hover {
+    background: linear-gradient(90deg, var(--accent-hover), var(--accent-primary));
+}
+
+.btn-group-inline .layui-btn-primary {
+    background: #64748b;
+    color: #fff;
+}
+
+.btn-group-inline .layui-btn-primary:hover {
+    background: #475569;
+}
+        .layui-form-label {
+            width: 120px !important;
+        }
+
+        .layui-table-cell {
+            height: auto;
+            line-height: inherit;
+            padding: 3px 15px !important;
+            word-wrap: break-word !important;
+            white-space: normal !important;
+        }
+    </style>
+</head>
+
 <body>
-<div class="layui-fluid" id="vue1">
-    <div class="layui-card">
-        <div class="layui-card-body">
-            <form class="layui-form">
-                <div class="layui-form-item" style="margin-top: 50px">
-                    <label class="layui-form-label" style="font-weight: bold">UUID</label>
-                    <div class="layui-col-xs3">
-                        <input type="text" minlength="32" maxlength="32" name="uuid" value="${data.uuid}" lay-verify="required" placeholder="LENGTH 32 UUID" value="" class="layui-input">
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">ONLINE UPDATE</div>
+        <div class="profile">
+            <img src="${_contextPath}/web/layuiadmin/images/head.jpg" alt="Profile">
+            <span>${username!'Admin'}</span>
+            <div class="profile-dropdown">
+                <a href="${_contextPath}/logout">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <ul>
+                <li><a href="${_contextPath}/dashboard"><i class="layui-icon layui-icon-home"></i>Dashboard</a></li>
+                <li><a href="${_contextPath}/index.html"><i class="layui-icon layui-icon-engine"></i>IoT Dashboard</a></li>
+            </ul>
+        </aside>
+
+        <main class="main">
+            <div class="card">
+                <h2><i class="layui-icon layui-icon-upload-drag"></i> Online Update</h2>
+
+                <form class="layui-form">
+                    <div class="form-group">
+                        <label>UUID</label>
+                        <input type="text" minlength="32" maxlength="32" name="uuid" value="${data.uuid}" placeholder="LENGTH 32 UUID">
                     </div>
-                </div>
-                <div class="layui-form-item layui-form-text layui-row">
-                    <label class="layui-form-label" style="font-weight: bold">Android<br>Release version</label>
-                    <div class="layui-col-xs3">
-                        <textarea name="androidRelease" placeholder="Android Release version" class="layui-textarea">${data.androidRelease}</textarea>
+
+                    <div class="form-group">
+                        <label>Android Release version</label>
+                        <textarea name="androidRelease" placeholder="Android Release version">${data.androidRelease}</textarea>
+                        <div class="btn-inline">
+                            <a class="btn" href="${_contextPath}/api/iot/app/version/publish?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
+                            <a class="btn btn-primary" href="javascript:layui.layer.alert(androidRelease)">DEMO TEXT</a>
+                        </div>
                     </div>
-                    <div class="layui-form-mid">&nbsp;</div>
-                    <div class="layui-input-inline" >
-                        <a class="layui-btn" href="${_contextPath}/api/iot/app/version/publish?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
-                        <a class="layui-btn" href="javascript: layui.layer.alert(androidRelease)">DEMO TEXT</a>
+
+                    <div class="form-group">
+                        <label>Android Test version</label>
+                        <textarea name="androidTest" placeholder="Android Test version">${data.androidTest}</textarea>
+                        <div class="btn-inline">
+                            <a class="btn" href="${_contextPath}/api/iot/app/version/test?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
+                            <a class="btn btn-primary" href="javascript:layui.layer.alert(androidTest)">DEMO TEXT</a>
+                        </div>
                     </div>
-                </div>
-                <div class="layui-form-item layui-form-text layui-row">
-                    <label class="layui-form-label">Android<br>Test version</label>
-                    <div class="layui-col-xs3">
-                        <textarea name="androidTest"  placeholder="Android Test version" class="layui-textarea" >${data.androidTest}</textarea>
+
+                    <div class="form-group">
+                        <label>MCU Release version</label>
+                        <textarea name="mcuRelease" placeholder="MCU Release version">${data.mcuRelease}</textarea>
+                        <div class="btn-inline">
+                            <a class="btn" href="${_contextPath}/api/iot/app/version/publish/mcu?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
+                            <a class="btn btn-primary" href="javascript:layui.layer.alert(mcuRelease)">DEMO TEXT</a>
+                        </div>
                     </div>
-                    <div class="layui-form-mid">&nbsp;</div>
-                    <div class="layui-input-inline" >
-                        <a class="layui-btn" href="${_contextPath}/api/iot/app/version/test?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
-                        <a class="layui-btn" href="javascript: layui.layer.alert(androidTest)">DEMO TEXT</a>
+
+                    <div class="form-group">
+                        <label>MCU Test version</label>
+                        <textarea name="mcuTest" placeholder="MCU Test version">${data.mcuTest}</textarea>
+                        <div class="btn-inline">
+                            <a class="btn" href="${_contextPath}/api/iot/app/version/test/mcu?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
+                            <a class="btn btn-primary" href="javascript:layui.layer.alert(mcuTest)">DEMO TEXT</a>
+                        </div>
                     </div>
-                </div>
-                <div class="layui-form-item layui-form-text layui-row">
-                    <label class="layui-form-label" style="font-weight: bold">MCU<br>Release version</label>
-                    <div class="layui-col-xs3">
-                        <textarea name="mcuRelease"  placeholder="Android Release version" class="layui-textarea" >${data.mcuRelease}</textarea>
-                    </div>
-                    <div class="layui-form-mid">&nbsp;</div>
-                    <div class="layui-input-inline" >
-                        <a class="layui-btn" href="${_contextPath}/api/iot/app/version/publish/mcu?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
-                        <a class="layui-btn" href="javascript: layui.layer.alert(mcuRelease)">DEMO TEXT</a>
-                    </div>
-                </div>
-                <div class="layui-form-item layui-form-text layui-row">
-                    <label class="layui-form-label">MCU<br>Test version</label>
-                    <div class="layui-col-xs3">
-                        <textarea name="mcuTest"  placeholder="Android Test version" class="layui-textarea" >${data.mcuTest}</textarea>
-                    </div>
-                    <div class="layui-form-mid">&nbsp;</div>
-                    <div class="layui-input-inline" >
-                        <a class="layui-btn" href="${_contextPath}/api/iot/app/version/test/mcu?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
-                        <a class="layui-btn" href="javascript:layui.layer.alert(mcuTest)">DEMO TEXT</a>
-                    </div>
-                </div>
-                <div class="layui-form-item layui-layout-admin">
-                    <div class="layui-input-block">
-                        <div class="layui-footer" style="left: 0;">
+
+                    <div class="layui-form-item">
+                        <div class="btn-group-inline">
                             <button class="layui-btn" lay-submit="" lay-filter="btn-submit">SAVE</button>
                             <a href="javascript:vue1.clear()" class="layui-btn layui-btn-primary">CLEAR</a>
                             <a href="javascript:$.closeWindow()" class="layui-btn layui-btn-primary">CLOSE</a>
                         </div>
                     </div>
-                </div>
-            </form>
-        </div>
+                </form>
+            </div>
+            <footer>© 2025 IoT Demo - Admin System. All rights reserved.</footer>
+        </main>
     </div>
-</div>
 
+    <#include "/web/views/common/script.html" />
 
-<#include "/web/views/common/script.html" />
-<script>
-    var androidRelease = "{\"code\":228,\"file_url1\":\"http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/ec89b84a69074eb817ef59bd1e84b7251.apk\",\"size\":7369702,\"name\":\"1.0\",\"md5\":\"ec89b84a69074eb817ef59bd1e84b725\"}";
-    var androidTest = "{\"code\":228,\"file_url1\":\"http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/ec89b84a69074eb817ef59bd1e84b7251.apk\",\"size\":7369702,\"name\":\"1.0\",\"md5\":\"ec89b84a69074eb817ef59bd1e84b725\"}";
-    var mcuRelease = "MoudleEC20_DUV1029_0x6E34.bin,53164,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/4db87503609bee2fe2a7b10b84da29291.bin";
-    var mcuTest = "MoudleEC20_DUV1029_0x6E34.bin,53164,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/4db87503609bee2fe2a7b10b84da29291.bin";
+    <script>
+        var androidRelease = "{\"code\":228,\"file_url1\":\"http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/ec89b84a69074eb817ef59bd1e84b7251.apk\",\"size\":7369702,\"name\":\"1.0\",\"md5\":\"ec89b84a69074eb817ef59bd1e84b725\"}";
+        var androidTest = "{\"code\":228,\"file_url1\":\"http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/ec89b84a69074eb817ef59bd1e84b7251.apk\",\"size\":7369702,\"name\":\"1.0\",\"md5\":\"ec89b84a69074eb817ef59bd1e84b725\"}";
+        var mcuRelease = "MoudleEC20_DUV1029_0x6E34.bin,53164,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/4db87503609bee2fe2a7b10b84da29291.bin";
+        var mcuTest = "MoudleEC20_DUV1029_0x6E34.bin,53164,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/4db87503609bee2fe2a7b10b84da29291.bin";
 
-    var vue1 = new Vue({
-        el: '#vue1',
-        data: {},
-        methods: {
-            //初始化数据
-            init: function () {
-                layui.form.on('submit(btn-submit)', function (data) {
-                    vue1.submit(data.field);
-                    return false;
-                });
-            },
-            //提交修改
-            submit: function (field) {
-                layer.confirm('save version info', function (index) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '${_contextPath}/version/update',
-                        data: field,
-                        cache: false,
-                        loading: true,
-                        errorMsg: true,
-                        dataType: 'json',
-                        success: function (result) {
-                            layer.msg('success update', {icon: 1, time: 500}, function () {
-                                window.location.reload();
-                            });
-                        }
+        var vue1 = new Vue({
+            el: '#vue1',
+            data: {},
+            methods: {
+                init: function () {
+                    layui.form.on('submit(btn-submit)', function (data) {
+                        vue1.submit(data.field);
+                        return false;
                     });
-                    layer.close(index);
-                });
-            },
-            //提交修改
-            clear: function () {
-                layer.confirm('Clear version info', function (index) {
-                    $.ajax({
-                        type: 'GET',
-                        url: '${_contextPath}/version/clear',
-                        cache: false,
-                        loading: true,
-                        errorMsg: true,
-                        dataType: 'json',
-                        success: function (result) {
-                            layer.msg('success update', {icon: 1, time: 500}, function () {
-                                window.location.reload();
-                            });
-                        }
+                },
+                submit: function (field) {
+                    layer.confirm('Save version info?', function (index) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '${_contextPath}/version/update',
+                            data: field,
+                            cache: false,
+                            loading: true,
+                            errorMsg: true,
+                            dataType: 'json',
+                            success: function (result) {
+                                layer.msg('success update', { icon: 1, time: 500 }, function () {
+                                    window.location.reload();
+                                });
+                            }
+                        });
+                        layer.close(index);
                     });
-                    layer.close(index);
-                });
-            }
-        },
-        mounted : function () {
+                },
+                clear: function () {
+                    layer.confirm('Clear version info?', function (index) {
+                        $.ajax({
+                            type: 'GET',
+                            url: '${_contextPath}/version/clear',
+                            cache: false,
+                            loading: true,
+                            errorMsg: true,
+                            dataType: 'json',
+                            success: function (result) {
+                                layer.msg('success update', { icon: 1, time: 500 }, function () {
+                                    window.location.reload();
+                                });
+                            }
+                        });
+                        layer.close(index);
+                    });
+                }
+            },
+            mounted: function () { }
+        });
+    </script>
 
-        }
-    });
-
-</script>
-
-<script>
-    layui.config({base: '${_contextPath}/web/layuiadmin/'});
-    layui.extend({index: 'lib/index'});
-    layui.use(['index','form','table'], function () {
-        vue1.init();
-    });
-</script>
+    <script>
+        layui.config({ base: '${_contextPath}/web/layuiadmin/' });
+        layui.extend({ index: 'lib/index' });
+        layui.use(['index', 'form', 'table'], function () {
+            vue1.init();
+        });
+    </script>
 </body>
+
 </html>
