@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class MqttPublisher {
+public class MqttPublisher implements MqttCallback {
     
     @Autowired
     private AppConfig appConfig;
@@ -35,7 +35,9 @@ public class MqttPublisher {
         String protocol = appConfig.isMqttSsl() ? "ssl://" : "tcp://";
         String broker = protocol + appConfig.getMqttBroker() + ":" + appConfig.getMqttPort();
         
-        mqttClient = new MqttClient(broker, appConfig.getMqttClientId() + "-publisher");
+        // Add unique timestamp to prevent clientId conflicts on restart
+        String clientId = appConfig.getMqttClientId() + "-publisher-" + System.currentTimeMillis();
+        mqttClient = new MqttClient(broker, clientId);
 
         MqttConnectOptions options = new MqttConnectOptions();
         options.setUserName(appConfig.getMqttUsername());
@@ -43,9 +45,76 @@ public class MqttPublisher {
         options.setCleanSession(true);
         options.setKeepAliveInterval(60);
         options.setConnectionTimeout(30);
+        options.setAutomaticReconnect(true);  // Enable automatic reconnection
 
-        mqttClient.connect(options);
-        System.out.println("MQTT Publisher initialized successfully");
+        // Set callback to monitor connection status
+        mqttClient.setCallback(this);
+        
+        try {
+            mqttClient.connect(options);
+            
+            // ✅ VERIFY CONNECTION BEFORE PROCEEDING
+            if (!mqttClient.isConnected()) {
+                throw new MqttException(MqttException.REASON_CODE_CLIENT_NOT_CONNECTED);
+            }
+            
+            System.out.println("✅ MQTT Publisher connected to: " + broker);
+            System.out.println("   Client ID: " + clientId);
+        } catch (MqttException e) {
+            System.err.println("❌ MQTT Publisher connection failed!");
+            System.err.println("   Error: " + e.getMessage());
+            System.err.println("   Reason Code: " + e.getReasonCode());
+            System.err.println("   Broker: " + broker);
+            throw e;
+        }
+    }
+
+    /**
+     * Called when connection to EMQX broker is lost
+     */
+    @Override
+    public void connectionLost(Throwable cause) {
+        System.err.println("❌ MQTT Publisher connection lost: " + cause.getMessage());
+        System.out.println("⚡ Automatic reconnection enabled - will retry connection...");
+    }
+
+    /**
+     * Called when a message arrives (not typically used for publisher)
+     */
+    @Override
+    public void messageArrived(String topic, MqttMessage message) throws Exception {
+        // Not used for publisher - only subscribes receive messages
+    }
+
+    /**
+     * Called when message delivery is complete
+     */
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken token) {
+        try {
+            String[] topics = token.getTopics();
+            if (topics != null && topics.length > 0) {
+                System.out.println("✅ Message delivered successfully to topic: " + topics[0]);
+            }
+        } catch (Exception e) {
+            // Fallback if getTopics() fails
+            System.out.println("✅ Message delivered successfully");
+        }
+    }
+
+    /**
+     * Gracefully disconnect publisher
+     */
+    public void disconnect() {
+        try {
+            if (mqttClient != null && mqttClient.isConnected()) {
+                mqttClient.disconnect();
+                mqttClient.close();
+                System.out.println("✅ MQTT Publisher disconnected");
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Error disconnecting MQTT Publisher: " + e.getMessage());
+        }
     }
 
     // Enhanced device status check with multiple indicators
