@@ -163,18 +163,16 @@ public class MqttPublisher implements MqttCallback {
         String emqxTopic;
         String deviceName;
         
-        // Handle both legacy and new topic formats
-        if (topicFullName.startsWith("device/")) {
-            // Already in EMQX format: device/{deviceName}/command
-            emqxTopic = topicFullName;
-            String[] parts = topicFullName.split("/");
-            deviceName = parts.length > 1 ? parts[1] : "unknown";
+        // Use the topic exactly as provided by controllers
+        // Controllers already construct the correct topic format: "powerbank/deviceName/user/command"
+        emqxTopic = topicFullName;
+        
+        // Extract deviceName from topic for logging and tracking
+        String[] parts = topicFullName.split("/");
+        if (parts.length >= 2) {
+            deviceName = parts[1]; // parts[1] is always the deviceName in "productKey/deviceName/..." format
         } else {
-            // Convert legacy format to EMQX format
-            // "/productKey/deviceName/get" → "device/deviceName/command"
-            String[] parts = topicFullName.split("/");
-            deviceName = parts.length > 2 ? parts[2] : (parts.length > 1 ? parts[1] : "unknown");
-            emqxTopic = "device/" + deviceName + "/command";
+            deviceName = "unknown";
         }
 
         MqttMessage message = new MqttMessage(messageContent.getBytes());
@@ -207,11 +205,11 @@ public class MqttPublisher implements MqttCallback {
 
     // Overloaded method for byte array
     public void sendMsgAsync(String productKey, String topicFullName, byte[] bytes, int qos) throws Exception {
+        String emqxTopic = topicFullName; // Use topic exactly as provided
+        
+        // Extract deviceName for logging consistency  
         String[] parts = topicFullName.split("/");
-        String deviceName = parts.length > 2 ? parts[2] : parts[1];
-        String topicPrefix = productKey + "/" + deviceName;
-        String userPath = appConfig.isTopicType() ? "/user" : "";
-        String emqxTopic = topicPrefix + userPath + "/command";
+        String deviceName = parts.length >= 2 ? parts[1] : "unknown";
 
         MqttMessage message = new MqttMessage(bytes);
         message.setQos(qos);
@@ -219,6 +217,7 @@ public class MqttPublisher implements MqttCallback {
 
         if (mqttClient != null && mqttClient.isConnected()) {
             mqttClient.publish(emqxTopic, message);
+            System.out.println("Message sent to device " + deviceName + " on topic: " + emqxTopic);
         } else {
             throw new Exception("MQTT client not connected");
         }
