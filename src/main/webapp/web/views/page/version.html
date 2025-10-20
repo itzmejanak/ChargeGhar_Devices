@@ -75,6 +75,28 @@
                         <a class="layui-btn" href="javascript:layui.layer.alert(mcuTest)">DEMO TEXT</a>
                     </div>
                 </div>
+                <div class="layui-form-item layui-form-text layui-row">
+                    <label class="layui-form-label" style="font-weight: bold">CHIP<br>Release version</label>
+                    <div class="layui-col-xs3">
+                        <textarea name="chipRelease"  placeholder="CHIP Release version" class="layui-textarea" >${data.chipRelease}</textarea>
+                    </div>
+                    <div class="layui-form-mid">&nbsp;</div>
+                    <div class="layui-input-inline" >
+                        <a class="layui-btn" href="${_contextPath}/api/iot/app/version/publish/chip?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
+                        <a class="layui-btn" href="javascript: layui.layer.alert(chipRelease)">DEMO TEXT</a>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text layui-row">
+                    <label class="layui-form-label">CHIP<br>Test version</label>
+                    <div class="layui-col-xs3">
+                        <textarea name="chipTest"  placeholder="CHIP Test version" class="layui-textarea" >${data.chipTest}</textarea>
+                    </div>
+                    <div class="layui-form-mid">&nbsp;</div>
+                    <div class="layui-input-inline" >
+                        <a class="layui-btn" href="${_contextPath}/api/iot/app/version/test/chip?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
+                        <a class="layui-btn" href="javascript:layui.layer.alert(chipTest)">DEMO TEXT</a>
+                    </div>
+                </div>
                 <div class="layui-form-item layui-layout-admin">
                     <div class="layui-input-block">
                         <div class="layui-footer" style="left: 0;">
@@ -96,6 +118,8 @@
     var androidTest = "{\"code\":228,\"file_url1\":\"http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/ec89b84a69074eb817ef59bd1e84b7251.apk\",\"size\":7369702,\"name\":\"1.0\",\"md5\":\"ec89b84a69074eb817ef59bd1e84b725\"}";
     var mcuRelease = "MoudleEC20_DUV1029_0x6E34.bin,53164,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/4db87503609bee2fe2a7b10b84da29291.bin";
     var mcuTest = "MoudleEC20_DUV1029_0x6E34.bin,53164,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/4db87503609bee2fe2a7b10b84da29291.bin";
+    var chipRelease = "ChipModule_V1.0.0.bin,45120,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/chip_release_v1.bin";
+    var chipTest = "ChipModule_V1.0.0.bin,45120,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/chip_test_v1.bin";
 
     var vue1 = new Vue({
         el: '#vue1',

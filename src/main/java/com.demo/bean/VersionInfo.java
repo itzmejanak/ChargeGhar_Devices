@@ -23,6 +23,10 @@ public class VersionInfo implements Serializable {
 
     private String mcuTest = "";
 
+    private String chipRelease = "";
+
+    private String chipTest = "";
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
@@ -65,5 +69,21 @@ public class VersionInfo implements Serializable {
 
     public void setMcuTest(String mcuTest) {
         this.mcuTest = mcuTest;
+    }
+
+    public String getChipRelease() {
+        return chipRelease;
+    }
+
+    public void setChipRelease(String chipRelease) {
+        this.chipRelease = chipRelease;
+    }
+
+    public String getChipTest() {
+        return chipTest;
+    }
+
+    public void setChipTest(String chipTest) {
+        this.chipTest = chipTest;
     }
 }
