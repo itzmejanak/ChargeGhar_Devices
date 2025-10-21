@@ -23,8 +23,28 @@ public class ReceivePopupIndex extends SerialPortData {
         this.status = data[2];
     }
 
+    public int getPinboardIndex() {
+        return pinboardIndex;
+    }
 
+    public void setPinboardIndex(int pinboardIndex) {
+        this.pinboardIndex = pinboardIndex;
+    }
 
+    public int getPowerbankIndex() {
+        return powerbankIndex;
+    }
 
+    public void setPowerbankIndex(int powerbankIndex) {
+        this.powerbankIndex = powerbankIndex;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
 }

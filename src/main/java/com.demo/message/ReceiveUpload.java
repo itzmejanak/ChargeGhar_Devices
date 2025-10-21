@@ -34,6 +34,12 @@ public class ReceiveUpload extends SerialPortData {
         }else {
             hole=getHole(bytes);
         }
+        boolean areaType = false;
+        int frontArea = 0;
+        if (data[2] != 0 && data[2] != 11 && data[2] != 255) {
+            areaType = true;
+            frontArea = data[2];
+        }
         int pinboardCount;
         int pinboardAndPowerbank = (hole * 15 + 6) ;
         boolean type = false;
@@ -63,7 +69,7 @@ public class ReceiveUpload extends SerialPortData {
             for (int j = 0; j < hole; j++) {
                 int[] powerbankData = ArrayUtils.subarray(data, (6 + (i * pinboardAndPowerbank) + (j * 15)), (21 + (i * pinboardAndPowerbank) + (j * 15)));
                 if (powerbankData!=null&&powerbankData.length>0){
-                    Powerbank powerbank = new Powerbank(powerbankData, pinboard.getIndex());
+                    Powerbank powerbank = new Powerbank(powerbankData, pinboard.getIndex(), areaType, frontArea);
                     powerbanks.add(powerbank);
                 }
             }
@@ -127,6 +133,19 @@ public class ReceiveUpload extends SerialPortData {
         if (pinboard % pinboard.intValue() == 0) {
             return 4;
         }
+        
+        //多机芯（3口）
+        pinboard = size / (6 + 15 * 3);
+        if (pinboard % pinboard.intValue() == 0) {
+            if (pinboard == 2) {
+                //判断是否是普及版：4+2
+                if (bytes[4 + 6 + 15 * 4] < 4) {
+                    return 4;
+                }
+            }
+            return 3;
+        }
+        
         return 0;
     }
 
@@ -177,6 +196,13 @@ public class ReceiveUpload extends SerialPortData {
         if (pinboard % pinboard.intValue() == 0) {
             return 4;
         }
+        
+        //多机芯（3口）
+        pinboard = size / (6 + 15 * 3);
+        if (pinboard % pinboard.intValue() == 0) {
+            return 3;
+        }
+        
         return 0;
     }
     public List<Powerbank> getNormalPowerbanks(int minPower){
@@ -196,6 +222,15 @@ public class ReceiveUpload extends SerialPortData {
         }
         Collections.shuffle(data); // 混乱排序
         return data.get(0);
+    }
+
+    //获取PowerBankSN号
+    public ArrayList<String> getPowerBankSN(List<Powerbank> powerbanks) {
+        ArrayList<String> powerBanks = new ArrayList<>();
+        for (Powerbank powerBank : powerbanks) {
+            powerBanks.add(powerBank.getSnAsString());
+        }
+        return powerBanks;
     }
 
 }
