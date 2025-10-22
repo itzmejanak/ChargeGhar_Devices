@@ -228,6 +228,20 @@ public class ApiController {
             // Parse the upload data
             ReceiveUpload receiveUpload = new ReceiveUpload(bytes);
             
+            // ✅ FIX: Update device activity and heartbeat timestamps in Redis
+            // This makes the device show as ONLINE in the UI
+            long now = System.currentTimeMillis();
+            
+            // Update device activity (checked by getDeviceStatus)
+            String activityKey = "device_activity:" + rentboxSN;
+            BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
+            activityOps.set(now, 10, TimeUnit.MINUTES);  // Expire after 10 minutes
+            
+            // Update device heartbeat (checked by getDeviceStatus)
+            String heartbeatKey = "device_heartbeat:" + rentboxSN;
+            BoundValueOperations heartbeatOps = redisTemplate.boundValueOps(heartbeatKey);
+            heartbeatOps.set(now, 5, TimeUnit.MINUTES);  // Expire after 5 minutes
+            
             // Log parsed data
             System.out.println("PARSED DATA:");
             System.out.println("  Pinboard count: " + receiveUpload.getPinboards().size());

@@ -1,0 +1,64 @@
+2025-10-22T13:40:30.814408205Z 
+2025-10-22T13:42:11.855923943Z ========================================
+2025-10-22T13:42:11.856242392Z REQUEST PARAMETERS:
+2025-10-22T13:42:11.856249452Z   rentboxSN: 864601069946994
+2025-10-22T13:42:11.856252702Z   signal: CSQ:30
+2025-10-22T13:42:11.856260472Z   sign: 85ecaccaa21fa9440e8af97cc796e716
+2025-10-22T13:42:11.856263582Z   io: null
+2025-10-22T13:42:11.856266462Z   ssid: null
+2025-10-22T13:42:11.856269302Z   data length: 71 bytes
+2025-10-22T13:42:11.856901371Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E5 49 02 6E D5 80 64 20 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 CB
+2025-10-22T13:42:11.857540479Z PARSED DATA:
+2025-10-22T13:42:11.857554819Z   Pinboard count: 1
+2025-10-22T13:42:11.857558179Z   Powerbank count: 4
+2025-10-22T13:42:11.857560859Z   Pinboard[0]: index=1, io=0
+2025-10-22T13:42:11.857563619Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-22T13:42:11.857694718Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-22T13:42:11.857701979Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818048, status=1, power=100%, area=73, temp=32°C, microSwitch=0, solenoidValve=0
+2025-10-22T13:42:11.857704869Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-22T13:42:11.857707348Z RESPONSE:
+2025-10-22T13:42:11.857709268Z   code: 200
+2025-10-22T13:42:11.857711169Z   msg: ok
+2025-10-22T13:42:11.857713049Z ========================================
+2025-10-22T14:02:12.085681274Z ========================================
+2025-10-22T14:02:12.085728243Z REQUEST PARAMETERS:
+2025-10-22T14:02:12.085733534Z   rentboxSN: 864601069946994
+2025-10-22T14:02:12.085738283Z   signal: CSQ:30
+2025-10-22T14:02:12.085742713Z   sign: 85ecaccaa21fa9440e8af97cc796e716
+2025-10-22T14:02:12.085746854Z   io: null
+2025-10-22T14:02:12.085750904Z   ssid: null
+2025-10-22T14:02:12.085755014Z   data length: 71 bytes
+2025-10-22T14:02:12.086358512Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E5 49 02 6E D5 80 64 20 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 CB
+2025-10-22T14:02:12.087003652Z PARSED DATA:
+2025-10-22T14:02:12.087070281Z   Pinboard count: 1
+2025-10-22T14:02:12.087075832Z   Powerbank count: 4
+2025-10-22T14:02:12.087085132Z   Pinboard[0]: index=1, io=0
+2025-10-22T14:02:12.087089422Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-22T14:02:12.087094572Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-22T14:02:12.087140511Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818048, status=1, power=100%, area=73, temp=32°C, microSwitch=0, solenoidValve=0
+2025-10-22T14:02:12.087143742Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-22T14:02:12.087146702Z RESPONSE:
+2025-10-22T14:02:12.087149401Z   code: 200
+2025-10-22T14:02:12.087151862Z   msg: ok
+2025-10-22T14:02:12.087156542Z ========================================
+2025-10-22T14:22:12.356262005Z ========================================
+2025-10-22T14:22:12.356327905Z REQUEST PARAMETERS:
+2025-10-22T14:22:12.356333445Z   rentboxSN: 864601069946994
+2025-10-22T14:22:12.356337765Z   signal: CSQ:30
+2025-10-22T14:22:12.356341695Z   sign: 85ecaccaa21fa9440e8af97cc796e716
+2025-10-22T14:22:12.356345455Z   io: null
+2025-10-22T14:22:12.356349225Z   ssid: null
+2025-10-22T14:22:12.356353035Z   data length: 71 bytes
+2025-10-22T14:22:12.356357005Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E5 49 02 6E D5 80 64 20 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 CB
+2025-10-22T14:22:12.356725834Z PARSED DATA:
+2025-10-22T14:22:12.356775934Z   Pinboard count: 1
+2025-10-22T14:22:12.356781604Z   Powerbank count: 4
+2025-10-22T14:22:12.356786264Z   Pinboard[0]: index=1, io=0
+2025-10-22T14:22:12.356790554Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-22T14:22:12.356795864Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-22T14:22:12.356800544Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818048, status=1, power=100%, area=73, temp=32°C, microSwitch=0, solenoidValve=0
+2025-10-22T14:22:12.356805254Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-22T14:22:12.356809994Z RESPONSE:
+2025-10-22T14:22:12.356814024Z   code: 200
+2025-10-22T14:22:12.356818264Z   msg: ok
+2025-10-22T14:22:12.356822904Z ========================================
