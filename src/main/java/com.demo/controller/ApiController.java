@@ -11,6 +11,8 @@ import com.demo.bean.ApiRentboxOrderReturnValid;
 import com.demo.common.AppConfig;
 import com.demo.common.HttpResult;
 import com.demo.message.ReceiveUpload;
+import com.demo.message.Pinboard;
+import com.demo.message.Powerbank;
 import com.demo.tools.ByteUtils;
 import com.demo.tools.HttpServletUtils;
 import com.demo.tools.JsonUtils;
@@ -184,11 +186,23 @@ public class ApiController {
                                             @RequestParam String rentboxSN,
                                             @RequestParam String sign,
                                             @RequestParam(defaultValue = "0") String signal,
+                                            @RequestParam(required = false) Integer io,
+                                            @RequestParam(required = false) String ssid,
                                             HttpServletResponse response) throws Exception {
 
         HttpResult httpResult = new HttpResult();
         MessageBody messageBody = new MessageBody();
         try {
+            // Log request parameters
+            System.out.println("========================================");
+            System.out.println("REQUEST PARAMETERS:");
+            System.out.println("  rentboxSN: " + rentboxSN);
+            System.out.println("  signal: " + signal);
+            System.out.println("  sign: " + sign);
+            System.out.println("  io: " + (io != null ? io.toString() : "null"));
+            System.out.println("  ssid: " + (StringUtils.isNotEmpty(ssid) ? ssid : "null"));
+            System.out.println("  data length: " + bytes.length + " bytes");
+            
             //TEST LOG
             String data = ByteUtils.to16Hexs(bytes);
             String url = HttpServletUtils.getRealUrl(true);
@@ -198,13 +212,53 @@ public class ApiController {
             messageBody.setPayload(data);
             messageBody.setTimestamp(System.currentTimeMillis() / 1000);
 
+            System.out.println("  hex data: " + data);
 
             Map params = new HashMap<>();
             params.put("rentboxSN", rentboxSN);
             params.put("signal", signal);
+            if (io != null) {
+                params.put("io", io.toString());
+            }
+            if (StringUtils.isNotEmpty(ssid)) {
+                params.put("ssid", ssid);
+            }
             this.checkSign(params, sign);
 
+            // Parse the upload data
             ReceiveUpload receiveUpload = new ReceiveUpload(bytes);
+            
+            // Log parsed data
+            System.out.println("PARSED DATA:");
+            System.out.println("  Pinboard count: " + receiveUpload.getPinboards().size());
+            System.out.println("  Powerbank count: " + receiveUpload.getPowerbanks().size());
+            
+            // Log each pinboard
+            for (int i = 0; i < receiveUpload.getPinboards().size(); i++) {
+                Pinboard pinboard = receiveUpload.getPinboards().get(i);
+                System.out.println("  Pinboard[" + i + "]: index=" + pinboard.getIndex() + ", io=" + pinboard.getIo());
+            }
+            
+            // Log each powerbank
+            for (int i = 0; i < receiveUpload.getPowerbanks().size(); i++) {
+                Powerbank pb = receiveUpload.getPowerbanks().get(i);
+                System.out.println("  Powerbank[" + i + "]: " +
+                    "index=" + pb.getIndex() + ", " +
+                    "pinboardIndex=" + pb.getPinboardIndex() + ", " +
+                    "SN=" + pb.getSnAsString() + ", " +
+                    "status=" + pb.getStatus() + ", " +
+                    "power=" + pb.getPower() + "%, " +
+                    "area=" + pb.getArea() + ", " +
+                    "temp=" + pb.getTemp() + "°C, " +
+                    "microSwitch=" + pb.getMicroSwitch() + ", " +
+                    "solenoidValve=" + pb.getSolenoidValveSwitch());
+            }
+            
+            System.out.println("RESPONSE:");
+            System.out.println("  code: " + httpResult.getCode());
+            System.out.println("  msg: " + httpResult.getMsg());
+            System.out.println("========================================");
+            
             messageBody.setPayload(JsonUtils.toJson(httpResult));
         }
         catch (Exception e){
@@ -212,7 +266,10 @@ public class ApiController {
             httpResult.setCode(response.getStatus());
             httpResult.setMsg(e.toString());
             messageBody.setPayload(e.toString());
-
+            
+            System.out.println("ERROR: " + e.toString());
+            e.printStackTrace();
+            System.out.println("========================================");
         }
         finally {
             mqttSubscriber.putMessageBody(messageBody);
