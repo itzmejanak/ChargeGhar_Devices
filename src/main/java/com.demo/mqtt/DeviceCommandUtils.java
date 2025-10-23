@@ -82,10 +82,10 @@ public class DeviceCommandUtils {
         BoundValueOperations operations = redisTemplate.boundValueOps(key);
         operations.set(null, overSecond, TimeUnit.SECONDS);
 
-        // Use consistent product key in topic format with topicType support
-        String topicPrefix = appConfig.getProductKey() + "/" + rentboxSN;
-        String userPath = appConfig.isTopicType() ? "/user" : "";
-        String emqxTopic = topicPrefix + userPath + "/command";
+        // FIX: Use the exact topic device is subscribed to
+        // Device subscribes to: /powerbank/{deviceName}/user/get (with leading slash)
+        // This matches the EMQX Cloud subscription shown in device client details
+        String emqxTopic = "/" + appConfig.getProductKey() + "/" + rentboxSN + "/user/get";
         
         mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message, 1);
 

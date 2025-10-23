@@ -82,27 +82,27 @@ public class MqttSubscriber implements MqttCallback {
             System.out.println("✅ MQTT Subscriber connected to: " + broker);
             System.out.println("   Client ID: " + clientId);
 
-            // Subscribe to product key based topics for consistency with topicType support
+            // FIX: Subscribe to exact topics device publishes to (with leading slash)
+            // Device publishes to: /powerbank/{deviceName}/user/upload
+            // Device publishes to: /powerbank/{deviceName}/user/heart (heartbeat)
             String productKey = appConfig.getProductKey();
-            String userPath = appConfig.isTopicType() ? "/user" : "";
             
-            String uploadTopic = productKey + "/+" + userPath + "/upload";
-            String statusTopic = productKey + "/+" + userPath + "/status";
+            // Primary subscriptions (with leading slash to match device topics)
+            String uploadTopic = "/" + productKey + "/+/user/upload";
+            String heartTopic = "/" + productKey + "/+/user/heart";
             
             mqttClient.subscribe(uploadTopic, 1);
-            mqttClient.subscribe(statusTopic, 1);
+            mqttClient.subscribe(heartTopic, 1);
             System.out.println("   Subscribed to: " + uploadTopic);
-            System.out.println("   Subscribed to: " + statusTopic);
+            System.out.println("   Subscribed to: " + heartTopic);
             
-            // Also subscribe to non-user path for backward compatibility when topicType=true
-            if (appConfig.isTopicType()) {
-                mqttClient.subscribe(productKey + "/+/upload", 1);
-                mqttClient.subscribe(productKey + "/+/status", 1);
-                System.out.println("   Subscribed to: " + productKey + "/+/upload");
-                System.out.println("   Subscribed to: " + productKey + "/+/status");
-            }
+            // Backward compatibility: Also listen to non-slash topics in case some devices use them
+            mqttClient.subscribe(productKey + "/+/user/upload", 1);
+            mqttClient.subscribe(productKey + "/+/user/heart", 1);
+            System.out.println("   Subscribed to: " + productKey + "/+/user/upload");
+            System.out.println("   Subscribed to: " + productKey + "/+/user/heart");
             
-            // Also subscribe to legacy device format for backward compatibility
+            // Legacy device format for backward compatibility
             mqttClient.subscribe("device/+/upload", 1);
             mqttClient.subscribe("device/+/status", 1);
             System.out.println("   Subscribed to: device/+/upload");
@@ -143,13 +143,24 @@ public class MqttSubscriber implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         try {
-            // Extract device name from topic (productKey/{deviceName}/upload or device/{deviceName}/upload)
+            // Extract device name from topic
+            // Topic format: /powerbank/{deviceName}/user/upload or /powerbank/{deviceName}/user/heart
             String[] topicParts = topic.split("/");
             String deviceName;
             String messageType;
             
-            if (topicParts.length >= 3) {
-                // Format: productKey/deviceName/messageType or device/deviceName/messageType
+            // Handle topics with leading slash: /powerbank/deviceName/user/upload
+            if (topicParts.length >= 4 && topicParts[0].isEmpty()) {
+                deviceName = topicParts[2]; // Skip empty first element from leading slash
+                messageType = topicParts[4]; // "upload", "heart", "status"
+            } 
+            // Handle topics without leading slash: powerbank/deviceName/user/upload
+            else if (topicParts.length >= 4) {
+                deviceName = topicParts[1];
+                messageType = topicParts[3];
+            }
+            // Fallback for other formats
+            else if (topicParts.length >= 3) {
                 deviceName = topicParts[1];
                 messageType = topicParts[2];
             } else {
@@ -162,12 +173,12 @@ public class MqttSubscriber implements MqttCallback {
             BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
             activityOps.set(System.currentTimeMillis(), 10, TimeUnit.MINUTES);
             
-            // Handle heartbeat messages specially
-            if ("status".equals(messageType)) {
+            // Handle heartbeat messages specially (both "heart" and "status" indicate heartbeat)
+            if ("status".equals(messageType) || "heart".equals(messageType)) {
                 String heartbeatKey = "device_heartbeat:" + deviceName;
                 BoundValueOperations heartbeatOps = redisTemplate.boundValueOps(heartbeatKey);
                 heartbeatOps.set(System.currentTimeMillis(), 5, TimeUnit.MINUTES);
-                System.out.println("Heartbeat received from device: " + deviceName);
+                System.out.println("Heartbeat received from device: " + deviceName + " (type: " + messageType + ")");
             }
             
             // Convert MQTT message to MessageBody format

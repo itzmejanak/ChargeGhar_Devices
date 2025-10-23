@@ -1,64 +1,138 @@
-2025-10-22T13:40:30.814408205Z 
-2025-10-22T13:42:11.855923943Z ========================================
-2025-10-22T13:42:11.856242392Z REQUEST PARAMETERS:
-2025-10-22T13:42:11.856249452Z   rentboxSN: 864601069946994
-2025-10-22T13:42:11.856252702Z   signal: CSQ:30
-2025-10-22T13:42:11.856260472Z   sign: 85ecaccaa21fa9440e8af97cc796e716
-2025-10-22T13:42:11.856263582Z   io: null
-2025-10-22T13:42:11.856266462Z   ssid: null
-2025-10-22T13:42:11.856269302Z   data length: 71 bytes
-2025-10-22T13:42:11.856901371Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E5 49 02 6E D5 80 64 20 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 CB
-2025-10-22T13:42:11.857540479Z PARSED DATA:
-2025-10-22T13:42:11.857554819Z   Pinboard count: 1
-2025-10-22T13:42:11.857558179Z   Powerbank count: 4
-2025-10-22T13:42:11.857560859Z   Pinboard[0]: index=1, io=0
-2025-10-22T13:42:11.857563619Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
-2025-10-22T13:42:11.857694718Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
-2025-10-22T13:42:11.857701979Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818048, status=1, power=100%, area=73, temp=32°C, microSwitch=0, solenoidValve=0
-2025-10-22T13:42:11.857704869Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
-2025-10-22T13:42:11.857707348Z RESPONSE:
-2025-10-22T13:42:11.857709268Z   code: 200
-2025-10-22T13:42:11.857711169Z   msg: ok
-2025-10-22T13:42:11.857713049Z ========================================
-2025-10-22T14:02:12.085681274Z ========================================
-2025-10-22T14:02:12.085728243Z REQUEST PARAMETERS:
-2025-10-22T14:02:12.085733534Z   rentboxSN: 864601069946994
-2025-10-22T14:02:12.085738283Z   signal: CSQ:30
-2025-10-22T14:02:12.085742713Z   sign: 85ecaccaa21fa9440e8af97cc796e716
-2025-10-22T14:02:12.085746854Z   io: null
-2025-10-22T14:02:12.085750904Z   ssid: null
-2025-10-22T14:02:12.085755014Z   data length: 71 bytes
-2025-10-22T14:02:12.086358512Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E5 49 02 6E D5 80 64 20 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 CB
-2025-10-22T14:02:12.087003652Z PARSED DATA:
-2025-10-22T14:02:12.087070281Z   Pinboard count: 1
-2025-10-22T14:02:12.087075832Z   Powerbank count: 4
-2025-10-22T14:02:12.087085132Z   Pinboard[0]: index=1, io=0
-2025-10-22T14:02:12.087089422Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
-2025-10-22T14:02:12.087094572Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
-2025-10-22T14:02:12.087140511Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818048, status=1, power=100%, area=73, temp=32°C, microSwitch=0, solenoidValve=0
-2025-10-22T14:02:12.087143742Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
-2025-10-22T14:02:12.087146702Z RESPONSE:
-2025-10-22T14:02:12.087149401Z   code: 200
-2025-10-22T14:02:12.087151862Z   msg: ok
-2025-10-22T14:02:12.087156542Z ========================================
-2025-10-22T14:22:12.356262005Z ========================================
-2025-10-22T14:22:12.356327905Z REQUEST PARAMETERS:
-2025-10-22T14:22:12.356333445Z   rentboxSN: 864601069946994
-2025-10-22T14:22:12.356337765Z   signal: CSQ:30
-2025-10-22T14:22:12.356341695Z   sign: 85ecaccaa21fa9440e8af97cc796e716
-2025-10-22T14:22:12.356345455Z   io: null
-2025-10-22T14:22:12.356349225Z   ssid: null
-2025-10-22T14:22:12.356353035Z   data length: 71 bytes
-2025-10-22T14:22:12.356357005Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E5 49 02 6E D5 80 64 20 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 CB
-2025-10-22T14:22:12.356725834Z PARSED DATA:
-2025-10-22T14:22:12.356775934Z   Pinboard count: 1
-2025-10-22T14:22:12.356781604Z   Powerbank count: 4
-2025-10-22T14:22:12.356786264Z   Pinboard[0]: index=1, io=0
-2025-10-22T14:22:12.356790554Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
-2025-10-22T14:22:12.356795864Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
-2025-10-22T14:22:12.356800544Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818048, status=1, power=100%, area=73, temp=32°C, microSwitch=0, solenoidValve=0
-2025-10-22T14:22:12.356805254Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
-2025-10-22T14:22:12.356809994Z RESPONSE:
-2025-10-22T14:22:12.356814024Z   code: 200
-2025-10-22T14:22:12.356818264Z   msg: ok
-2025-10-22T14:22:12.356822904Z ========================================
+opt/iotdemo# docker logs -f --since 100m --tail 100 --timestamps iotdemo-app-prod
+2025-10-23T12:15:13.270944252Z  at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:901)
+2025-10-23T12:15:13.270951362Z  at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:970)
+2025-10-23T12:15:13.270979342Z  at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:872)
+2025-10-23T12:15:13.270982282Z  at javax.servlet.http.HttpServlet.service(HttpServlet.java:515)
+2025-10-23T12:15:13.270984972Z  at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:846)
+2025-10-23T12:15:13.271486582Z  at javax.servlet.http.HttpServlet.service(HttpServlet.java:583)
+2025-10-23T12:15:13.271503662Z  at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:212)
+2025-10-23T12:15:13.271507192Z  at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:156)
+2025-10-23T12:15:13.271516882Z  at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+2025-10-23T12:15:13.271519882Z  at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:181)
+2025-10-23T12:15:13.271747771Z  at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:156)
+2025-10-23T12:15:13.271754632Z  at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:197)
+2025-10-23T12:15:13.271757821Z  at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+2025-10-23T12:15:13.271908642Z  at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:181)
+2025-10-23T12:15:13.271915232Z  at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:156)
+2025-10-23T12:15:13.272193141Z  at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:168)
+2025-10-23T12:15:13.272203371Z  at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+2025-10-23T12:15:13.272206632Z  at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+2025-10-23T12:15:13.272209501Z  at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:130)
+2025-10-23T12:15:13.272212272Z  at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+2025-10-23T12:15:13.272214971Z  at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:679)
+2025-10-23T12:15:13.272217672Z  at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+2025-10-23T12:15:13.272220432Z  at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+2025-10-23T12:15:13.272223491Z  at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:617)
+2025-10-23T12:15:13.272612432Z  at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+2025-10-23T12:15:13.272619452Z  at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:932)
+2025-10-23T12:15:13.272622781Z  at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1694)
+2025-10-23T12:15:13.272773571Z  at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+2025-10-23T12:15:13.272779481Z  at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+2025-10-23T12:15:13.272786661Z  at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+2025-10-23T12:15:13.272789481Z  at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+2025-10-23T12:15:13.272792221Z  at java.lang.Thread.run(Thread.java:750)
+2025-10-23T12:15:13.272716541Z ========================================
+2025-10-23T12:18:54.784227306Z ========================================
+2025-10-23T12:18:54.784282226Z REQUEST PARAMETERS:
+2025-10-23T12:18:54.784287986Z   rentboxSN: 864601069946994
+2025-10-23T12:18:54.784292557Z   signal: CSQ:30
+2025-10-23T12:18:54.784296966Z   sign: 85ecaccaa21fa9440e8af97cc796e716
+2025-10-23T12:18:54.784301366Z   io: null
+2025-10-23T12:18:54.784305696Z   ssid: null
+2025-10-23T12:18:54.784309896Z   data length: 71 bytes
+2025-10-23T12:18:54.784889586Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E5 49 02 6E D5 80 64 21 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 CA
+2025-10-23T12:18:54.786598196Z PARSED DATA:
+2025-10-23T12:18:54.786619476Z   Pinboard count: 1
+2025-10-23T12:18:54.786624185Z   Powerbank count: 4
+2025-10-23T12:18:54.786628545Z   Pinboard[0]: index=1, io=0
+2025-10-23T12:18:54.786742245Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-23T12:18:54.786749985Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-23T12:18:54.786754405Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818048, status=1, power=100%, area=73, temp=33°C, microSwitch=0, solenoidValve=0
+2025-10-23T12:18:54.786980545Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-23T12:18:54.786992265Z RESPONSE:
+2025-10-23T12:18:54.786997076Z   code: 200
+2025-10-23T12:18:54.787001486Z   msg: ok
+2025-10-23T12:18:54.787005766Z ========================================
+2025-10-23T12:19:11.719870272Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:11.724262420Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:14.006052255Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:14.006917675Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:17.150482189Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:17.151567419Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:18.728193941Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:18.728768790Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:22.512319295Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:22.512375825Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:41.589734570Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:19:41.589936790Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:20:07.748927815Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:20:07.749422314Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:20:59.309735833Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:20:59.310222972Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:00.900383736Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:00.900979006Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:02.448555277Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:02.448968397Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:03.842559830Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:03.842788800Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:05.252707245Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:05.253523245Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:21.066791697Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:21.067039267Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:23.305065851Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:23.305537980Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:37.705965971Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:37.706344502Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:40.076681379Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:40.076727550Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:45.061141246Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:21:45.061400796Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:24:21.634275993Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:24:21.634955573Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:24:39.274323134Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:24:39.274631724Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:24:41.267696308Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:24:41.268192929Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:26:40.124596901Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:26:40.125157033Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:26:42.097678167Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:26:42.097935287Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:26:46.544257347Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:26:46.544959318Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:37:48.355563703Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:37:48.355864902Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:37:50.439998502Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:37:50.440258383Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:38:38.682504402Z ========================================
+2025-10-23T12:38:38.682556523Z REQUEST PARAMETERS:
+2025-10-23T12:38:38.682562013Z   rentboxSN: 864601069946994
+2025-10-23T12:38:38.682566393Z   signal: CSQ:30
+2025-10-23T12:38:38.682604913Z   sign: 85ecaccaa21fa9440e8af97cc796e716
+2025-10-23T12:38:38.682934303Z   io: null
+2025-10-23T12:38:38.682944573Z   ssid: null
+2025-10-23T12:38:38.682949913Z   data length: 71 bytes
+2025-10-23T12:38:38.683044213Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E5 49 02 6E D5 80 64 21 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 CA
+2025-10-23T12:38:38.684876884Z PARSED DATA:
+2025-10-23T12:38:38.684896044Z   Pinboard count: 1
+2025-10-23T12:38:38.684899164Z   Powerbank count: 4
+2025-10-23T12:38:38.685057264Z   Pinboard[0]: index=1, io=0
+2025-10-23T12:38:38.685073764Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-23T12:38:38.685078213Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-23T12:38:38.685081394Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818048, status=1, power=100%, area=73, temp=33°C, microSwitch=0, solenoidValve=0
+2025-10-23T12:38:38.685234494Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+2025-10-23T12:38:38.685266194Z RESPONSE:
+2025-10-23T12:38:38.685269274Z   code: 200
+2025-10-23T12:38:38.685426674Z   msg: ok
+2025-10-23T12:38:38.685429684Z ========================================
+2025-10-23T12:38:55.619855389Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:38:55.620349789Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:39:00.435659223Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:39:00.436192684Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:39:22.352667739Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:39:22.352752459Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:39:28.355119214Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:39:28.355624964Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:41:29.610017069Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:41:29.610273779Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command
+2025-10-23T12:41:40.450432232Z Message sent to device 864601069946994 on topic: powerbank/864601069946994/user/command
+2025-10-23T12:41:40.451318023Z ✅ Message delivered successfully to topic: powerbank/864601069946994/user/command

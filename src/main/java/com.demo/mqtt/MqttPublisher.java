@@ -164,7 +164,7 @@ public class MqttPublisher implements MqttCallback {
         String deviceName;
         
         // Use the topic exactly as provided by controllers
-        // Controllers already construct the correct topic format: "powerbank/deviceName/user/command"
+        // Controllers construct the topic to match device subscriptions: "/powerbank/deviceName/user/get"
         emqxTopic = topicFullName;
         
         // Extract deviceName from topic for logging and tracking
