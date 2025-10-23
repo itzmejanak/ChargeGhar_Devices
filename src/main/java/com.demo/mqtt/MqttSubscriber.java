@@ -83,22 +83,27 @@ public class MqttSubscriber implements MqttCallback {
             System.out.println("   Client ID: " + clientId);
 
             // FIX: Subscribe to exact topics device publishes to (with leading slash)
-            // Device publishes to: /powerbank/{deviceName}/user/upload
-            // Device publishes to: /powerbank/{deviceName}/user/heart (heartbeat)
+            // CRITICAL: Device publishes responses to /user/UPDATE (not /user/upload!)
+            // Device publishes heartbeat to: /powerbank/{deviceName}/user/heart
             String productKey = appConfig.getProductKey();
             
             // Primary subscriptions (with leading slash to match device topics)
-            String uploadTopic = "/" + productKey + "/+/user/upload";
+            String updateTopic = "/" + productKey + "/+/user/update";  // Device uses UPDATE not upload
+            String uploadTopic = "/" + productKey + "/+/user/upload";  // Keep for HTTP uploads
             String heartTopic = "/" + productKey + "/+/user/heart";
             
+            mqttClient.subscribe(updateTopic, 1);
             mqttClient.subscribe(uploadTopic, 1);
             mqttClient.subscribe(heartTopic, 1);
+            System.out.println("   Subscribed to: " + updateTopic);
             System.out.println("   Subscribed to: " + uploadTopic);
             System.out.println("   Subscribed to: " + heartTopic);
             
-            // Backward compatibility: Also listen to non-slash topics in case some devices use them
+            // Backward compatibility: Also listen to non-slash topics
+            mqttClient.subscribe(productKey + "/+/user/update", 1);
             mqttClient.subscribe(productKey + "/+/user/upload", 1);
             mqttClient.subscribe(productKey + "/+/user/heart", 1);
+            System.out.println("   Subscribed to: " + productKey + "/+/user/update");
             System.out.println("   Subscribed to: " + productKey + "/+/user/upload");
             System.out.println("   Subscribed to: " + productKey + "/+/user/heart");
             
@@ -152,7 +157,7 @@ public class MqttSubscriber implements MqttCallback {
             // Handle topics with leading slash: /powerbank/deviceName/user/upload
             if (topicParts.length >= 4 && topicParts[0].isEmpty()) {
                 deviceName = topicParts[2]; // Skip empty first element from leading slash
-                messageType = topicParts[4]; // "upload", "heart", "status"
+                messageType = topicParts[4]; // "upload", "update", "heart", "status"
             } 
             // Handle topics without leading slash: powerbank/deviceName/user/upload
             else if (topicParts.length >= 4) {
@@ -179,6 +184,11 @@ public class MqttSubscriber implements MqttCallback {
                 BoundValueOperations heartbeatOps = redisTemplate.boundValueOps(heartbeatKey);
                 heartbeatOps.set(System.currentTimeMillis(), 5, TimeUnit.MINUTES);
                 System.out.println("Heartbeat received from device: " + deviceName + " (type: " + messageType + ")");
+            }
+            
+            // Treat "update" as "upload" for message processing (device uses UPDATE for command responses)
+            if ("update".equals(messageType)) {
+                messageType = "upload";  // Normalize to upload for handlerMessage processing
             }
             
             // Convert MQTT message to MessageBody format
