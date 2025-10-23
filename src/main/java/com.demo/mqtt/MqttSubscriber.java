@@ -176,7 +176,7 @@ public class MqttSubscriber implements MqttCallback {
             // Track device activity for status checking
             String activityKey = "device_activity:" + deviceName;
             BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
-            activityOps.set(System.currentTimeMillis(), 10, TimeUnit.MINUTES);
+            activityOps.set(System.currentTimeMillis(), 25, TimeUnit.MINUTES);
             
             // Handle heartbeat messages specially (both "heart" and "status" indicate heartbeat)
             if ("status".equals(messageType) || "heart".equals(messageType)) {

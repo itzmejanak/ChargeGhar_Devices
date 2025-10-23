@@ -235,7 +235,7 @@ public class ApiController {
             // Update device activity (checked by getDeviceStatus)
             String activityKey = "device_activity:" + rentboxSN;
             BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
-            activityOps.set(now, 10, TimeUnit.MINUTES);  // Expire after 10 minutes
+            activityOps.set(now, 25, TimeUnit.MINUTES);  // Expire after 10 minutes
             
             // Update device heartbeat (checked by getDeviceStatus)
             String heartbeatKey = "device_heartbeat:" + rentboxSN;

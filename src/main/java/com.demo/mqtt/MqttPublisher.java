@@ -145,7 +145,7 @@ public class MqttPublisher implements MqttCallback {
             return DeviceOnline.ONLINE;
         }
         
-        if (deviceConfig != null && lastActivity != null && (now - lastActivity < 300000)) { // 5 minute threshold for activity
+        if (deviceConfig != null && lastActivity != null && (now - lastActivity < 1500000)) { // 25 minute threshold for activity (devices upload every 20 min)
             return DeviceOnline.ONLINE;
         }
         
@@ -186,7 +186,7 @@ public class MqttPublisher implements MqttCallback {
             // Track message activity
             String activityKey = "device_activity:" + deviceName;
             BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
-            activityOps.set(System.currentTimeMillis(), 10, TimeUnit.MINUTES);
+            activityOps.set(System.currentTimeMillis(), 25, TimeUnit.MINUTES);
             
             // Keep same logging for compatibility
             MessageBody messageBody = new MessageBody();
