@@ -11,6 +11,8 @@ import com.demo.bean.ApiRentboxOrderReturnValid;
 import com.demo.common.AppConfig;
 import com.demo.common.HttpResult;
 import com.demo.message.ReceiveUpload;
+import com.demo.message.Pinboard;
+import com.demo.message.Powerbank;
 import com.demo.tools.ByteUtils;
 import com.demo.tools.HttpServletUtils;
 import com.demo.tools.JsonUtils;
@@ -68,24 +70,8 @@ public class ApiController {
             messageBody.setTopic("GET：" + url);
             messageBody.setTimestamp(System.currentTimeMillis() / 1000);
 
-            //POST数据处理
-            String hardwareVersion = null;
-            if(request.getContentLength() > 0){
-                byte[] bytes = IOUtils.readFully(request.getInputStream(), request.getContentLength());
-                String body = new String(bytes, StandardCharsets.UTF_8);
-                List<NameValuePair> params = URLEncodedUtils.parse(body, Charset.forName("UTF-8"));
-                for(NameValuePair param : params){
-                    //MCU硬件版本号
-                    if("hardware".equals(param.getName())){
-                        hardwareVersion = param.getValue();
-
-                        String key = "hardware:" + valid.getUuid();
-                        BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
-                        boundValueOps.set(hardwareVersion);
-                    }
-                }
-                messageBody.setTopic("POST：" + url + "  POSTDATA:" + body);
-            }
+            // Log the request parameters
+            messageBody.setTopic("POST：" + url + "  UUID:" + valid.getUuid());
 
 
 
@@ -145,9 +131,17 @@ public class ApiController {
     public HttpResult deviceCreate(HttpServletResponse response,  @RequestParam String deviceName) throws Exception {
         HttpResult httpResult = new HttpResult();
         try {
-            String key = "clientConect:" + deviceName;
-            BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
-            boundValueOps.expire(-2, TimeUnit.SECONDS);
+            // Clear API cache
+            String apiKey = "clientConect:" + deviceName;
+            BoundValueOperations apiBoundValueOps = redisTemplate.boundValueOps(apiKey);
+            apiBoundValueOps.expire(-2, TimeUnit.SECONDS);
+            
+            // Clear EMQX cache
+            String emqxKey = "device_credentials:" + deviceName;
+            BoundValueOperations emqxBoundValueOps = redisTemplate.boundValueOps(emqxKey);
+            emqxBoundValueOps.expire(-2, TimeUnit.SECONDS);
+            
+            System.out.println("Cleared both API and EMQX cache for device: " + deviceName);
 
         }
         catch (Exception e){
@@ -192,11 +186,23 @@ public class ApiController {
                                             @RequestParam String rentboxSN,
                                             @RequestParam String sign,
                                             @RequestParam(defaultValue = "0") String signal,
+                                            @RequestParam(required = false) Integer io,
+                                            @RequestParam(required = false) String ssid,
                                             HttpServletResponse response) throws Exception {
 
         HttpResult httpResult = new HttpResult();
         MessageBody messageBody = new MessageBody();
         try {
+            // Log request parameters
+            System.out.println("========================================");
+            System.out.println("REQUEST PARAMETERS:");
+            System.out.println("  rentboxSN: " + rentboxSN);
+            System.out.println("  signal: " + signal);
+            System.out.println("  sign: " + sign);
+            System.out.println("  io: " + (io != null ? io.toString() : "null"));
+            System.out.println("  ssid: " + (StringUtils.isNotEmpty(ssid) ? ssid : "null"));
+            System.out.println("  data length: " + bytes.length + " bytes");
+            
             //TEST LOG
             String data = ByteUtils.to16Hexs(bytes);
             String url = HttpServletUtils.getRealUrl(true);
@@ -206,13 +212,67 @@ public class ApiController {
             messageBody.setPayload(data);
             messageBody.setTimestamp(System.currentTimeMillis() / 1000);
 
+            System.out.println("  hex data: " + data);
 
             Map params = new HashMap<>();
             params.put("rentboxSN", rentboxSN);
             params.put("signal", signal);
+            if (io != null) {
+                params.put("io", io.toString());
+            }
+            if (StringUtils.isNotEmpty(ssid)) {
+                params.put("ssid", ssid);
+            }
             this.checkSign(params, sign);
 
+            // Parse the upload data
             ReceiveUpload receiveUpload = new ReceiveUpload(bytes);
+            
+            // ✅ FIX: Update device activity and heartbeat timestamps in Redis
+            // This makes the device show as ONLINE in the UI
+            long now = System.currentTimeMillis();
+            
+            // Update device activity (checked by getDeviceStatus)
+            String activityKey = "device_activity:" + rentboxSN;
+            BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
+            activityOps.set(now, 25, TimeUnit.MINUTES);  // Expire after 10 minutes
+            
+            // Update device heartbeat (checked by getDeviceStatus)
+            String heartbeatKey = "device_heartbeat:" + rentboxSN;
+            BoundValueOperations heartbeatOps = redisTemplate.boundValueOps(heartbeatKey);
+            heartbeatOps.set(now, 5, TimeUnit.MINUTES);  // Expire after 5 minutes
+            
+            // Log parsed data
+            System.out.println("PARSED DATA:");
+            System.out.println("  Pinboard count: " + receiveUpload.getPinboards().size());
+            System.out.println("  Powerbank count: " + receiveUpload.getPowerbanks().size());
+            
+            // Log each pinboard
+            for (int i = 0; i < receiveUpload.getPinboards().size(); i++) {
+                Pinboard pinboard = receiveUpload.getPinboards().get(i);
+                System.out.println("  Pinboard[" + i + "]: index=" + pinboard.getIndex() + ", io=" + pinboard.getIo());
+            }
+            
+            // Log each powerbank
+            for (int i = 0; i < receiveUpload.getPowerbanks().size(); i++) {
+                Powerbank pb = receiveUpload.getPowerbanks().get(i);
+                System.out.println("  Powerbank[" + i + "]: " +
+                    "index=" + pb.getIndex() + ", " +
+                    "pinboardIndex=" + pb.getPinboardIndex() + ", " +
+                    "SN=" + pb.getSnAsString() + ", " +
+                    "status=" + pb.getStatus() + ", " +
+                    "power=" + pb.getPower() + "%, " +
+                    "area=" + pb.getArea() + ", " +
+                    "temp=" + pb.getTemp() + "°C, " +
+                    "microSwitch=" + pb.getMicroSwitch() + ", " +
+                    "solenoidValve=" + pb.getSolenoidValveSwitch());
+            }
+            
+            System.out.println("RESPONSE:");
+            System.out.println("  code: " + httpResult.getCode());
+            System.out.println("  msg: " + httpResult.getMsg());
+            System.out.println("========================================");
+            
             messageBody.setPayload(JsonUtils.toJson(httpResult));
         }
         catch (Exception e){
@@ -220,7 +280,10 @@ public class ApiController {
             httpResult.setCode(response.getStatus());
             httpResult.setMsg(e.toString());
             messageBody.setPayload(e.toString());
-
+            
+            System.out.println("ERROR: " + e.toString());
+            e.printStackTrace();
+            System.out.println("========================================");
         }
         finally {
             mqttSubscriber.putMessageBody(messageBody);

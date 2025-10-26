@@ -33,13 +33,25 @@ RUN rm -rf /usr/local/tomcat/webapps/* && \
 
 # Set JVM options for production
 ENV CATALINA_OPTS="-server -Xmx512m -Xms256m -XX:+UseG1GC -XX:+UseStringDeduplication" \
-    JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true"
+    JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Djava.util.prefs.userRoot=/tmp/.java -Djava.util.prefs.systemRoot=/tmp/.java -Djava.util.logging.config.file=/usr/local/tomcat/conf/logging.properties"
 
 # Create non-root user for security
 RUN groupadd -r iotdemo && useradd -r -g iotdemo iotdemo
 
+# Fix Java preferences warnings by creating necessary directories
+RUN mkdir -p /home/iotdemo/.java/.userPrefs && \
+    mkdir -p /opt/java/openjdk/jre/.systemPrefs && \
+    mkdir -p /tmp/.java/.userPrefs && \
+    chown -R iotdemo:iotdemo /home/iotdemo/.java && \
+    chown -R iotdemo:iotdemo /tmp/.java && \
+    chmod -R 755 /home/iotdemo/.java && \
+    chmod -R 755 /tmp/.java
+
 # Copy WAR file from build stage
 COPY --from=build /build/target/ROOT.war /usr/local/tomcat/webapps/
+
+# Copy custom logging configuration to suppress Java preferences warnings
+COPY logging.properties /usr/local/tomcat/conf/logging.properties
 
 # Set ownership and permissions
 RUN chown -R iotdemo:iotdemo /usr/local/tomcat && \

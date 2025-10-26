@@ -1,5 +1,7 @@
 package com.demo.message;
 
+import com.demo.tools.ByteUtils;
+
 /**
  * 机芯数据
  */
@@ -55,5 +57,11 @@ public class Pinboard {
 
     public int getHardVersion() {
         return hardVersion;
+    }
+
+    public int getIo() {
+        //每个串口上只有一个转接板，每个转接板上都只有5个机芯
+        int ioHex = Integer.parseInt(ByteUtils.to16Hex(data[0]));
+        return ioHex / 50;
     }
 }

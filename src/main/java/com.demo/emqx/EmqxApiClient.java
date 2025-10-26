@@ -59,7 +59,7 @@ public class EmqxApiClient {
      * Register a new device with EMQX platform
      */
     public boolean registerDevice(String deviceId, String password) throws Exception {
-        String url = appConfig.getEmqxApiUrl() + "/api/v5/authentication/password_based:built_in_database/users";
+        String url = appConfig.getEmqxApiUrl() + "/authentication/password_based:built_in_database/users";
         
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("user_id", deviceId);
@@ -78,8 +78,9 @@ public class EmqxApiClient {
                 System.out.println("Device registered successfully: " + deviceId);
                 return true;
             } else if (statusCode == 409) {
-                System.out.println("Device already exists: " + deviceId);
-                return true; // Device already exists, consider it success
+                System.out.println("Device already exists, updating password: " + deviceId);
+                // Device exists, update password to ensure sync
+                return updateDevicePassword(deviceId, password);
             } else {
                 String responseBody = EntityUtils.toString(response.getEntity());
                 System.err.println("Failed to register device: " + statusCode + " - " + responseBody);
@@ -108,7 +109,7 @@ public class EmqxApiClient {
      * Update device password
      */
     public boolean updateDevicePassword(String deviceId, String newPassword) throws Exception {
-        String url = appConfig.getEmqxApiUrl() + "/api/v5/authentication/password_based:built_in_database/users/" + deviceId;
+        String url = appConfig.getEmqxApiUrl() + "/authentication/password_based:built_in_database/users/" + deviceId;
         
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("password", newPassword);
@@ -137,7 +138,7 @@ public class EmqxApiClient {
      * Delete device from EMQX platform
      */
     public boolean deleteDevice(String deviceId) throws Exception {
-        String url = appConfig.getEmqxApiUrl() + "/api/v5/authentication/password_based:built_in_database/users/" + deviceId;
+        String url = appConfig.getEmqxApiUrl() + "/authentication/password_based:built_in_database/users/" + deviceId;
         
         HttpDelete request = new HttpDelete(url);
         request.setHeader("Authorization", getAuthHeader());
@@ -161,7 +162,7 @@ public class EmqxApiClient {
      * Publish message to EMQX via REST API
      */
     public boolean publishMessage(String topic, String payload, int qos) throws Exception {
-        String url = appConfig.getEmqxApiUrl() + "/api/v5/publish";
+        String url = appConfig.getEmqxApiUrl() + "/publish";
         
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("topic", topic);
@@ -204,7 +205,7 @@ public class EmqxApiClient {
     public boolean testConnection() {
         try {
             // Use /clients endpoint instead of /status as it's accessible with our API key
-            String url = appConfig.getEmqxApiUrl() + "/api/v5/clients";
+            String url = appConfig.getEmqxApiUrl() + "/clients";
             HttpGet request = new HttpGet(url);
             request.setHeader("Authorization", getAuthHeader());
             

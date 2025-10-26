@@ -335,9 +335,15 @@
                             <a class="btn btn-primary" href="javascript:layui.layer.alert(mcuTest)">DEMO TEXT</a>
                         </div>
                     </div>
-
-                    <div class="layui-form-item">
-                        <div class="btn-group-inline">
+                    <div class="layui-form-mid">&nbsp;</div>
+                    <div class="layui-input-inline" >
+                        <a class="layui-btn" href="${_contextPath}/api/iot/app/version/test/mcu?appUuid=${data.uuid}&sign=${sign}" target="_blank">OPEN API</a>
+                        <a class="layui-btn" href="javascript:layui.layer.alert(mcuTest)">DEMO TEXT</a>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-layout-admin">
+                    <div class="layui-input-block">
+                        <div class="layui-footer" style="left: 0;">
                             <button class="layui-btn" lay-submit="" lay-filter="btn-submit">SAVE</button>
                             <a href="javascript:vue1.clear()" class="layui-btn layui-btn-primary">CLEAR</a>
                             <a href="javascript:$.closeWindow()" class="layui-btn layui-btn-primary">CLOSE</a>
@@ -349,13 +355,12 @@
         </main>
     </div>
 
-    <#include "/web/views/common/script.html" />
-
-    <script>
-        var androidRelease = "{\"code\":228,\"file_url1\":\"http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/ec89b84a69074eb817ef59bd1e84b7251.apk\",\"size\":7369702,\"name\":\"1.0\",\"md5\":\"ec89b84a69074eb817ef59bd1e84b725\"}";
-        var androidTest = "{\"code\":228,\"file_url1\":\"http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/ec89b84a69074eb817ef59bd1e84b7251.apk\",\"size\":7369702,\"name\":\"1.0\",\"md5\":\"ec89b84a69074eb817ef59bd1e84b725\"}";
-        var mcuRelease = "MoudleEC20_DUV1029_0x6E34.bin,53164,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/4db87503609bee2fe2a7b10b84da29291.bin";
-        var mcuTest = "MoudleEC20_DUV1029_0x6E34.bin,53164,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/4db87503609bee2fe2a7b10b84da29291.bin";
+<#include "/web/views/common/script.html" />
+<script>
+    var androidRelease = "{\"code\":228,\"file_url1\":\"http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/ec89b84a69074eb817ef59bd1e84b7251.apk\",\"size\":7369702,\"name\":\"1.0\",\"md5\":\"ec89b84a69074eb817ef59bd1e84b725\"}";
+    var androidTest = "{\"code\":228,\"file_url1\":\"http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/ec89b84a69074eb817ef59bd1e84b7251.apk\",\"size\":7369702,\"name\":\"1.0\",\"md5\":\"ec89b84a69074eb817ef59bd1e84b725\"}";
+    var mcuRelease = "MoudleEC20_DUV1029_0x6E34.bin,53164,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/4db87503609bee2fe2a7b10b84da29291.bin";
+    var mcuTest = "MoudleEC20_DUV1029_0x6E34.bin,53164,http://sharingweb.oss-cn-shenzhen.aliyuncs.com/apps/4db87503609bee2fe2a7b10b84da29291.bin";
 
         var vue1 = new Vue({
             el: '#vue1',

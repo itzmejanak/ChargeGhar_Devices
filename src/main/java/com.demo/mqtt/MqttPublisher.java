@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class MqttPublisher {
+public class MqttPublisher implements MqttCallback {
     
     @Autowired
     private AppConfig appConfig;
@@ -35,7 +35,9 @@ public class MqttPublisher {
         String protocol = appConfig.isMqttSsl() ? "ssl://" : "tcp://";
         String broker = protocol + appConfig.getMqttBroker() + ":" + appConfig.getMqttPort();
         
-        mqttClient = new MqttClient(broker, appConfig.getMqttClientId() + "-publisher");
+        // Add unique timestamp to prevent clientId conflicts on restart
+        String clientId = appConfig.getMqttClientId() + "-publisher-" + System.currentTimeMillis();
+        mqttClient = new MqttClient(broker, clientId);
 
         MqttConnectOptions options = new MqttConnectOptions();
         options.setUserName(appConfig.getMqttUsername());
@@ -43,9 +45,76 @@ public class MqttPublisher {
         options.setCleanSession(true);
         options.setKeepAliveInterval(60);
         options.setConnectionTimeout(30);
+        options.setAutomaticReconnect(true);  // Enable automatic reconnection
 
-        mqttClient.connect(options);
-        System.out.println("MQTT Publisher initialized successfully");
+        // Set callback to monitor connection status
+        mqttClient.setCallback(this);
+        
+        try {
+            mqttClient.connect(options);
+            
+            // ✅ VERIFY CONNECTION BEFORE PROCEEDING
+            if (!mqttClient.isConnected()) {
+                throw new MqttException(MqttException.REASON_CODE_CLIENT_NOT_CONNECTED);
+            }
+            
+            System.out.println("✅ MQTT Publisher connected to: " + broker);
+            System.out.println("   Client ID: " + clientId);
+        } catch (MqttException e) {
+            System.err.println("❌ MQTT Publisher connection failed!");
+            System.err.println("   Error: " + e.getMessage());
+            System.err.println("   Reason Code: " + e.getReasonCode());
+            System.err.println("   Broker: " + broker);
+            throw e;
+        }
+    }
+
+    /**
+     * Called when connection to EMQX broker is lost
+     */
+    @Override
+    public void connectionLost(Throwable cause) {
+        System.err.println("❌ MQTT Publisher connection lost: " + cause.getMessage());
+        System.out.println("⚡ Automatic reconnection enabled - will retry connection...");
+    }
+
+    /**
+     * Called when a message arrives (not typically used for publisher)
+     */
+    @Override
+    public void messageArrived(String topic, MqttMessage message) throws Exception {
+        // Not used for publisher - only subscribes receive messages
+    }
+
+    /**
+     * Called when message delivery is complete
+     */
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken token) {
+        try {
+            String[] topics = token.getTopics();
+            if (topics != null && topics.length > 0) {
+                System.out.println("✅ Message delivered successfully to topic: " + topics[0]);
+            }
+        } catch (Exception e) {
+            // Fallback if getTopics() fails
+            System.out.println("✅ Message delivered successfully");
+        }
+    }
+
+    /**
+     * Gracefully disconnect publisher
+     */
+    public void disconnect() {
+        try {
+            if (mqttClient != null && mqttClient.isConnected()) {
+                mqttClient.disconnect();
+                mqttClient.close();
+                System.out.println("✅ MQTT Publisher disconnected");
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Error disconnecting MQTT Publisher: " + e.getMessage());
+        }
     }
 
     // Enhanced device status check with multiple indicators
@@ -76,7 +145,7 @@ public class MqttPublisher {
             return DeviceOnline.ONLINE;
         }
         
-        if (deviceConfig != null && lastActivity != null && (now - lastActivity < 300000)) { // 5 minute threshold for activity
+        if (deviceConfig != null && lastActivity != null && (now - lastActivity < 1500000)) { // 25 minute threshold for activity (devices upload every 20 min)
             return DeviceOnline.ONLINE;
         }
         
@@ -94,18 +163,16 @@ public class MqttPublisher {
         String emqxTopic;
         String deviceName;
         
-        // Handle both legacy and new topic formats
-        if (topicFullName.startsWith("device/")) {
-            // Already in EMQX format: device/{deviceName}/command
-            emqxTopic = topicFullName;
-            String[] parts = topicFullName.split("/");
-            deviceName = parts.length > 1 ? parts[1] : "unknown";
+        // Use the topic exactly as provided by controllers
+        // Controllers construct the topic to match device subscriptions: "/powerbank/deviceName/user/get"
+        emqxTopic = topicFullName;
+        
+        // Extract deviceName from topic for logging and tracking
+        String[] parts = topicFullName.split("/");
+        if (parts.length >= 2) {
+            deviceName = parts[1]; // parts[1] is always the deviceName in "productKey/deviceName/..." format
         } else {
-            // Convert legacy format to EMQX format
-            // "/productKey/deviceName/get" → "device/deviceName/command"
-            String[] parts = topicFullName.split("/");
-            deviceName = parts.length > 2 ? parts[2] : (parts.length > 1 ? parts[1] : "unknown");
-            emqxTopic = "device/" + deviceName + "/command";
+            deviceName = "unknown";
         }
 
         MqttMessage message = new MqttMessage(messageContent.getBytes());
@@ -119,7 +186,7 @@ public class MqttPublisher {
             // Track message activity
             String activityKey = "device_activity:" + deviceName;
             BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
-            activityOps.set(System.currentTimeMillis(), 10, TimeUnit.MINUTES);
+            activityOps.set(System.currentTimeMillis(), 25, TimeUnit.MINUTES);
             
             // Keep same logging for compatibility
             MessageBody messageBody = new MessageBody();
@@ -138,11 +205,11 @@ public class MqttPublisher {
 
     // Overloaded method for byte array
     public void sendMsgAsync(String productKey, String topicFullName, byte[] bytes, int qos) throws Exception {
+        String emqxTopic = topicFullName; // Use topic exactly as provided
+        
+        // Extract deviceName for logging consistency  
         String[] parts = topicFullName.split("/");
-        String deviceName = parts.length > 2 ? parts[2] : parts[1];
-        String topicPrefix = productKey + "/" + deviceName;
-        String userPath = appConfig.isTopicType() ? "/user" : "";
-        String emqxTopic = topicPrefix + userPath + "/command";
+        String deviceName = parts.length >= 2 ? parts[1] : "unknown";
 
         MqttMessage message = new MqttMessage(bytes);
         message.setQos(qos);
@@ -150,6 +217,7 @@ public class MqttPublisher {
 
         if (mqttClient != null && mqttClient.isConnected()) {
             mqttClient.publish(emqxTopic, message);
+            System.out.println("Message sent to device " + deviceName + " on topic: " + emqxTopic);
         } else {
             throw new Exception("MQTT client not connected");
         }

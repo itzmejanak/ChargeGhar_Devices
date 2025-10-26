@@ -261,6 +261,89 @@ public class VersionController {
     }
 
     /**
+     * 返回最新版本(CHIP)
+     * @return 新版本地址
+     */
+    @RequestMapping("/api/iot/app/version/publish/chip")
+    public HttpResult iotAppVersionPublishChip(@RequestParam String appUuid,
+                                               @RequestParam(defaultValue = "") String deviceUuid,
+                                               @RequestParam String sign,
+                                               HttpServletResponse response){
+        HttpResult httpResult = new HttpResult();
+        MessageBody messageBody = new MessageBody();
+        try {
+            //TEST LOG
+            String url = HttpServletUtils.getRealUrl(true);
+            messageBody.setMessageId("publish/chip");
+            messageBody.setMessageType("http");
+            messageBody.setTopic("GET：" + url);
+            messageBody.setTimestamp(System.currentTimeMillis() / 1000);
+
+            Map map = new HashMap();
+            map.put("appUuid",appUuid);
+            map.put("deviceUuid",deviceUuid);
+            map.put("sign",sign);
+            this.checkSign(map, sign);
+
+            VersionInfo versionInfo = getVersionInfo();
+            httpResult.setData(versionInfo.getChipRelease());
+            messageBody.setPayload(JsonUtils.toJson(httpResult));
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+            messageBody.setPayload(e.toString());
+        }
+        finally {
+            mqttSubscriber.putMessageBody(messageBody);
+        }
+        return httpResult;
+    }
+
+    /**
+     * 返回最测试版本信息(CHIP)
+     * @return 新版本地址
+     */
+    @RequestMapping("/api/iot/app/version/test/chip")
+    public HttpResult iotAppVersionTestChip(@RequestParam String appUuid,
+                                            @RequestParam(defaultValue = "") String deviceUuid,
+                                            @RequestParam String sign,
+                                            HttpServletResponse response){
+        HttpResult httpResult = new HttpResult();
+        MessageBody messageBody = new MessageBody();
+
+        try {
+            //TEST LOG
+            String url = HttpServletUtils.getRealUrl(true);
+            messageBody.setMessageId("test/chip");
+            messageBody.setMessageType("http");
+            messageBody.setTopic("GET：" + url);
+            messageBody.setTimestamp(System.currentTimeMillis() / 1000);
+
+            Map map = new HashMap();
+            map.put("appUuid",appUuid);
+            map.put("deviceUuid",deviceUuid);
+            map.put("sign",sign);
+            this.checkSign(map, sign);
+
+            VersionInfo versionInfo = getVersionInfo();
+            httpResult.setData(versionInfo.getChipTest());
+            messageBody.setPayload(JsonUtils.toJson(httpResult));
+        }
+        catch (Exception e){
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            httpResult.setCode(response.getStatus());
+            httpResult.setMsg(e.toString());
+            messageBody.setPayload(e.toString());
+        }
+        finally {
+            mqttSubscriber.putMessageBody(messageBody);
+        }
+        return httpResult;
+    }
+
+    /**
      * Check the signature
      * @param valid
      * @param sign

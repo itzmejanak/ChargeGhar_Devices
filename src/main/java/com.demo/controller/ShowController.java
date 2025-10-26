@@ -48,11 +48,11 @@ public class ShowController {
 
         DeviceOnline deviceOnline = mqttPublisher.getDeviceStatus(appConfig.getProductKey(), deviceName);
         mv.addObject("deviceOnline", deviceOnline);
-        // Use consistent product key in topics with topicType support
-        String topicPrefix = appConfig.getProductKey() + "/" + deviceName;
-        String userPath = appConfig.isTopicType() ? "/user" : "";
-        mv.addObject("getTopic", topicPrefix + userPath + "/command");
-        mv.addObject("updateTopic", topicPrefix + userPath + "/upload");
+        // FIX: Display actual topics device uses (with leading slash)
+        // Device subscribes to: /powerbank/{deviceName}/user/get
+        // Device publishes to: /powerbank/{deviceName}/user/upload (or similar)
+        mv.addObject("getTopic", "/" + appConfig.getProductKey() + "/" + deviceName + "/user/get");
+        mv.addObject("updateTopic", "/" + appConfig.getProductKey() + "/" + deviceName + "/user/upload");
 
         //MQTT CONNECT API
         String contextPath = HttpServletUtils.getRealContextpath();
@@ -73,10 +73,9 @@ public class ShowController {
     public HttpResult send(@RequestParam String deviceName, @RequestParam String data, HttpServletResponse response) throws Exception {
         HttpResult httpResult = new HttpResult();
         try {
-            // Use consistent product key in topic format with topicType support
-            String topicPrefix = appConfig.getProductKey() + "/" + deviceName;
-            String userPath = appConfig.isTopicType() ? "/user" : "";
-            String topic = topicPrefix + userPath + "/command";
+            // FIX: Use the exact topic device is subscribed to
+            // Device subscribes to: /powerbank/{deviceName}/user/get (with leading slash)
+            String topic = "/" + appConfig.getProductKey() + "/" + deviceName + "/user/get";
             mqttPublisher.sendMsgAsync(appConfig.getProductKey(), topic, data, 1);
         }
         catch (Exception e){

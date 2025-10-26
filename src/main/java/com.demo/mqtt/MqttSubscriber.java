@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,11 +30,36 @@ public class MqttSubscriber implements MqttCallback {
     private boolean isRunning = false;
     private List<MessageBody> messageBodys = new ArrayList<>();
 
+    /**
+     * Auto-start MQTT Subscriber on application startup
+     * This ensures the subscriber is always ready to receive messages from devices
+     */
+    @PostConstruct
+    public void autoStart() {
+        try {
+            System.out.println("🚀 Auto-starting MQTT Subscriber...");
+            startQueue();
+            System.out.println("✅ MQTT Subscriber auto-started successfully");
+        } catch (Exception e) {
+            System.err.println("❌ Failed to auto-start MQTT Subscriber: " + e.getMessage());
+            e.printStackTrace();
+            this.exception = e;
+        }
+    }
+
     public void startQueue() throws Exception {
+        // Prevent multiple starts
+        if (isRunning && mqttClient != null && mqttClient.isConnected()) {
+            System.out.println("⚠️ MQTT Subscriber already running");
+            return;
+        }
+        
         String protocol = appConfig.isMqttSsl() ? "ssl://" : "tcp://";
         String broker = protocol + appConfig.getMqttBroker() + ":" + appConfig.getMqttPort();
         
-        mqttClient = new MqttClient(broker, appConfig.getMqttClientId());
+        // Add unique timestamp to prevent clientId conflicts on restart
+        String clientId = appConfig.getMqttClientId() + "-subscriber-" + System.currentTimeMillis();
+        mqttClient = new MqttClient(broker, clientId);
 
         MqttConnectOptions options = new MqttConnectOptions();
         options.setUserName(appConfig.getMqttUsername());
@@ -41,32 +67,62 @@ public class MqttSubscriber implements MqttCallback {
         options.setCleanSession(true);
         options.setKeepAliveInterval(60);
         options.setConnectionTimeout(30);
+        options.setAutomaticReconnect(true);  // Enable automatic reconnection
 
         mqttClient.setCallback(this);
-        mqttClient.connect(options);
+        
+        try {
+            mqttClient.connect(options);
+            
+            // ✅ VERIFY CONNECTION BEFORE PROCEEDING
+            if (!mqttClient.isConnected()) {
+                throw new MqttException(MqttException.REASON_CODE_CLIENT_NOT_CONNECTED);
+            }
+            
+            System.out.println("✅ MQTT Subscriber connected to: " + broker);
+            System.out.println("   Client ID: " + clientId);
 
-        // Subscribe to product key based topics for consistency with topicType support
-        String productKey = appConfig.getProductKey();
-        String userPath = appConfig.isTopicType() ? "/user" : "";
-        
-        String uploadTopic = productKey + "/+" + userPath + "/upload";
-        String statusTopic = productKey + "/+" + userPath + "/status";
-        
-        mqttClient.subscribe(uploadTopic, 1);
-        mqttClient.subscribe(statusTopic, 1);
-        
-        // Also subscribe to non-user path for backward compatibility when topicType=true
-        if (appConfig.isTopicType()) {
-            mqttClient.subscribe(productKey + "/+/upload", 1);
-            mqttClient.subscribe(productKey + "/+/status", 1);
+            // FIX: Subscribe to exact topics device publishes to (with leading slash)
+            // CRITICAL: Device publishes responses to /user/UPDATE (not /user/upload!)
+            // Device publishes heartbeat to: /powerbank/{deviceName}/user/heart
+            String productKey = appConfig.getProductKey();
+            
+            // Primary subscriptions (with leading slash to match device topics)
+            String updateTopic = "/" + productKey + "/+/user/update";  // Device uses UPDATE not upload
+            String uploadTopic = "/" + productKey + "/+/user/upload";  // Keep for HTTP uploads
+            String heartTopic = "/" + productKey + "/+/user/heart";
+            
+            mqttClient.subscribe(updateTopic, 1);
+            mqttClient.subscribe(uploadTopic, 1);
+            mqttClient.subscribe(heartTopic, 1);
+            System.out.println("   Subscribed to: " + updateTopic);
+            System.out.println("   Subscribed to: " + uploadTopic);
+            System.out.println("   Subscribed to: " + heartTopic);
+            
+            // Backward compatibility: Also listen to non-slash topics
+            mqttClient.subscribe(productKey + "/+/user/update", 1);
+            mqttClient.subscribe(productKey + "/+/user/upload", 1);
+            mqttClient.subscribe(productKey + "/+/user/heart", 1);
+            System.out.println("   Subscribed to: " + productKey + "/+/user/update");
+            System.out.println("   Subscribed to: " + productKey + "/+/user/upload");
+            System.out.println("   Subscribed to: " + productKey + "/+/user/heart");
+            
+            // Legacy device format for backward compatibility
+            mqttClient.subscribe("device/+/upload", 1);
+            mqttClient.subscribe("device/+/status", 1);
+            System.out.println("   Subscribed to: device/+/upload");
+            System.out.println("   Subscribed to: device/+/status");
+            
+            isRunning = true;
+            System.out.println("✅ MQTT Subscriber started successfully - Ready to receive messages");
+            
+        } catch (MqttException e) {
+            System.err.println("❌ MQTT Subscriber connection failed!");
+            System.err.println("   Error: " + e.getMessage());
+            System.err.println("   Reason Code: " + e.getReasonCode());
+            System.err.println("   Broker: " + broker);
+            throw e;
         }
-        
-        // Also subscribe to legacy device format for backward compatibility
-        mqttClient.subscribe("device/+/upload", 1);
-        mqttClient.subscribe("device/+/status", 1);
-        
-        isRunning = true;
-        System.out.println("MQTT Subscriber started successfully");
     }
 
     public void stopQueue() throws Exception {
@@ -74,35 +130,42 @@ public class MqttSubscriber implements MqttCallback {
         if (mqttClient != null && mqttClient.isConnected()) {
             mqttClient.disconnect();
             mqttClient.close();
+            System.out.println("✅ MQTT Subscriber stopped and disconnected");
         }
-        System.out.println("MQTT Subscriber stopped");
     }
 
     @Override
     public void connectionLost(Throwable cause) {
-        System.err.println("MQTT Connection lost: " + cause.getMessage());
+        System.err.println("❌ MQTT Subscriber connection lost: " + cause.getMessage());
         this.exception = new Exception(cause);
         isRunning = false;
         
-        // Attempt to reconnect
-        try {
-            Thread.sleep(5000); // Wait 5 seconds before reconnecting
-            startQueue();
-        } catch (Exception e) {
-            System.err.println("Failed to reconnect: " + e.getMessage());
-        }
+        // Note: Automatic reconnect is enabled in MqttConnectOptions
+        // Paho client will handle reconnection automatically
+        System.out.println("⚡ Automatic reconnection enabled - will retry connection...");
     }
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         try {
-            // Extract device name from topic (productKey/{deviceName}/upload or device/{deviceName}/upload)
+            // Extract device name from topic
+            // Topic format: /powerbank/{deviceName}/user/upload or /powerbank/{deviceName}/user/heart
             String[] topicParts = topic.split("/");
             String deviceName;
             String messageType;
             
-            if (topicParts.length >= 3) {
-                // Format: productKey/deviceName/messageType or device/deviceName/messageType
+            // Handle topics with leading slash: /powerbank/deviceName/user/upload
+            if (topicParts.length >= 4 && topicParts[0].isEmpty()) {
+                deviceName = topicParts[2]; // Skip empty first element from leading slash
+                messageType = topicParts[4]; // "upload", "update", "heart", "status"
+            } 
+            // Handle topics without leading slash: powerbank/deviceName/user/upload
+            else if (topicParts.length >= 4) {
+                deviceName = topicParts[1];
+                messageType = topicParts[3];
+            }
+            // Fallback for other formats
+            else if (topicParts.length >= 3) {
                 deviceName = topicParts[1];
                 messageType = topicParts[2];
             } else {
@@ -113,14 +176,19 @@ public class MqttSubscriber implements MqttCallback {
             // Track device activity for status checking
             String activityKey = "device_activity:" + deviceName;
             BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
-            activityOps.set(System.currentTimeMillis(), 10, TimeUnit.MINUTES);
+            activityOps.set(System.currentTimeMillis(), 25, TimeUnit.MINUTES);
             
-            // Handle heartbeat messages specially
-            if ("status".equals(messageType)) {
+            // Handle heartbeat messages specially (both "heart" and "status" indicate heartbeat)
+            if ("status".equals(messageType) || "heart".equals(messageType)) {
                 String heartbeatKey = "device_heartbeat:" + deviceName;
                 BoundValueOperations heartbeatOps = redisTemplate.boundValueOps(heartbeatKey);
                 heartbeatOps.set(System.currentTimeMillis(), 5, TimeUnit.MINUTES);
-                System.out.println("Heartbeat received from device: " + deviceName);
+                System.out.println("Heartbeat received from device: " + deviceName + " (type: " + messageType + ")");
+            }
+            
+            // Treat "update" as "upload" for message processing (device uses UPDATE for command responses)
+            if ("update".equals(messageType)) {
+                messageType = "upload";  // Normalize to upload for handlerMessage processing
             }
             
             // Convert MQTT message to MessageBody format
