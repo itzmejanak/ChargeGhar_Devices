@@ -133,6 +133,4 @@ public class ShowController {
         }
         return httpResult;
     }
-
-
 }

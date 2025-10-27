@@ -20,7 +20,7 @@
 
     <spring.version>4.3.30.RELEASE</spring.version>
     <servlet.version>3.1.0</servlet.version>
-    <jackson.version>2.9.10</jackson.version>
+    <jackson.version>2.15.2</jackson.version>
     <aspectj.version>1.9.2</aspectj.version>
     <freemarker.version>2.3.31</freemarker.version>
     <jedis.version>2.9.0</jedis.version>
@@ -133,16 +133,26 @@
       <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
       <version>1.2.5</version>
     </dependency>
+    
+    <!-- Apache HttpClient for HTTP requests -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.5</version>
+      <version>4.5.14</version>
     </dependency>
+    
     <!-- Base64 encoding for message payloads -->
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.15</version>
+    </dependency>
+    
+    <!-- Javax Annotation API for @PostConstruct -->
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>1.3.2</version>
     </dependency>
 
     <!-- SLF4J Logging Implementation -->
