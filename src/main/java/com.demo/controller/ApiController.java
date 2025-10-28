@@ -10,8 +10,10 @@ import com.demo.connector.ChargeGharConnector;
 import com.demo.emqx.EmqxDeviceService;
 import com.demo.helper.ControllerHelper;
 import com.demo.message.ReceiveUpload;
+import com.demo.model.Device;
 import com.demo.mqtt.MqttPublisher;
 import com.demo.mqtt.MqttSubscriber;
+import com.demo.service.DeviceService;
 import com.demo.tools.ByteUtils;
 import com.demo.tools.HttpServletUtils;
 import com.demo.tools.JsonUtils;
@@ -58,6 +60,9 @@ public class ApiController {
     @Autowired
     ControllerHelper controllerHelper;
 
+    @Autowired
+    private DeviceService deviceService;
+
     // ========================================================================================
     // API ENDPOINTS
     // ========================================================================================
@@ -76,22 +81,23 @@ public class ApiController {
 
             this.checkSign(valid, valid.getSign());
 
-            // EMQX DEVICE REGISTRATION AND CONFIG
+            // Check if device exists in database
+            Device device = deviceService.getDeviceByName(valid.getUuid());
+            if (device == null) {
+                throw new Exception("Device not registered. Please register the device first.");
+            }
+
+            // Get or create EMQX configuration
             String key = "clientConect:" + valid.getUuid();
             BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
             DeviceConfig config = (DeviceConfig) boundValueOps.get();
 
             if (config == null || StringUtils.isBlank(config.getTimeStamp())) {
-                try {
-                    // Register device with EMQX platform and get unique credentials
-                    config = emqxDeviceService.getOrCreateDeviceConfig(valid.getUuid());
-                    if (config != null) {
-                        boundValueOps.set(config, 1, TimeUnit.DAYS);
-                        System.out.println("Device registered successfully: " + valid.getUuid());
-                    }
-                } catch (Exception emqxError) {
-                    System.err.println("EMQX device registration failed for " + valid.getUuid() + ": " + emqxError.getMessage());
-                    throw new Exception("Device registration failed. Please try again later. Error: " + emqxError.getMessage());
+                config = emqxDeviceService.getOrCreateDeviceConfig(valid.getUuid());
+                if (config != null) {
+                    // Sync password: Use database password as source of truth
+                    config.setIotToken(device.getPassword());
+                    boundValueOps.set(config, 1, TimeUnit.DAYS);
                 }
             }
 
@@ -99,14 +105,14 @@ public class ApiController {
                 throw new Exception("Failed to get device configuration. EMQX service may be unavailable.");
             }
 
-            // Return EMQX format instead of Alibaba format
+            // Return device configuration with database password
             String[] arrStr = new String[]{
                 valid.getUuid(),
                 config.getProductKey(),
                 config.getHost(),
                 String.valueOf(config.getPort()),
                 config.getIotId(),
-                config.getIotToken(),
+                device.getPassword(),
                 config.getTimeStamp()
             };
 

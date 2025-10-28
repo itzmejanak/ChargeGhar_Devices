@@ -13,11 +13,19 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=iotdemo123_prod
+      # MySQL connection (matches db-config.properties placeholders)
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=chargeghar_iot
+      - DB_USERNAME=root
+      - DB_PASSWORD=zaan5060
       # Application settings
       - SPRING_PROFILES_ACTIVE=production
       # EMQX settings already in config.properties
     depends_on:
       redis:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     networks:
       - iotdemo-prod-network
@@ -67,6 +75,37 @@ services:
           memory: 512M
           cpus: '0.5'
 
+  # MySQL Database - Production
+  mysql:
+    image: mysql:8.0
+    container_name: iotdemo-mysql-prod
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=zaan5060
+      - MYSQL_DATABASE=chargeghar_iot
+      # Optionally create a non-root user (if desired):
+      # - MYSQL_USER=chargeghar
+      # - MYSQL_PASSWORD=chargeghar_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # Auto-initialize database with schema on first run
+      - ./src/main/resources/db-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    networks:
+      - iotdemo-prod-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+
 # Production networks
 networks:
   iotdemo-prod-network:
@@ -77,5 +116,7 @@ networks:
 volumes:
   redis-data:
     name: iotdemo-redis-prod-data
+  mysql-data:
+    name: iotdemo-mysql-prod-data
   app-logs:
     name: iotdemo-app-prod-logs

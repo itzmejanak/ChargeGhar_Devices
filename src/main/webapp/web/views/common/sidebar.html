@@ -1,0 +1,75 @@
+<!-- Reusable Sidebar Component -->
+
+<div class="app-sidebar">
+    <div class="sidebar-brand">🚀</div>
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-nav">
+        <a href="${_contextPath}/test" class="nav-item">
+            <span class="nav-icon">🔧</span>
+            <span class="nav-text">API Test</span>
+        </a>
+        <a href="${_contextPath}/health" class="nav-item">
+            <span class="nav-icon">💚</span>
+            <span class="nav-text">Health Check</span>
+        </a>
+        <a href="${_contextPath}/index.html" class="nav-item" id="dashboard-nav">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="${_contextPath}/listen.html" target="_blank" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span class="nav-text">MQTT Listener</span>
+        </a>
+        <a href="${_contextPath}/version.html" target="_blank" class="nav-item">
+            <span class="nav-icon">🔄</span>
+            <span class="nav-text">Version Manager</span>
+        </a>
+        <a href="${_contextPath}/show.html?deviceName=test" target="_blank" class="nav-item">
+            <span class="nav-icon">🎮</span>
+            <span class="nav-text">Device Control</span>
+        </a>
+        <a href="javascript:void(0)" onclick="showAdminPanel()" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span class="nav-text">Admin Management</span>
+        </a>
+        <a href="${_contextPath}/emqx/test/connection" target="_blank" class="nav-item">
+            <span class="nav-icon">🧪</span>
+            <span class="nav-text">Test EMQX API</span>
+        </a>
+    </div>
+</div>
+
+<script>
+    // Function to set active nav item
+    function setActiveNavItem(path) {
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        if (path.includes('index.html') || path === '/') {
+            document.getElementById('dashboard-nav').classList.add('active');
+        }
+    }
+
+    // Set active on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        setActiveNavItem(window.location.pathname);
+    });
+
+    // Global admin panel function
+    function showAdminPanel() {
+        if (typeof vue1 !== 'undefined' && vue1.showAdminPanel) {
+            vue1.showAdminPanel();
+        } else if (typeof layer !== 'undefined') {
+            layer.open({
+                type: 2,
+                title: 'Admin Management',
+                area: ['80%', '80%'],
+                content: '${_contextPath}/admin/panel'
+            });
+        } else {
+            window.open('${_contextPath}/admin/panel', '_blank');
+        }
+    }
+</script>

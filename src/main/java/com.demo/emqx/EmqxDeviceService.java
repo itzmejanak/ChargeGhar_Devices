@@ -2,6 +2,7 @@ package com.demo.emqx;
 
 import com.demo.common.DeviceConfig;
 import com.demo.common.AppConfig;
+import com.demo.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,6 +23,9 @@ public class EmqxDeviceService {
     
     @Autowired
     private RedisTemplate redisTemplate;
+    
+    @Autowired
+    private DeviceService deviceService;
     
     private static final String DEVICE_CREDENTIALS_PREFIX = "device_credentials:";
     private static final String CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -120,7 +124,7 @@ public class EmqxDeviceService {
     }
     
     /**
-     * Rotate device password
+     * Rotate device password - Updates both EMQX and database
      */
     public boolean rotateDevicePassword(String deviceName) throws Exception {
         String credentialsKey = DEVICE_CREDENTIALS_PREFIX + deviceName;
@@ -140,11 +144,17 @@ public class EmqxDeviceService {
             throw new Exception("Failed to update device password in EMQX: " + deviceName);
         }
         
+        // Update password in database
+        boolean dbUpdated = deviceService.updateDevicePassword(deviceName, newPassword);
+        if (!dbUpdated) {
+            System.err.println("⚠️ Failed to update password in database for device: " + deviceName);
+        }
+        
         // Update cached credentials
         credentials.setPassword(newPassword);
         credentialsOps.set(credentials, 7, TimeUnit.DAYS);
         
-        System.out.println("Device password rotated: " + deviceName);
+        System.out.println("✅ Device password rotated: " + deviceName);
         return true;
     }
     

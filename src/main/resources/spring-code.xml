@@ -5,7 +5,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-    <!--导入项目配置文件-->
+    
+    <!-- ======================================== -->
+    <!-- Application Properties Configuration     -->
+    <!-- ======================================== -->
     <bean id="appconfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="fileEncoding" value="UTF-8" />
         <property name="locations">
@@ -14,12 +17,110 @@
             </array>
         </property>
     </bean>
-    <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
-        <property name="properties" ref="appconfig"/>
+
+    <!-- ======================================== -->
+    <!-- Database Properties Configuration        -->
+    <!-- ======================================== -->
+    <bean id="dbconfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="fileEncoding" value="UTF-8" />
+        <property name="locations">
+            <array>
+                <value>classpath:db-config.properties</value>
+            </array>
+        </property>
+    </bean>
+    
+    <!-- ======================================== -->
+    <!-- Property Placeholder Configurer          -->
+    <!-- Loads both config.properties and db-config.properties -->
+    <!-- Environment variables override properties file -->
+    <!-- ======================================== -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:config.properties</value>
+                <value>classpath:db-config.properties</value>
+            </list>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="systemPropertiesMode" value="2"/>
+        <!-- SYSTEM_PROPERTIES_MODE_OVERRIDE = 2: environment variables override properties file -->
     </bean>
 
-    <!--扫描项目-->
+    <!-- ======================================== -->
+    <!-- MySQL DataSource Configuration           -->
+    <!-- ======================================== -->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${db.driver}" />
+        <property name="url" value="${db.url}" />
+        <property name="username" value="${db.username}" />
+        <property name="password" value="${db.password}" />
+        <property name="initialSize" value="${db.pool.initialSize}" />
+        <property name="maxTotal" value="${db.pool.maxTotal}" />
+        <property name="maxIdle" value="${db.pool.maxIdle}" />
+        <property name="minIdle" value="${db.pool.minIdle}" />
+        <property name="maxWaitMillis" value="${db.pool.maxWaitMillis}" />
+        <property name="testOnBorrow" value="true" />
+        <property name="testWhileIdle" value="true" />
+        <property name="validationQuery" value="SELECT 1" />
+    </bean>
+
+    <!-- ======================================== -->
+    <!-- JDBC Template                            -->
+    <!-- ======================================== -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- ======================================== -->
+    <!-- DAO Layer Beans                          -->
+    <!-- ======================================== -->
+    <bean id="adminUserDao" class="com.demo.dao.AdminUserDao">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
+    <bean id="deviceDao" class="com.demo.dao.DeviceDao">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+
+    <!-- ======================================== -->
+    <!-- Security Beans                           -->
+    <!-- ======================================== -->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+        <constructor-arg value="${password.encoding.strength}" />
+    </bean>
+
+    <bean id="jwtUtil" class="com.demo.security.JwtUtil">
+        <property name="secret" value="${jwt.secret}" />
+        <property name="expiration" value="${jwt.expiration}" />
+    </bean>
+
+    <!-- ======================================== -->
+    <!-- Service Layer Beans                      -->
+    <!-- ======================================== -->
+    <bean id="authService" class="com.demo.service.AuthService">
+        <property name="adminUserDao" ref="adminUserDao" />
+        <property name="passwordEncoder" ref="passwordEncoder" />
+        <property name="jwtUtil" ref="jwtUtil" />
+    </bean>
+
+    <bean id="adminUserService" class="com.demo.service.AdminUserService">
+        <property name="adminUserDao" ref="adminUserDao" />
+        <property name="passwordEncoder" ref="passwordEncoder" />
+    </bean>
+
+    <bean id="deviceService" class="com.demo.service.DeviceService">
+        <property name="deviceDao" ref="deviceDao" />
+    </bean>
+
+    <!-- ======================================== -->
+    <!-- Component Scan                           -->
+    <!-- ======================================== -->
     <context:component-scan base-package="com.demo" ></context:component-scan>
 
+    <!-- ======================================== -->
+    <!-- Import Redis Configuration               -->
+    <!-- ======================================== -->
     <import resource="classpath*:spring-redis.xml" />
 </beans>

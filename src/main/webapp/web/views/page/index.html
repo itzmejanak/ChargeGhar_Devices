@@ -1,156 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>IOT DEMO</title>
-  <#include "/web/views/common/header.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IOT Device Management</title>
+    <#include "/web/views/common/header.html" />
+    <link rel="stylesheet" type="text/css" href="${_contextPath}/web/resource/css/index-dashboard.css">
 </head>
-<style>
-    .layui-form-label{
-        width: 120px !important;
-    }
-</style>
+
 <body>
-<div class="layui-fluid" id="vue1">
-    <div class="layui-card">
-        <div class="layui-card-body" style="padding: 50px 15px">
-            <form class="layui-form">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">EMQX Broker</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${mqttBroker}" lay-verify="required" placeholder="EMQX Cloud Broker" class="layui-input">
-                    </div>
-                    <div class="layui-form-mid">
-                        <span style="color: #5FB878;">✅ EMQX Cloud</span>
-                    </div>
+    <div id="vue1" style="display: flex; width: 100%; height: 100vh;">
+        <#include "/web/views/common/sidebar.html" />
+
+        <div class="main-content">
+            <div class="credentials-bar">
+                <div class="credential-item">
+                    <span class="credential-label">Broker:</span>
+                    <span class="credential-value">${mqttBroker}</span>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">EMQX Username</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${mqttUsername}" placeholder="EMQX Username" class="layui-input">
-                    </div>
-                    <div class="layui-form-mid">
-                        <span style="color: #666;">Server Credentials</span>
-                    </div>
+                <div class="credential-item">
+                    <span class="credential-label">Username:</span>
+                    <span class="credential-value">${mqttUsername}</span>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">ProductKey</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${data.productKey}" placeholder="Product Key" class="layui-input">
-                    </div>
+                <div class="credential-item">
+                    <span class="credential-label">Product Key:</span>
+                    <span class="credential-value">${data.productKey}</span>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">MQTT Connection</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${mqtt}" placeholder="MQTT Connection String" class="layui-input">
-                    </div>
-                    <div class="layui-form-mid"></div>
-                    <div class="layui-input-block">
-                        <a href="${_contextPath}/listen.html" target="_blank" class="layui-btn ">MQTT LISTENER</a>
-                        <a href="javascript:vue1.createDevice()" class="layui-btn ">CREATE DEVICE BY DEVICENAME</a>
-                        <a href="${_contextPath}/version.html" target="_blank" class="layui-btn ">ONLINE UPDATE</a>
-                        <a href="${_contextPath}/emqx/test/connection" target="_blank" class="layui-btn layui-btn-normal">TEST EMQX API</a>
-                    </div>
+                <div class="credential-item">
+                    <span class="credential-label">Connection:</span>
+                    <span class="credential-value">${mqtt}</span>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">Document</label>
-                    <div>
-                        <a class="layui-btn layui-btn-normal" href="https://www.yuque.com/books/share/d7c5925d-2986-467f-afa9-3f951ceda881" target="_blank">About this demo</a>
-                        <a class="layui-btn layui-btn-normal" href="https://www.yuque.com/books/share/e0c78792-9c1c-4a6c-896e-7e2e25722fc6" target="_blank">Chargeing Box API</a>
-                        <a class="layui-btn layui-btn-normal" href="https://www.yuque.com/books/share/726cdd6c-a6cc-40ea-8e03-15d5beaf24f7" target="_blank">共享充电柜API</a>
-                        <a class="layui-btn layui-btn-normal" href="https://www.yuque.com/books/share/e153414b-d778-4239-9971-151d7cd949e5" target="_blank">桌面式广告充电API</a>
-                    </div>
+            </div>
+
+            <div class="content-area">
+                <div class="action-buttons">
+                    <button class="action-btn create" onclick="vue1.createDevice()">
+                        <span>➕</span> CREATE DEVICE
+                    </button>
+                    <a href="${_contextPath}/listen.html" target="_blank" class="action-btn">
+                        <span>📡</span> MQTT LISTENER
+                    </a>
+                    <button class="action-btn admin" onclick="vue1.showAdminPanel()">
+                        <span>👥</span> ADMIN MANAGEMENT
+                    </button>
+                    <a href="${_contextPath}/version.html" target="_blank" class="action-btn">
+                        <span>🔄</span> VERSION UPDATE
+                    </a>
+                    <a href="${_contextPath}/emqx/test/connection" target="_blank" class="action-btn">
+                        <span>🧪</span> TEST API
+                    </a>
                 </div>
 
-                <hr>
-
-                <!--表格显示-->
-                <table id="table1" lay-filter="table1"></table>
-
-            </form>
+                <div class="device-table-container">
+                    <div class="table-header">
+                        <div class="table-title">
+                            <span>📱</span> Connected Devices
+                        </div>
+                    </div>
+                    <table id="table1" lay-filter="table1"></table>
+                </div>
+            </div>
         </div>
+
+        <button class="logout-btn" onclick="vue1.logout()">
+            <span>🚪</span> LOGOUT
+        </button>
     </div>
-</div>
 
-<#include "/web/views/common/script.html" />
-<script type="text/html" id="tools">
-    <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="{{d.connectUrl}}" target="_blank">CONNECT API</a>
-    <a class="layui-btn layui-btn-primary layui-btn-xs layui-bg-green" href="${_contextPath}/show.html?deviceName={{d.deviceName}}" target="_blank">CONTROL</a>
-</script>
+    <#include "/web/views/common/script.html" />
 
-<script>
-    var list = [];
-    <#list deviceInfos as item>
-        list.push({'deviceName': '${item.deviceName}', 'status' : '${item.deviceOnline}', 'connectUrl' : '${item.connectUrl}', 'hardware' : '${item.hardware}'});
-    </#list>
+    <script type="text/html" id="tools">
+        <div style="display: flex; gap: 6px; justify-content: center; padding: 4px;">
+            <a class="layui-btn layui-btn-xs layui-bg-green" href="{{d.connectUrl}}" target="_blank" title="Connect API" style="padding: 5px 10px !important;">
+                CONNECT
+            </a>
+            <a class="layui-btn layui-btn-xs" href="${_contextPath}/show.html?deviceName={{d.deviceName}}" target="_blank" title="Device Control" style="background: #4299e1 !important; border-color: #4299e1 !important; padding: 5px 10px !important;">
+                CONTROL
+            </a>
+            <a class="layui-btn layui-btn-xs layui-bg-red" lay-event="delete" title="Delete Device" style="padding: 5px 10px !important;">
+                DELETE
+            </a>
+        </div>
+    </script>
 
-    var vue1 = new Vue({
-        el: '#vue1',
-        data: {
-            data: list
-        },
-        methods: {
-            //初始化数据
-            init: function () {
-                layui.table.render({
-                    elem: '#table1',
-                    height: 'full-250',
-                    data : vue1.data,
-                    limit:100,
-                    cols: [[
-                        {type:'numbers', width:50},
-                        {field: 'deviceName', title: 'DeviceName', sort: true},
-                        {field: 'hardware', title: 'hardware', sort: true, templet: function (d) {
-                                return d.hardware || 'UNKNOW';
-                        }},
-                        {field: 'status', title: 'Status', sort: true, templet: function (d) {
-                            var temp = '<span class="layui-badge {0}">{1}</span>';
-                            var style = d.status == 'ONLINE' ? 'layui-bg-green' : 'layui-bg-gray';
-                            temp = temp.format(style, d.status);
-                            return temp;
-                        }},
-                        {title: 'Menu', align : 'center', toolbar : '#tools', fixed: 'right'}
-                    ]],
-                    //skin: 'line'
-                });
+    <script>
+        var list = [];
+        <#list deviceInfos as item>
+            list.push({'deviceName': '${item.deviceName}', 'status' : '${item.deviceOnline}', 'connectUrl' : '${item.connectUrl}', 'hardware' : '${item.hardware}'});
+        </#list>
+
+        var vue1 = new Vue({
+            el: '#vue1',
+            data: {
+                data: list
             },
-            createDevice: function () {
-                layer.prompt({title: 'Create deivce by UUID/IMEI/SN', formType: 0, btn: ['CREATE', 'CANCEL']}, function (value, index) {
-                    if(value.length < 5){
-                        layer.msg('DeviceName should be 5—20 length', {anim: 6});
-                        layer.close(index);
-                        return;
-                    }
-                    $.ajax({
-                        type: 'POST',
-                        url: '${_contextPath}/device/create',
-                        data: {
-                            deviceName: value
-                        },
-                        cache: false,
-                        errorMsg: true,
-                        dataType: 'json',
-                        loading:true,
-                        success: function (result) {
-                            window.location.reload();
+            methods: {
+                init: function () {
+                    layui.table.render({
+                        elem: '#table1',
+                        height: 'full-280',
+                        data: vue1.data,
+                        limit: 100,
+                        page: false,
+                        cols: [[
+                            { type: 'numbers', width: 80, title: '#' },
+                            { field: 'deviceName', title: 'Device Name', sort: true, minWidth: 200 },
+                            {
+                                field: 'hardware', title: 'Hardware', sort: true, width: 150, templet: function (d) {
+                                    return '<span style="color: #718096;">' + (d.hardware || 'UNKNOWN') + '</span>';
+                                }
+                            },
+                            {
+                                field: 'status', title: 'Status', sort: true, width: 120, templet: function (d) {
+                                    var statusClass = d.status == 'ONLINE' ? 'status-online' : 'status-offline';
+                                    return '<span class="status-badge ' + statusClass + '">' + d.status + '</span>';
+                                }
+                            },
+                            { title: 'Actions', align: 'center', toolbar: '#tools', fixed: 'right', width: 300 }
+                        ]]
+                    });
+
+                    layui.table.on('tool(table1)', function (obj) {
+                        var data = obj.data;
+                        if (obj.event === 'delete') {
+                            vue1.deleteDevice(data.deviceName);
                         }
                     });
-                    layer.close(index);
-                });
-
+                },
+                createDevice: function () {
+                    layer.open({
+                        type: 1,
+                        title: 'Create New Device',
+                        area: ['400px', '300px'],
+                        content: '<div style="padding: 20px;">' +
+                            '<form class="layui-form" lay-filter="deviceForm">' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">Device Name</label>' +
+                            '<div class="layui-input-block">' +
+                            '<input type="text" name="deviceName" required lay-verify="required" placeholder="Enter device name" class="layui-input">' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">IMEI (Optional)</label>' +
+                            '<div class="layui-input-block">' +
+                            '<input type="text" name="imei" placeholder="Enter IMEI" class="layui-input">' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<div class="layui-input-block">' +
+                            '<button class="layui-btn" lay-submit lay-filter="createDevice">Create Device</button>' +
+                            '<button type="reset" class="layui-btn layui-btn-primary">Reset</button>' +
+                            '</div>' +
+                            '</div>' +
+                            '</form>' +
+                            '</div>',
+                        success: function (layero, index) {
+                            layui.form.render();
+                            layui.form.on('submit(createDevice)', function (data) {
+                                var formData = data.field;
+                                if (formData.deviceName.length < 3) {
+                                    layer.msg('Device name should be at least 3 characters', { anim: 6 });
+                                    return false;
+                                }
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '${_contextPath}/device/create',
+                                    data: formData,
+                                    cache: false,
+                                    dataType: 'json',
+                                    success: function (result) {
+                                        if (result.code === 200) {
+                                            layer.msg('Device created successfully', { icon: 1 });
+                                            layer.close(index);
+                                            setTimeout(function () {
+                                                window.location.reload();
+                                            }, 1000);
+                                        } else {
+                                            layer.msg(result.msg || 'Failed to create device', { icon: 2 });
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg('Network error', { icon: 2 });
+                                    }
+                                });
+                                return false;
+                            });
+                        }
+                    });
+                },
+                deleteDevice: function (deviceName) {
+                    layer.confirm('Are you sure you want to delete device: ' + deviceName + '?', {
+                        btn: ['Delete', 'Cancel'],
+                        icon: 3,
+                        title: 'Confirm Delete'
+                    }, function (index) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '${_contextPath}/device/delete',
+                            data: {
+                                deviceName: deviceName
+                            },
+                            cache: false,
+                            dataType: 'json',
+                            success: function (result) {
+                                if (result.code === 200) {
+                                    layer.msg('Device deleted successfully', { icon: 1 });
+                                    layer.close(index);
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 1000);
+                                } else {
+                                    layer.msg(result.msg || 'Failed to delete device', { icon: 2 });
+                                }
+                            },
+                            error: function () {
+                                layer.msg('Network error', { icon: 2 });
+                            }
+                        });
+                    });
+                },
+                showAdminPanel: function () {
+                    layer.open({
+                        type: 2,
+                        title: 'Admin Management',
+                        area: ['80%', '80%'],
+                        content: '${_contextPath}/admin/panel'
+                    });
+                },
+                logout: function () {
+                    layer.confirm('Are you sure you want to logout?', {
+                        btn: ['Logout', 'Cancel'],
+                        icon: 3,
+                        title: 'Confirm Logout'
+                    }, function (index) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '${_contextPath}/api/auth/logout',
+                            success: function () {
+                                localStorage.removeItem('jwt_token');
+                                localStorage.removeItem('user');
+                                layer.msg('Logged out successfully', { icon: 1 });
+                                setTimeout(function () {
+                                    window.location.href = '${_contextPath}/login';
+                                }, 1000);
+                            }
+                        });
+                        layer.close(index);
+                    });
+                }
             }
-        }
-    });
+        });
 
-</script>
-
-
-<script>
-    layui.config({base: '${_contextPath}/web/layuiadmin/'});
-    layui.extend({index: 'lib/index'});
-    layui.use(['index','form','table'], function () {
-        vue1.init();
-    });
-</script>
+        layui.config({ base: '${_contextPath}/web/layuiadmin/' });
+        layui.extend({ index: 'lib/index' });
+        layui.use(['index', 'form', 'table'], function () {
+            vue1.init();
+        });
+    </script>
 </body>
+
 </html>

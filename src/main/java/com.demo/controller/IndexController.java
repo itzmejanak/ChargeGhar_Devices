@@ -8,6 +8,9 @@ import com.demo.common.AppConfig;
 import com.demo.common.HttpResult;
 import com.demo.emqx.EmqxDeviceService;
 import com.demo.common.DeviceConfig;
+import com.demo.model.Device;
+import com.demo.service.AdminUserService;
+import com.demo.service.DeviceService;
 import com.demo.tools.HttpServletUtils;
 import com.demo.tools.SignUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
@@ -42,6 +46,12 @@ public class IndexController {
     @Autowired
     EmqxDeviceService emqxDeviceService;
 
+    @Autowired
+    private DeviceService deviceService;
+
+    @Autowired
+    private AdminUserService adminUserService;
+
 
     @RequestMapping("/index.html")
     public ModelAndView indexHtml() throws Exception {
@@ -50,7 +60,9 @@ public class IndexController {
 
         List<DeviceInfo> deviceInfos = new ArrayList<>();
 
-        String[] machines = appConfig.getMachines();
+        // Get devices from database instead of properties file
+        List<String> machinesList = deviceService.getDeviceNames();
+        String[] machines = machinesList.toArray(new String[0]);
 
         //online status
         Map<String, DeviceOnline> onlineMap = new HashMap<>();
@@ -108,74 +120,181 @@ public class IndexController {
     }
 
     @RequestMapping("/device/create")
-    public HttpResult deviceCreate(HttpServletResponse response,  @RequestParam String deviceName) throws Exception {
-        HttpResult httpResult = new HttpResult();
+    public HttpResult deviceCreate(HttpServletRequest request, HttpServletResponse response, 
+                                   @RequestParam String deviceName, 
+                                   @RequestParam(required = false) String imei) throws Exception {
+        
+        if (StringUtils.isBlank(deviceName)) {
+            return HttpResult.error("Device name cannot be empty");
+        }
+
         try {
-            // Step 1: Register device with EMQX platform first
-            DeviceConfig deviceConfig = null;
-            try {
-                deviceConfig = emqxDeviceService.getOrCreateDeviceConfig(deviceName);
-                System.out.println("✅ Device registered with EMQX: " + deviceName);
-                System.out.println("   Username: " + deviceConfig.getIotId());
-                System.out.println("   Host: " + deviceConfig.getHost() + ":" + deviceConfig.getPort());
-            } catch (Exception emqxError) {
-                System.err.println("❌ EMQX device registration failed for " + deviceName + ": " + emqxError.getMessage());
-                throw new Exception("Failed to register device with EMQX platform: " + emqxError.getMessage());
-            }
+            // Get admin user ID from request (if authenticated)
+            Integer adminId = (Integer) request.getAttribute("userId");
+            
+            System.out.println("========================================");
+            System.out.println("DEVICE REGISTRATION REQUEST");
+            System.out.println("Device Name: " + deviceName);
+            System.out.println("IMEI: " + imei);
+            System.out.println("Requested by Admin ID: " + adminId);
+            System.out.println("========================================");
 
-            // Step 2: Add device to machines.properties file (only if EMQX registration succeeded)
-            String path = HttpServletUtils.getHttpServletRequest().getServletContext().
-                    getRealPath("/WEB-INF/classes/machines.properties");
+            // Step 1: Register device with EMQX platform and get generated password
+            DeviceConfig deviceConfig = emqxDeviceService.getOrCreateDeviceConfig(deviceName);
+            String generatedPassword = deviceConfig.getIotToken();
+            
+            System.out.println("✅ Device registered with EMQX: " + deviceName);
+            System.out.println("   Username: " + deviceConfig.getIotId());
+            System.out.println("   Host: " + deviceConfig.getHost() + ":" + deviceConfig.getPort());
 
-            // Check if device already exists in file
-            boolean deviceExists = false;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (line.trim().equals(deviceName)) {
-                        deviceExists = true;
-                        break;
-                    }
+            // Step 2: Check if device exists in database
+            Device existingDevice = deviceService.getDeviceByName(deviceName);
+            
+            if (existingDevice != null) {
+                // Device exists in database, update password to match EMQX
+                boolean passwordUpdated = deviceService.updateDevicePassword(deviceName, generatedPassword);
+                if (passwordUpdated) {
+                    System.out.println("✅ Device password updated in database: " + deviceName);
+                } else {
+                    System.out.println("⚠️ Failed to update device password in database: " + deviceName);
                 }
-            }
-
-            if (!deviceExists) {
-                FileOutputStream fos = null;
-                OutputStreamWriter osw = null;
-                BufferedWriter bw = null;
-                try {
-                    fos = new FileOutputStream(new File(path), true);
-                    osw = new OutputStreamWriter(fos, "UTF-8");
-                    bw = new BufferedWriter(osw);
-                    bw.write(System.lineSeparator() + deviceName);
-                    System.out.println("✅ Device added to machines.properties: " + deviceName);
-                } finally {
-                    if (bw != null) bw.close();
-                    if (osw != null) osw.close();
-                    if (fos != null) fos.close();
+                
+                // Update IMEI if provided and different
+                if (imei != null && !imei.equals(existingDevice.getImei())) {
+                    existingDevice.setImei(imei);
+                    deviceService.updateDevice(existingDevice);
+                    System.out.println("✅ Device IMEI updated: " + deviceName);
                 }
+                
             } else {
-                System.out.println("ℹ️ Device already exists in machines.properties: " + deviceName);
+                // Device doesn't exist in database, create new record
+                Device device = new Device();
+                device.setDeviceName(deviceName);
+                device.setImei(imei);
+                device.setPassword(generatedPassword);
+                device.setCreatedBy(adminId);
+
+                Device created = deviceService.createDevice(device, adminId);
+                if (created == null) {
+                    return HttpResult.error("Failed to save device to database");
+                }
+
+                System.out.println("✅ Device saved to database: " + deviceName);
             }
+            
+            System.out.println("========================================");
 
             // Step 3: Return success with device information
             Map<String, Object> result = new HashMap<>();
             result.put("deviceName", deviceName);
+            result.put("imei", imei);
+            result.put("password", generatedPassword);
             result.put("emqxRegistered", true);
             result.put("username", deviceConfig.getIotId());
             result.put("host", deviceConfig.getHost());
             result.put("port", deviceConfig.getPort());
             result.put("message", "Device created successfully and registered with EMQX platform");
             
-            httpResult.setData(result);
+            return HttpResult.ok(result);
 
         } catch (Exception e) {
-            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-            httpResult.setCode(response.getStatus());
-            httpResult.setMsg("Device creation failed: " + e.getMessage());
+            System.out.println("❌ Error during device creation: " + e.getMessage());
             e.printStackTrace();
+            return HttpResult.error("Device creation failed: " + e.getMessage());
         }
-        return httpResult;
+    }
+
+    @RequestMapping("/device/delete")
+    public HttpResult deviceDelete(HttpServletRequest request, @RequestParam String deviceName) throws Exception {
+        if (StringUtils.isBlank(deviceName)) {
+            return HttpResult.error("Device name cannot be empty");
+        }
+
+        try {
+            // Get admin user ID from request (if authenticated)
+            Integer adminId = (Integer) request.getAttribute("userId");
+            String role = (String) request.getAttribute("role");
+            
+            System.out.println("========================================");
+            System.out.println("DEVICE DELETION REQUEST");
+            System.out.println("Device Name: " + deviceName);
+            System.out.println("Requested by Admin ID: " + adminId + " (Role: " + role + ")");
+            System.out.println("========================================");
+
+            // Step 1: Check if device exists in database
+            Device device = deviceService.getDeviceByName(deviceName);
+            if (device == null) {
+                return HttpResult.error("Device not found: " + deviceName);
+            }
+
+            // Step 2: Remove device from EMQX platform
+            try {
+                boolean emqxRemoved = emqxDeviceService.removeDevice(deviceName);
+                if (emqxRemoved) {
+                    System.out.println("✅ Device removed from EMQX: " + deviceName);
+                } else {
+                    System.out.println("⚠️ Failed to remove device from EMQX: " + deviceName);
+                }
+            } catch (Exception emqxError) {
+                System.err.println("⚠️ EMQX removal failed (continuing anyway): " + emqxError.getMessage());
+            }
+
+            // Step 3: Delete device from database
+            boolean deleted = deviceService.deleteDevice(device.getId());
+            if (!deleted) {
+                return HttpResult.error("Failed to delete device from database");
+            }
+
+            System.out.println("✅ Device deleted successfully: " + deviceName);
+            System.out.println("========================================");
+
+            return HttpResult.ok("Device deleted successfully");
+
+        } catch (Exception e) {
+            System.out.println("❌ Error during device deletion: " + e.getMessage());
+            e.printStackTrace();
+            return HttpResult.error("Device deletion failed: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping("/admin/panel")
+    public ModelAndView adminPanel() throws Exception {
+        ModelAndView mv = new ModelAndView("/web/views/page/admin");
+        return mv;
+    }
+
+    @RequestMapping("/api/admin/statistics")
+    public HttpResult getAdminStatistics(HttpServletRequest request) {
+        try {
+            // Get admin user ID from request (if authenticated)
+            Integer adminId = (Integer) request.getAttribute("userId");
+            String role = (String) request.getAttribute("role");
+            
+            if (adminId == null) {
+                return HttpResult.error("Authentication required");
+            }
+
+            // Get statistics from services
+            Map<String, Object> deviceStats = deviceService.getDeviceStatistics();
+            Map<String, Object> adminStats = adminUserService.getAdminStatistics();
+            
+            // Combine statistics
+            Map<String, Object> allStats = new HashMap<>();
+            allStats.putAll(deviceStats);
+            allStats.putAll(adminStats);
+            
+            // Add system info
+            allStats.put("systemStatus", "Online");
+            allStats.put("currentUser", adminId);
+            allStats.put("currentUserRole", role);
+            
+            return HttpResult.ok(allStats);
+
+        } catch (Exception e) {
+            System.out.println("❌ Error getting statistics: " + e.getMessage());
+            e.printStackTrace();
+            return HttpResult.error("Failed to get statistics: " + e.getMessage());
+        }
     }
 
     @RequestMapping("/")

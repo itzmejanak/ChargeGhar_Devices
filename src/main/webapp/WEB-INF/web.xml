@@ -52,7 +52,15 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-
+  <!-- JWT Authentication Filter -->
+  <filter>
+    <filter-name>jwtAuthenticationFilter</filter-name>
+    <filter-class>com.demo.security.filter.JwtAuthenticationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>jwtAuthenticationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
 
 </web-app>

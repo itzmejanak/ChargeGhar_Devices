@@ -70,4 +70,49 @@ public class HttpResult {
     public void setCode(int code) {
         this.code = code;
     }
+
+    // ========================================
+    // Static Helper Methods for Authentication
+    // ========================================
+
+    /**
+     * Create success response with data
+     */
+    public static HttpResult ok(Object data) {
+        HttpResult result = new HttpResult();
+        result.setCode(200);
+        result.setMsg("ok");
+        result.setData(data);
+        return result;
+    }
+
+    /**
+     * Create success response with message
+     */
+    public static HttpResult ok(String message) {
+        HttpResult result = new HttpResult();
+        result.setCode(200);
+        result.setMsg(message);
+        return result;
+    }
+
+    /**
+     * Create error response with message
+     */
+    public static HttpResult error(String message) {
+        HttpResult result = new HttpResult();
+        result.setCode(500);
+        result.setMsg(message);
+        return result;
+    }
+
+    /**
+     * Create error response with code and message
+     */
+    public static HttpResult error(int code, String message) {
+        HttpResult result = new HttpResult();
+        result.setCode(code);
+        result.setMsg(message);
+        return result;
+    }
 }

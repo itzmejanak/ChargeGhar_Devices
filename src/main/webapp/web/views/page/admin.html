@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Management - ChargeGhar IoT</title>
+    <#include "/web/views/common/header.html" />
+</head>
+<style>
+    .layui-form-label {
+        width: 120px !important;
+    }
+
+    .admin-panel {
+        padding: 20px;
+    }
+
+    .panel-section {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 1px solid #e6e6e6;
+        border-radius: 5px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+        border-bottom: 2px solid #5FB878;
+        padding-bottom: 5px;
+    }
+</style>
+
+<body>
+    <div class="layui-fluid admin-panel" id="adminApp">
+
+        <!-- Current User Info -->
+        <div class="panel-section">
+            <div class="section-title">👤 Current User Information</div>
+            <div class="layui-row">
+                <div class="layui-col-md6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">Username:</label>
+                        <div class="layui-form-mid" id="currentUsername">Loading...</div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">Role:</label>
+                        <div class="layui-form-mid" id="currentRole">Loading...</div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">Email:</label>
+                        <div class="layui-form-mid" id="currentEmail">Loading...</div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <button class="layui-btn layui-btn-normal" onclick="adminApp.changePassword()">Change
+                        Password</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Management (SUPER_ADMIN only) -->
+        <div class="panel-section" id="adminManagement" style="display: none;">
+            <div class="section-title">👥 Admin User Management</div>
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <button class="layui-btn layui-btn-normal" onclick="adminApp.createAdmin()">Create New
+                        Admin</button>
+                    <button class="layui-btn layui-btn-primary" onclick="adminApp.refreshAdmins()">Refresh List</button>
+                </div>
+            </div>
+            <div style="margin-top: 15px;">
+                <table id="adminTable" lay-filter="adminTable"></table>
+            </div>
+        </div>
+
+        <div class="panel-section">
+        <div class="section-title">📊 System Statistics</div>
+        <div class="layui-row">
+            <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-body" style="text-align:center;background:#f5f5f5;color:#333;border-radius:4px;padding:12px 4px">
+                <h2 id="totalDevices" style="margin:0 0 4px;font-size:18px">-</h2>
+                <p style="margin:0;font-size:12px">Total Devices</p>
+                </div>
+            </div>
+            </div>
+            <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-body" style="text-align:center;background:#f5f5f5;color:#333;border-radius:4px;padding:12px 4px">
+                <h2 id="devicesCreatedToday" style="margin:0 0 4px;font-size:18px">-</h2>
+                <p style="margin:0;font-size:12px">Created Today</p>
+                </div>
+            </div>
+            </div>
+            <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-body" style="text-align:center;background:#f5f5f5;color:#333;border-radius:4px;padding:12px 4px">
+                <h2 id="totalAdmins" style="margin:0 0 4px;font-size:18px">-</h2>
+                <p style="margin:0;font-size:12px">Total Admins</p>
+                </div>
+            </div>
+            </div>
+            <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-body" style="text-align:center;background:#f5f5f5;color:#333;border-radius:4px;padding:12px 4px">
+                <h2 id="superAdmins" style="margin:0 0 4px;font-size:18px">-</h2>
+                <p style="margin:0;font-size:12px">Super Admins</p>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="layui-row" style="margin-top:10px">
+            <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-body" style="text-align:center;background:#f5f5f5;color:#333;border-radius:4px;padding:12px 4px">
+                <h2 id="devicesCreatedThisWeek" style="margin:0 0 4px;font-size:18px">-</h2>
+                <p style="margin:0;font-size:12px">Created This Week</p>
+                </div>
+            </div>
+            </div>
+            <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-body" style="text-align:center;background:#f5f5f5;color:#333;border-radius:4px;padding:12px 4px">
+                <h2 id="regularAdmins" style="margin:0 0 4px;font-size:18px">-</h2>
+                <p style="margin:0;font-size:12px">Regular Admins</p>
+                </div>
+            </div>
+            </div>
+            <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-body" style="text-align:center;background:#f5f5f5;color:#333;border-radius:4px;padding:12px 4px">
+                <h2 id="recentActiveAdmins" style="margin:0 0 4px;font-size:18px">-</h2>
+                <p style="margin:0;font-size:12px">Active This Week</p>
+                </div>
+            </div>
+            </div>
+            <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-body" style="text-align:center;background:#f5f5f5;color:#333;border-radius:4px;padding:12px 4px">
+                <h2 id="systemStatus" style="margin:0 0 4px;font-size:18px">-</h2>
+                <p style="margin:0;font-size:12px">System Status</p>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <#include "/web/views/common/script.html" />
+
+    <script type="text/html" id="adminTools">
+    {{# if(d.role === 'SUPER_ADMIN') { }}
+        <span class="layui-badge layui-bg-red">SUPER ADMIN</span>
+    {{# } else { }}
+        <span class="layui-badge layui-bg-blue">ADMIN</span>
+    {{# } }}
+</script>
+
+    <script>
+        var adminApp = new Vue({
+            el: '#adminApp',
+            data: {
+                currentUser: null,
+                admins: []
+            },
+            methods: {
+                init: function () {
+                    this.loadCurrentUser();
+                    this.loadStatistics();
+                },
+
+                loadCurrentUser: function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: '${_contextPath}/api/auth/me',
+                        success: function (result) {
+                            if (result.code === 200) {
+                                adminApp.currentUser = result.data;
+                                $('#currentUsername').text(result.data.username);
+                                $('#currentRole').html('<span class="layui-badge ' +
+                                    (result.data.role === 'SUPER_ADMIN' ? 'layui-bg-red' : 'layui-bg-blue') +
+                                    '">' + result.data.role + '</span>');
+                                $('#currentEmail').text(result.data.email || 'Not set');
+
+                                // Show admin management for SUPER_ADMIN
+                                if (result.data.role === 'SUPER_ADMIN') {
+                                    $('#adminManagement').show();
+                                    adminApp.loadAdmins();
+                                }
+                            }
+                        },
+                        error: function () {
+                            layer.msg('Failed to load user information', { icon: 2 });
+                        }
+                    });
+                },
+
+                loadAdmins: function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: '${_contextPath}/api/auth/admins',
+                        success: function (result) {
+                            if (result.code === 200) {
+                                adminApp.admins = result.data;
+                                adminApp.renderAdminTable();
+                                $('#totalAdmins').text(result.data.length);
+                            }
+                        },
+                        error: function () {
+                            layer.msg('Failed to load admin list', { icon: 2 });
+                        }
+                    });
+                },
+
+                renderAdminTable: function () {
+                    layui.table.render({
+                        elem: '#adminTable',
+                        data: adminApp.admins,
+                        cols: [[
+                            { type: 'numbers', width: 50 },
+                            { field: 'username', title: 'Username', sort: true },
+                            { field: 'fullName', title: 'Full Name', sort: true },
+                            { field: 'email', title: 'Email', sort: true },
+                            { field: 'role', title: 'Role', templet: '#adminTools' },
+                            {
+                                field: 'createdAt', title: 'Created', sort: true, templet: function (d) {
+                                    return d.createdAt ? new Date(d.createdAt).toLocaleDateString() : '-';
+                                }
+                            },
+                            {
+                                field: 'lastLogin', title: 'Last Login', sort: true, templet: function (d) {
+                                    return d.lastLogin ? new Date(d.lastLogin).toLocaleDateString() : 'Never';
+                                }
+                            }
+                        ]]
+                    });
+                },
+
+                loadStatistics: function () {
+                    // Set loading state
+                    $('#totalDevices').text('...');
+                    $('#devicesCreatedToday').text('...');
+                    $('#devicesCreatedThisWeek').text('...');
+                    $('#totalAdmins').text('...');
+                    $('#superAdmins').text('...');
+                    $('#regularAdmins').text('...');
+                    $('#recentActiveAdmins').text('...');
+                    $('#systemStatus').text('...');
+
+                    // Load real statistics from API
+                    $.ajax({
+                        type: 'GET',
+                        url: '${_contextPath}/api/admin/statistics',
+                        success: function (result) {
+                            if (result.code === 200) {
+                                var stats = result.data;
+
+                                // Device statistics
+                                $('#totalDevices').text(stats.totalDevices || 0);
+                                $('#devicesCreatedToday').text(stats.devicesCreatedToday || 0);
+                                $('#devicesCreatedThisWeek').text(stats.devicesCreatedThisWeek || 0);
+
+                                // Admin statistics
+                                $('#totalAdmins').text(stats.totalAdmins || 0);
+                                $('#superAdmins').text(stats.superAdmins || 0);
+                                $('#regularAdmins').text(stats.regularAdmins || 0);
+                                $('#recentActiveAdmins').text(stats.recentActiveAdmins || 0);
+
+                                // System status
+                                $('#systemStatus').text(stats.systemStatus || 'Online');
+                            } else {
+                                layer.msg('Failed to load statistics', { icon: 2 });
+                            }
+                        },
+                        error: function () {
+                            // Fallback to default values on error
+                            $('#totalDevices').text('N/A');
+                            $('#devicesCreatedToday').text('N/A');
+                            $('#devicesCreatedThisWeek').text('N/A');
+                            $('#totalAdmins').text('N/A');
+                            $('#superAdmins').text('N/A');
+                            $('#regularAdmins').text('N/A');
+                            $('#recentActiveAdmins').text('N/A');
+                            $('#systemStatus').text('Error');
+                            layer.msg('Failed to load statistics', { icon: 2 });
+                        }
+                    });
+                },
+
+                createAdmin: function () {
+                    layer.open({
+                        type: 1,
+                        title: 'Create New Admin',
+                        area: ['500px', '400px'],
+                        content: '<div style="padding: 20px;">' +
+                            '<form class="layui-form" lay-filter="adminForm">' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">Username</label>' +
+                            '<div class="layui-input-block">' +
+                            '<input type="text" name="username" required lay-verify="required" placeholder="Enter username" class="layui-input">' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">Password</label>' +
+                            '<div class="layui-input-block">' +
+                            '<input type="password" name="password" required lay-verify="required" placeholder="Enter password" class="layui-input">' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">Full Name</label>' +
+                            '<div class="layui-input-block">' +
+                            '<input type="text" name="fullName" placeholder="Enter full name" class="layui-input">' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">Email</label>' +
+                            '<div class="layui-input-block">' +
+                            '<input type="email" name="email" placeholder="Enter email" class="layui-input">' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">Role</label>' +
+                            '<div class="layui-input-block">' +
+                            '<select name="role" lay-verify="required">' +
+                            '<option value="">Select Role</option>' +
+                            '<option value="ADMIN">ADMIN</option>' +
+                            '<option value="SUPER_ADMIN">SUPER_ADMIN</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<div class="layui-input-block">' +
+                            '<button class="layui-btn" lay-submit lay-filter="createAdmin">Create Admin</button>' +
+                            '<button type="reset" class="layui-btn layui-btn-primary">Reset</button>' +
+                            '</div>' +
+                            '</div>' +
+                            '</form>' +
+                            '</div>',
+                        success: function (layero, index) {
+                            layui.form.render();
+                            layui.form.on('submit(createAdmin)', function (data) {
+                                var formData = data.field;
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '${_contextPath}/api/auth/admins',
+                                    data: JSON.stringify(formData),
+                                    contentType: 'application/json',
+                                    success: function (result) {
+                                        if (result.code === 200) {
+                                            layer.msg('Admin created successfully', { icon: 1 });
+                                            layer.close(index);
+                                            adminApp.loadAdmins();
+                                        } else {
+                                            layer.msg(result.msg || 'Failed to create admin', { icon: 2 });
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg('Network error', { icon: 2 });
+                                    }
+                                });
+                                return false;
+                            });
+                        }
+                    });
+                },
+
+                changePassword: function () {
+                    layer.open({
+                        type: 1,
+                        title: 'Change Password',
+                        area: ['400px', '300px'],
+                        content: '<div style="padding: 20px;">' +
+                            '<form class="layui-form" lay-filter="passwordForm">' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">Old Password</label>' +
+                            '<div class="layui-input-block">' +
+                            '<input type="password" name="oldPassword" required lay-verify="required" placeholder="Enter old password" class="layui-input">' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">New Password</label>' +
+                            '<div class="layui-input-block">' +
+                            '<input type="password" name="newPassword" required lay-verify="required" placeholder="Enter new password" class="layui-input">' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<div class="layui-input-block">' +
+                            '<button class="layui-btn" lay-submit lay-filter="changePassword">Change Password</button>' +
+                            '<button type="reset" class="layui-btn layui-btn-primary">Reset</button>' +
+                            '</div>' +
+                            '</div>' +
+                            '</form>' +
+                            '</div>',
+                        success: function (layero, index) {
+                            layui.form.render();
+                            layui.form.on('submit(changePassword)', function (data) {
+                                var formData = data.field;
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '${_contextPath}/api/auth/change-password',
+                                    data: JSON.stringify(formData),
+                                    contentType: 'application/json',
+                                    success: function (result) {
+                                        if (result.code === 200) {
+                                            layer.msg('Password changed successfully', { icon: 1 });
+                                            layer.close(index);
+                                        } else {
+                                            layer.msg(result.msg || 'Failed to change password', { icon: 2 });
+                                        }
+                                    },
+                                    error: function () {
+                                        layer.msg('Network error', { icon: 2 });
+                                    }
+                                });
+                                return false;
+                            });
+                        }
+                    });
+                },
+
+                refreshAdmins: function () {
+                    this.loadAdmins();
+                    this.loadStatistics(); // Also refresh statistics
+                    layer.msg('Admin list refreshed', { icon: 1 });
+                }
+            }
+        });
+    </script>
+
+    <script>
+        layui.config({ base: '${_contextPath}/web/layuiadmin/' });
+        layui.extend({ index: 'lib/index' });
+        layui.use(['index', 'form', 'table'], function () {
+            adminApp.init();
+        });
+    </script>
+</body>
+
+</html>
