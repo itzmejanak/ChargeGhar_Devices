@@ -355,7 +355,7 @@ public class ChargeGharConnector {
         ObjectNode device = objectMapper.createObjectNode();
         device.put("serial_number", rentboxSN);
         device.put("imei", rentboxSN);
-        device.put("signal_strength", signal != null ? signal : "0");
+        device.put("signal_strength", parseSignalStrength(signal));
         device.put("wifi_ssid", ssid != null ? ssid : "");
         device.put("last_heartbeat", getCurrentISOTimestamp());
         device.put("status", "ONLINE");
@@ -505,6 +505,30 @@ public class ChargeGharConnector {
             case 0x06: return "DAMAGED";
             default: return "AVAILABLE";
         }
+    }
+    
+    /**
+     * Parse signal strength from various formats
+     * Handles: "CSQ:28", "RSSI:-65", "28", null
+     * Returns: "28", "-65", "28", "0"
+     */
+    private String parseSignalStrength(String signal) {
+        if (signal == null || signal.isEmpty()) {
+            return "0";
+        }
+        
+        // Handle "CSQ:28" format (GSM signal quality)
+        if (signal.startsWith("CSQ:")) {
+            return signal.substring(4).trim();
+        }
+        
+        // Handle "RSSI:-65" format (WiFi signal strength)
+        if (signal.startsWith("RSSI:")) {
+            return signal.substring(5).trim();
+        }
+        
+        // Already numeric or other format
+        return signal.trim();
     }
     
     /**
