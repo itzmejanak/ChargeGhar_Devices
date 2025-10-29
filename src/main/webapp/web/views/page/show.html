@@ -1,358 +1,599 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>CONTROL-${_params.deviceName}</title>
-  <#include "/web/views/common/header.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control - ${_params.deviceName}</title>
+    <#include "/web/views/common/header.html" />
+    <link rel="stylesheet" type="text/css" href="${_contextPath}/web/resource/css/show-control.css">
 </head>
-<style>
-    .layui-form-label{
-        width: 120px !important;
-    }
-    .layui-table-cell {
-        height: auto;
-        line-height:inherit;
-        padding:3px 15px; !important;
-    }
 
-    .layui-table-cell, .layui-table-tool-panel li{
-        word-wrap:break-word !important;
-        white-space: normal !important;
-    }
-</style>
 <body>
-<div class="layui-fluid" id="vue1">
-    <div class="layui-card">
-        <div class="layui-card-body" style="padding: 50px 15px">
-            <form class="layui-form">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">DeviceName</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${_params.deviceName}" lay-verify="required" placeholder="请输入" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">DeviceOnline</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${deviceOnline}" placeholder="请输入" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">hardware Version</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${hardware!'UNKONW'}" placeholder="请输入" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">Topic<br/>(device receive)</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${getTopic}" lay-verify="required" placeholder="请输入" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">Topic<br/>(device upload)</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${updateTopic}" lay-verify="required" placeholder="请输入" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">Http API<br/>(return powerbank)</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${__contextPath}/api/rentbox/order/return?rentboxSN=***&singleSN=***&hole=***&sign=***" lay-verify="required" placeholder="请输入" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">Http API<br/>(mqtt Connect)</label>
-                    <div class="layui-col-xs3">
-                        <input readonly="readonly" type="text" value="${connectUrl}" lay-verify="required" placeholder="请输入" class="layui-input">
-                    </div>
-                    <div class="layui-form-mid"></div>
-                    <div class="layui-input-block">
-                        <a href="${connectUrl}" target="_blank" class="layui-btn ">OEPN WINDOW</a>
-                        <a href="javascript:vue1.clearCache('${_params.deviceName}')" target="_blank" class="layui-btn ">CLEAR CACHE</a>
-                    </div>
-                </div>
-                <fieldset class="layui-elem-field">
-                    <legend>Chargeing Box</legend>
-                    <div class="layui-field-box">
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">Send Sync</label>
-                            <div class="layui-input-block">
-                                <a class="layui-btn" v-on:click="check('check')">Check</a>
-                                <a class="layui-btn" v-on:click="check('check_all')">Check all</a>
-                                <a class="layui-btn" v-on:click="popupRandom(0)">Random popup(minPower:0%)</a>
-                                <a class="layui-btn" v-on:click="popupRandom(50)">Random popup(minPower:50%)</a>
-                                <a class="layui-btn" v-on:click="popupRandom(80)">Random popup(minPower:80%)</a>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">Send Aynch</label>
-                            <div class="layui-input-block">
-                                <a class="layui-btn" v-on:click="sendCommand('push_version_publish')">Check last version(HTTP)</a>
-                                <a class="layui-btn" href=javascript:$('#stringText').val('{\"cmd\":\"popup_sn\",\"data\":\"123456\"}')>popup by powerbank SN</a>
-                                <a class="layui-btn" v-on:click="sendCommand('reboot')">Reboot Machine</a>
-                                <a class="layui-btn" v-on:click="sendCommand('upload_all')">Upload rentbox info（HTTP）</a>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">Popup by IO0</label>
-                            <div class="layui-input-block">
-                                <#list 1..13 as i>
-                                    <a style="width: 50px" class="layui-btn" onclick="vue1.sendCommand('popup','${i}', '0')">${i}</a>
-                                </#list>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label"></label>
-                            <div class="layui-input-block">
-                                <#list 14..25 as i>
-                                    <a style="width: 50px"  class="layui-btn" onclick="vue1.sendCommand('popup','${i}','0')">${i}</a>
-                                </#list>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">Popup by IO1</label>
-                            <div class="layui-input-block">
-                                <#list 1..13 as i>
-                                    <a style="width: 50px" class="layui-btn" onclick="vue1.sendCommand('popup','${i}', '1')">${i}</a>
-                                </#list>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label"></label>
-                            <div class="layui-input-block">
-                                <#list 14..25 as i>
-                                    <a style="width: 50px"  class="layui-btn" onclick="vue1.sendCommand('popup','${i}','1')">${i}</a>
-                                </#list>
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
-                <fieldset class="layui-elem-field">
-                    <legend>Advisement Powerbank</legend>
-                    <div class="layui-field-box">
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">Send commond</label>
-                            <div class="layui-input-block">
-                                <a class="layui-btn" v-on:click="sendCommand('check')">Upload Data</a>
-                                <a class="layui-btn" v-on:click="sendCommand('open', '3600')">Open Power</a>
-                                <a class="layui-btn" v-on:click="sendCommand('close')">Close Power</a>
-                                <a class="layui-btn" v-on:click="sendCommand('close')">Reboot Machine</a>
-                                <a class="layui-btn" v-on:click="sendCommand('check_log')">Upload MCU logs</a>
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
+    <div id="vue1" style="display: flex; width: 100%; height: 100vh;">
+        <#include "/web/views/common/sidebar.html" />
 
-                <hr>
-                <div class="layui-form-item layui-form-text layui-row">
-                    <label class="layui-form-label">Send Message</label>
-                    <div class="layui-col-xs3">
-                        <textarea maxlength="200" id="stringText" placeholder="Whatever text" class="layui-textarea"></textarea>
-                    </div>
-                    <div class="layui-form-mid">&nbsp;</div>
-                    <div class="layui-form-mid">
-                        <a class="layui-btn" href="javascript:vue1.send($('#stringText').val(), false)">SEND</a>
+        <div class="main-content" style="flex: 1; overflow-y: auto;">
+            <div class="container">
+                <!-- Header -->
+                <div class="header-card">
+                    <div class="device-header">
+                        <div class="device-info">
+                            <a href="${_contextPath}/index.html" class="back-btn" title="Back to Dashboard">
+                                <span>←</span>
+                            </a>
+                            <div class="device-icon">📱</div>
+                            <div class="device-details">
+                                <h1>${_params.deviceName}</h1>
+                                <p>IoT Control Dashboard</p>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <button class="info-toggle-btn" onclick="vue1.toggleDeviceInfo()"
+                                title="Toggle Device Information">
+                                <span class="info-icon">ℹ️</span>
+                            </button>
+                            <div class="status-badges">
+                                <div class="badge <#if deviceOnline == 'ONLINE'>online<#else>offline</#if>">
+                                    <span class="status-dot <#if deviceOnline != 'ONLINE'>offline</#if>"></span>
+                                    ${deviceOnline}
+                                </div>
+                                <div class="badge hardware">
+                                    Hardware ${hardware!'UNKNOWN'}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </form>
 
-            <hr>
+                <!-- Device Information Section -->
+                <div class="device-info-section" id="device-info-section" style="display: none; margin-bottom: 24px;">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <span class="info-icon-title">📋</span>
+                            Device Information
+                        </div>
+                        <button class="close-info-btn" onclick="vue1.toggleDeviceInfo()" title="Close">
+                            <span>✕</span>
+                        </button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: #4a5568;">Device Name</div>
+                            <div
+                                style="padding: 12px 16px; background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.875rem; color: #2d3748; font-family: 'Monaco', 'Courier New', monospace; word-break: break-all;">
+                                ${_params.deviceName}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: #4a5568;">Device Status</div>
+                            <div
+                                style="padding: 12px 16px; background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.875rem; color: #2d3748; font-family: 'Monaco', 'Courier New', monospace; word-break: break-all;">
+                                ${deviceOnline}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: #4a5568;">Hardware Version</div>
+                            <div
+                                style="padding: 12px 16px; background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.875rem; color: #2d3748; font-family: 'Monaco', 'Courier New', monospace; word-break: break-all;">
+                                ${hardware!'UNKNOWN'}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: #4a5568;">Topic (Device Receive)
+                            </div>
+                            <div
+                                style="padding: 12px 16px; background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.875rem; color: #2d3748; font-family: 'Monaco', 'Courier New', monospace; word-break: break-all;">
+                                ${getTopic}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: #4a5568;">Topic (Device Upload)
+                            </div>
+                            <div
+                                style="padding: 12px 16px; background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.875rem; color: #2d3748; font-family: 'Monaco', 'Courier New', monospace; word-break: break-all;">
+                                ${updateTopic}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: #4a5568;">HTTP API (MQTT Connect)
+                            </div>
+                            <div
+                                style="padding: 12px 16px; background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.875rem; color: #2d3748; font-family: 'Monaco', 'Courier New', monospace; word-break: break-all;">
+                                ${connectUrl}</div>
+                            <div style="display: flex; gap: 8px; margin-top: 8px;">
+                                <a href="${connectUrl}" target="_blank" class="action-btn primary">Open Window</a>
+                                <a href="javascript:vue1.clearCache('${_params.deviceName}')"
+                                    class="action-btn warning">Clear Cache</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!--表格显示-->
-            <table id="table1" lay-filter="table1"></table>
+                <!-- Main Layout -->
+                <div class="main-layout">
+                    <!-- Left: Popup Controls -->
+                    <div class="popup-section">
+                        <div class="section-header">
+                            <div class="section-title">Popup Controls</div>
+                            <div class="io-tabs">
+                                <button class="io-tab active" onclick="vue1.switchIO(0)">IO0</button>
+                                <button class="io-tab" onclick="vue1.switchIO(1)">IO1</button>
+                            </div>
+                        </div>
+                        <div class="popup-grid" id="popup-grid-io0">
+                            <#list 1..25 as i>
+                                <button class="popup-btn" onclick="vue1.sendCommand('popup','${i}', '0')">${i}</button>
+                            </#list>
+                        </div>
+                        <div class="popup-grid" id="popup-grid-io1" style="display: none;">
+                            <#list 1..25 as i>
+                                <button class="popup-btn" onclick="vue1.sendCommand('popup','${i}', '1')">${i}</button>
+                            </#list>
+                        </div>
+                    </div>
+
+                    <!-- Right: Action Cards -->
+                    <div class="actions-panel">
+                        <!-- Sync Commands -->
+                        <div class="action-card">
+                            <div class="action-card-title">Sync Commands</div>
+                            <div class="action-grid">
+                                <button class="action-btn success" v-on:click="check('check')">Check</button>
+                                <button class="action-btn success" v-on:click="check('check_all')">Check All</button>
+                                <button class="action-btn primary" v-on:click="popupRandom(0)">Random 0%</button>
+                                <button class="action-btn primary" v-on:click="popupRandom(50)">Random 50%</button>
+                                <button class="action-btn primary" v-on:click="popupRandom(80)">Random 80%</button>
+                            </div>
+                        </div>
+
+                        <!-- Async Commands -->
+                        <div class="action-card">
+                            <div class="action-card-title">Async Commands</div>
+                            <div class="action-grid">
+                                <button class="action-btn primary"
+                                    v-on:click="sendCommand('push_version_publish')">Version</button>
+                                <button class="action-btn primary" v-on:click="setPopupSN()">Popup SN</button>
+                                <button class="action-btn warning" v-on:click="sendCommand('reboot')">Reboot</button>
+                                <button class="action-btn primary"
+                                    v-on:click="sendCommand('upload_all')">Upload</button>
+                            </div>
+                        </div>
+
+                        <!-- Powerbank Commands -->
+                        <div class="action-card">
+                            <div class="action-card-title">Powerbank</div>
+                            <div class="action-grid">
+                                <button class="action-btn success" v-on:click="sendCommand('check')">Upload
+                                    Data</button>
+                                <button class="action-btn primary" v-on:click="sendCommand('open', '3600')">Open
+                                    Power</button>
+                                <button class="action-btn warning" v-on:click="sendCommand('close')">Close
+                                    Power</button>
+                                <button class="action-btn danger" v-on:click="sendCommand('reboot')">Reboot</button>
+                                <button class="action-btn primary" v-on:click="sendCommand('check_log')">MCU
+                                    Logs</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Console/Input Section -->
+                <div class="console-section">
+                    <div class="console-tabs">
+                        <button class="console-tab active" onclick="vue1.switchConsoleTab('input')">Custom
+                            Input</button>
+                        <button class="console-tab" onclick="vue1.switchConsoleTab('console')">Console</button>
+                    </div>
+
+                    <!-- Input Tab -->
+                    <div class="console-content active" id="input-tab">
+                        <div class="message-input-group">
+                            <textarea id="stringText" class="message-textarea"
+                                placeholder='{"cmd": "example", "data": "value"}'></textarea>
+                            <button class="send-btn" v-on:click="send($('#stringText').val())">Send</button>
+                        </div>
+                    </div>
+
+                    <!-- Console Tab -->
+                    <div class="console-content" id="console-tab">
+                        <div class="console-output" id="console-output">
+                            <div class="console-line">
+                                <span class="console-time">00:00:00</span>
+                                <span class="console-message">Console initialized. Waiting for commands...</span>
+                            </div>
+                        </div>
+                        <div class="console-actions">
+                            <button class="console-btn" onclick="vue1.clearConsole()">Clear</button>
+                            <button class="console-btn" onclick="vue1.exportConsole()">Export</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table for displaying results -->
+                <table id="table1" lay-filter="table1"></table>
+                </button>
+            </div>
         </div>
+        <!-- Floating Logout Button -->
+        <button class="floating-logout-btn" onclick="vue1.logout()" title="Logout">
+            <span class="logout-icon">🚪</span>
     </div>
-</div>
 
-<#include "/web/views/common/script.html" />
-<script>
-    var vue1 = new Vue({
-        el: '#vue1',
-        data: {},
-        methods: {
-            //发送命令
-            sendCommand: function (cmd, data, io) {
-                var map = {};
-                map.cmd = cmd;
-
-                map.data = data || "";
-                if(io){
-                    map.io = io;
-                }
-                var json = JSON.stringify(map);
-                $('#stringText').val(json);
-
-                $.ajax({
-                    type: 'POST',
-                    url: '${_contextPath}/send',
-                    data: {
-                        deviceName: '${_params.deviceName}',
-                        data: json
-                    },
-                    cache: false,
-                    errorMsg: true,
-                    dataType: 'json',
-                    loading:true,
-                    success: function (result) {
-                        layer.msg(json);
-                    }
-                });
+    <#include "/web/views/common/script.html" />
+    <script>
+        var vue1 = new Vue({
+            el: '#vue1',
+            data: {
+                currentIO: 0,
+                consoleLines: []
             },
-            //发送命令
-            send: function (data) {
-                if(!data){
-                    layer.msg('Please Input the string ');
-                    return;
-                }
-
-                $.ajax({
-                    type: 'POST',
-                    url: '${_contextPath}/send',
-                    data: {
-                        deviceName: '${_params.deviceName}',
-                        data: data
-                    },
-                    cache: false,
-                    errorMsg: true,
-                    dataType: 'json',
-                    loading:true,
-                    success: function (result) {
-                        layer.msg(data);
+            methods: {
+                //发送命令
+                sendCommand: function (cmd, data, io) {
+                    var map = {};
+                    map.cmd = cmd;
+                    map.data = data || "";
+                    if (io) {
+                        map.io = io;
                     }
-                });
-            },
-            //查询
-            check: function (cmd) {
-                $.ajax({
-                    type: 'GET',
-                    url: '${_contextPath}/' + cmd,
-                    data: {
-                        deviceName: '${_params.deviceName}',
-                    },
-                    cache: false,
-                    errorMsg: true,
-                    dataType: 'json',
-                    loading:true,
-                    success: function (result) {
-                        var data = result.data;
-                        vue1.showTable(data);
+                    var json = JSON.stringify(map);
+                    $('#stringText').val(json);
+
+                    this.addConsoleLog('Sending command: ' + cmd, 'info');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '${_contextPath}/send',
+                        data: {
+                            deviceName: '${_params.deviceName}',
+                            data: json
+                        },
+                        cache: false,
+                        errorMsg: true,
+                        dataType: 'json',
+                        loading: true,
+                        success: function (result) {
+                            vue1.addConsoleLog('✓ Command sent successfully: ' + json, 'success');
+                            layer.msg(json);
+                        },
+                        error: function (xhr, status, error) {
+                            vue1.addConsoleLog('✗ Error sending command: ' + error, 'error');
+                        }
+                    });
+                },
+                //发送命令
+                send: function (data) {
+                    if (!data) {
+                        layer.msg('Please Input the string ');
+                        this.addConsoleLog('Error: Empty message', 'error');
+                        return;
                     }
-                });
 
-                var data = {cmd: cmd, data: ""};
-                var json = $.toJSON(data);
-                $('#stringText').val(json);
-            },
-            //显示表格
-            showTable: function(data){
-                for(var i in data){
-                    data[i].data = JSON.stringify(data[i].data);
-                    data[i].sn = JSON.stringify(data[i].sn);
-
-                    data[i]._snAsString = data[i].snAsInt ? data[i].snAsString : '-';
-                    data[i]._power = (data[i].power == 255) ? 0 : data[i].power;
-                    data[i]._current = (data[i].current == 255) ? 0 : data[i].current;
-                    data[i]._voltage = (data[i].voltage == 255) ? 0 : (data[i].voltage / 10).toFixed(1);
-                    data[i]._pinboardIndex = '0X' + data[i].pinboardIndex.toString(16);
-
-                    data[i]._status = '0X0' + data[i].status.toString(16);
-                    if(data[i].status > 1){
-                        data[i]._status += '<span style="color:blue">&nbsp;ERROR</span>';
+                    try {
+                        JSON.parse(data);
+                    } catch (e) {
+                        layer.msg('Invalid JSON format');
+                        this.addConsoleLog('Error: Invalid JSON format - ' + e.message, 'error');
+                        return;
                     }
-                }
-                layer.open({
-                    title: 'Upload:' + data.length, area: ['80%', '70%'],
-                    content: '<table class="layui-hide" id="test"></table>',
-                    shadeClose: true,
-                    anim: -1,
-                    isOutAnim: false,
-                    btn: ['Close'],
-                    success: function () {
-                        layui.table.render({
-                            elem: '#test',
-                            cellMinWidth: 120, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-                            data: data,
-                            limit: 100
-                            ,cols: [[
-                                {title: 'ROWS', templet: function (d) {
-                                        return d.LAY_TABLE_INDEX + 1;
-                                    }},
-                                {field:'_snAsString', title: 'PowerbankSN'},
-                                {field:'_power', title: 'Power'},
-                                {field:'_current',title: 'Current'},
-                                {field:'_voltage',  title: 'Voltage'},
-                                {field:'_pinboardIndex', title: 'PinboardIndex'},
-                                {field:'index', title: 'Hole'},
-                                {field:'_status', title: 'Status'}
-                            ]]
+
+                    this.addConsoleLog('Sending custom message...', 'info');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '${_contextPath}/send',
+                        data: {
+                            deviceName: '${_params.deviceName}',
+                            data: data
+                        },
+                        cache: false,
+                        errorMsg: true,
+                        dataType: 'json',
+                        loading: true,
+                        success: function (result) {
+                            vue1.addConsoleLog('✓ Custom message sent: ' + data, 'success');
+                            layer.msg(data);
+                        },
+                        error: function (xhr, status, error) {
+                            vue1.addConsoleLog('✗ Error: ' + error, 'error');
+                        }
+                    });
+                },
+                //查询
+                check: function (cmd) {
+                    this.addConsoleLog('Executing check command: ' + cmd, 'info');
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '${_contextPath}/' + cmd,
+                        data: {
+                            deviceName: '${_params.deviceName}',
+                        },
+                        cache: false,
+                        errorMsg: true,
+                        dataType: 'json',
+                        loading: true,
+                        success: function (result) {
+                            var data = result.data;
+                            vue1.addConsoleLog('✓ Received ' + data.length + ' records', 'success');
+                            vue1.showTable(data);
+                        },
+                        error: function (xhr, status, error) {
+                            vue1.addConsoleLog('✗ Check failed: ' + error, 'error');
+                        }
+                    });
+
+                    var data = { cmd: cmd, data: "" };
+                    var json = $.toJSON(data);
+                    $('#stringText').val(json);
+                },
+                //显示表格
+                showTable: function (data) {
+                    for (var i in data) {
+                        data[i].data = JSON.stringify(data[i].data);
+                        data[i].sn = JSON.stringify(data[i].sn);
+
+                        data[i]._snAsString = data[i].snAsInt ? data[i].snAsString : '-';
+                        data[i]._power = (data[i].power == 255) ? 0 : data[i].power;
+                        data[i]._current = (data[i].current == 255) ? 0 : data[i].current;
+                        data[i]._voltage = (data[i].voltage == 255) ? 0 : (data[i].voltage / 10).toFixed(1);
+                        data[i]._pinboardIndex = '0X' + data[i].pinboardIndex.toString(16);
+
+                        data[i]._status = '0X0' + data[i].status.toString(16);
+                        if (data[i].status > 1) {
+                            data[i]._status += '<span style="color:blue">&nbsp;ERROR</span>';
+                        }
+                    }
+                    layer.open({
+                        title: 'Upload:' + data.length, area: ['80%', '70%'],
+                        content: '<table class="layui-hide" id="test"></table>',
+                        shadeClose: true,
+                        anim: -1,
+                        isOutAnim: false,
+                        btn: ['Close'],
+                        success: function () {
+                            layui.table.render({
+                                elem: '#test',
+                                cellMinWidth: 120,
+                                data: data,
+                                limit: 100,
+                                cols: [[
+                                    {
+                                        title: 'ROWS', templet: function (d) {
+                                            return d.LAY_TABLE_INDEX + 1;
+                                        }
+                                    },
+                                    { field: '_snAsString', title: 'PowerbankSN' },
+                                    { field: '_power', title: 'Power' },
+                                    { field: '_current', title: 'Current' },
+                                    { field: '_voltage', title: 'Voltage' },
+                                    { field: '_pinboardIndex', title: 'PinboardIndex' },
+                                    { field: 'index', title: 'Hole' },
+                                    { field: '_status', title: 'Status' }
+                                ]]
+                            });
+
+                        }
+                    });
+                },
+                //查询
+                popupRandom: function (minPower) {
+                    this.addConsoleLog('Requesting random popup with minPower: ' + minPower + '%', 'info');
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '${_contextPath}/popup_random',
+                        data: {
+                            deviceName: '${_params.deviceName}',
+                            minPower: minPower
+                        },
+                        cache: false,
+                        errorMsg: true,
+                        dataType: 'json',
+                        loading: true,
+                        success: function (result) {
+                            var sn = result.data;
+                            vue1.addConsoleLog('✓ Random popup successful - SN: ' + sn, 'success');
+
+                            layer.open({
+                                title: 'Popup Result',
+                                content: ('Succeed SN:' + sn),
+                                btn: ['Close']
+                            });
+
+                            var data = { cmd: 'popup_sn', data: sn };
+                            var json = $.toJSON(data);
+                            $('#stringText').val(json);
+                        },
+                        error: function (xhr, status, error) {
+                            vue1.addConsoleLog('✗ Random popup failed: ' + error, 'error');
+                        }
+                    });
+                },
+                //查询
+                clearCache: function (deviceName) {
+                    this.addConsoleLog('Clearing cache for device...', 'info');
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '${_contextPath}/api/iot/client/clear',
+                        data: {
+                            deviceName: '${_params.deviceName}',
+                        },
+                        cache: false,
+                        errorMsg: true,
+                        dataType: 'json',
+                        loading: true,
+                        success: function (result) {
+                            vue1.addConsoleLog('✓ Cache cleared successfully', 'success');
+                            layer.msg('Succeed');
+                        },
+                        error: function (xhr, status, error) {
+                            vue1.addConsoleLog('✗ Clear cache failed: ' + error, 'error');
+                        }
+                    });
+                },
+                // Switch IO tabs
+                switchIO: function (io) {
+                    this.currentIO = io;
+                    var tabs = document.querySelectorAll('.io-tab');
+                    var grids = document.querySelectorAll('[id^="popup-grid-io"]');
+
+                    tabs.forEach(function (tab, index) {
+                        if (index === io) {
+                            tab.classList.add('active');
+                        } else {
+                            tab.classList.remove('active');
+                        }
+                    });
+
+                    grids.forEach(function (grid, index) {
+                        if (index === io) {
+                            grid.style.display = 'grid';
+                        } else {
+                            grid.style.display = 'none';
+                        }
+                    });
+                    this.addConsoleLog('Switched to IO' + io, 'info');
+                },
+                // Switch console tabs
+                switchConsoleTab: function (tab) {
+                    var tabs = document.querySelectorAll('.console-tab');
+                    var contents = document.querySelectorAll('.console-content');
+
+                    tabs.forEach(function (t) {
+                        t.classList.remove('active');
+                    });
+                    contents.forEach(function (c) {
+                        c.classList.remove('active');
+                    });
+
+                    if (tab === 'input') {
+                        tabs[0].classList.add('active');
+                        document.getElementById('input-tab').classList.add('active');
+                    } else {
+                        tabs[1].classList.add('active');
+                        document.getElementById('console-tab').classList.add('active');
+                    }
+                },
+                // Add console log
+                addConsoleLog: function (message, type) {
+                    var now = new Date();
+                    var time = now.toTimeString().split(' ')[0];
+
+                    var consoleOutput = document.getElementById('console-output');
+                    var line = document.createElement('div');
+                    line.className = 'console-line ' + (type || 'info');
+                    line.innerHTML = '<span class="console-time">' + time + '</span><span class="console-message">' + message + '</span>';
+
+                    consoleOutput.appendChild(line);
+                    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+
+                    this.consoleLines.push({ time: time, message: message, type: type });
+                },
+                // Clear console
+                clearConsole: function () {
+                    var consoleOutput = document.getElementById('console-output');
+                    consoleOutput.innerHTML = '<div class="console-line"><span class="console-time">00:00:00</span><span class="console-message">Console cleared.</span></div>';
+                    this.consoleLines = [];
+                },
+                // Export console
+                exportConsole: function () {
+                    var text = this.consoleLines.map(function (l) {
+                        return '[' + l.time + '] ' + l.message;
+                    }).join('\n');
+                    var blob = new Blob([text], { type: 'text/plain' });
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'console-log-' + Date.now() + '.txt';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    this.addConsoleLog('Console exported', 'success');
+                },
+                // Set popup SN
+                setPopupSN: function () {
+                    var message = { cmd: "popup_sn", data: "123456" };
+                    $('#stringText').val(JSON.stringify(message, null, 2));
+                    this.addConsoleLog('Popup SN command prepared', 'info');
+                },
+                //查询
+                clearCache: function (deviceName) {
+                    this.addConsoleLog('Clearing cache for device...', 'info');
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '${_contextPath}/api/iot/client/clear',
+                        data: {
+                            deviceName: '${_params.deviceName}',
+                        },
+                        cache: false,
+                        errorMsg: true,
+                        dataType: 'json',
+                        loading: true,
+                        success: function (result) {
+                            vue1.addConsoleLog('✓ Cache cleared successfully', 'success');
+                            layer.msg('Succeed');
+                        },
+                        error: function (xhr, status, error) {
+                            vue1.addConsoleLog('✗ Clear cache failed: ' + error, 'error');
+                        }
+                    });
+                },
+                logout: function () {
+                    layer.confirm('Are you sure you want to logout?', {
+                        btn: ['Logout', 'Cancel'],
+                        icon: 3,
+                        title: 'Confirm Logout'
+                    }, function (index) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '${_contextPath}/api/auth/logout',
+                            success: function () {
+                                localStorage.removeItem('jwt_token');
+                                localStorage.removeItem('user');
+                                layer.msg('Logged out successfully', { icon: 1 });
+                                setTimeout(function () {
+                                    window.location.href = '${_contextPath}/login';
+                                }, 1000);
+                            }
                         });
+                        layer.close(index);
+                    });
+                },
+                // Toggle device information section
+                toggleDeviceInfo: function () {
+                    var infoSection = document.getElementById('device-info-section');
+                    var infoBtn = document.querySelector('.info-toggle-btn');
 
+                    if (infoSection.style.display === 'none' || infoSection.style.display === '') {
+                        infoSection.style.display = 'block';
+                        infoBtn.classList.add('active');
+                        this.addConsoleLog('Device information panel opened', 'info');
+
+                        // Smooth scroll to the info section
+                        setTimeout(function () {
+                            infoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
+                    } else {
+                        infoSection.style.display = 'none';
+                        infoBtn.classList.remove('active');
+                        this.addConsoleLog('Device information panel closed', 'info');
                     }
-                });
+                }
             },
-            //查询
-            popupRandom: function (minPower) {
-                $.ajax({
-                    type: 'GET',
-                    url: '${_contextPath}/popup_random',
-                    data: {
-                        deviceName: '${_params.deviceName}',
-                        minPower: minPower
-                    },
-                    cache: false,
-                    errorMsg: true,
-                    dataType: 'json',
-                    loading:true,
-                    success: function (result) {
-                        var sn = result.data;
+            mounted: function () {
+                // Initialize with IO0
+                this.switchIO(0);
+                this.addConsoleLog('Dashboard initialized for device: ${_params.deviceName}', 'success');
+            }
+        });
 
-                        layer.open({
-                            title: 'Popup Result',
-                            content: ('Succeed SN:' +sn),
-                            btn: ['Close']
-                        });
+    </script>
 
-                        var data = {cmd: 'popup_sn', data: sn};
-                        var json = $.toJSON(data);
-                        $('#stringText').val(json);
-                    }
-                });
-            },
-            //查询
-            clearCache: function (deviceName) {
-                $.ajax({
-                    type: 'GET',
-                    url: '${_contextPath}/api/iot/client/clear',
-                    data: {
-                        deviceName: '${_params.deviceName}',
-                    },
-                    cache: false,
-                    errorMsg: true,
-                    dataType: 'json',
-                    loading:true,
-                    success: function (result) {
-                        layer.msg('Succeed');
-                    }
-                });
-            },
-        },
-        mounted : function () {
+    <script>
+        layui.config({ base: '${_contextPath}/web/layuiadmin/' });
+        layui.extend({ index: 'lib/index' });
+        layui.use(['index', 'form', 'table'], function () {
 
-        }
-    });
-
-</script>
-
-<script>
-    layui.config({base: '${_contextPath}/web/layuiadmin/'});
-    layui.extend({index: 'lib/index'});
-    layui.use(['index','form','table'], function () {
-
-    });
-</script>
+        });
+    </script>
 </body>
+
 </html>

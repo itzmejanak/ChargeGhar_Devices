@@ -41,18 +41,15 @@ public class AuthService {
         AdminUser user = adminUserDao.findByUsername(request.getUsername());
         
         if (user == null) {
-            System.out.println("❌ Login failed: User not found - " + request.getUsername());
             return new LoginResponse(false, "Invalid username or password");
         }
 
         if (!user.getIsActive()) {
-            System.out.println("❌ Login failed: User inactive - " + request.getUsername());
             return new LoginResponse(false, "Account is deactivated");
         }
 
         // Verify password
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            System.out.println("❌ Login failed: Wrong password - " + request.getUsername());
             return new LoginResponse(false, "Invalid username or password");
         }
 
@@ -64,8 +61,6 @@ public class AuthService {
 
         // Don't send password in response
         user.setPassword(null);
-
-        System.out.println("✅ Login successful: " + user.getUsername() + " (Role: " + user.getRole() + ")");
         
         return new LoginResponse(true, "Login successful", token, user);
     }
@@ -77,7 +72,6 @@ public class AuthService {
         try {
             return jwtUtil.validateToken(token);
         } catch (Exception e) {
-            System.out.println("❌ Token validation failed: " + e.getMessage());
             return false;
         }
     }
@@ -90,7 +84,6 @@ public class AuthService {
             String username = jwtUtil.extractUsername(token);
             return adminUserDao.findByUsername(username);
         } catch (Exception e) {
-            System.out.println("❌ Failed to get user from token: " + e.getMessage());
             return null;
         }
     }
@@ -116,7 +109,6 @@ public class AuthService {
         // Update password
         adminUserDao.changePassword(userId, hashedPassword);
         
-        System.out.println("✅ Password changed for user: " + user.getUsername());
         return true;
     }
 }

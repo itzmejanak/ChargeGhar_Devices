@@ -31,8 +31,6 @@ public class AuthController {
     @ResponseBody
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request, HttpServletResponse response) {
-        System.out.println("🔐 Login attempt: " + request.getUsername());
-        
         LoginResponse loginResponse = authService.login(request);
         
         if (loginResponse.isSuccess()) {
@@ -42,8 +40,6 @@ public class AuthController {
             cookie.setPath("/");
             cookie.setMaxAge(24 * 60 * 60); // 24 hours
             response.addCookie(cookie);
-            
-            System.out.println("✅ Login successful, token set in cookie");
         }
         
         return loginResponse;
@@ -61,8 +57,6 @@ public class AuthController {
         cookie.setPath("/");
         cookie.setMaxAge(0); // Delete cookie
         response.addCookie(cookie);
-        
-        System.out.println("👋 User logged out");
         
         return HttpResult.ok("Logged out successfully");
     }

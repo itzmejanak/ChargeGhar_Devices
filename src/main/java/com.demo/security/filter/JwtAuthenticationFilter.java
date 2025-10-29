@@ -39,18 +39,14 @@ public class JwtAuthenticationFilter implements Filter {
         String contextPath = httpRequest.getContextPath();
         String path = uri.substring(contextPath.length());
         
-        System.out.println("🔍 JWT Filter: " + httpRequest.getMethod() + " " + path);
-        
         // Check if this is a public URL (no authentication required)
         if (isPublicUrl(path)) {
-            System.out.println("✅ Public URL - No auth required: " + path);
             chain.doFilter(request, response);
             return;
         }
         
         // Check if this is a hardware/IoT API (no authentication required)
         if (isHardwareUrl(path)) {
-            System.out.println("✅ Hardware API - No auth required: " + path);
             chain.doFilter(request, response);
             return;
         }
@@ -77,17 +73,13 @@ public class JwtAuthenticationFilter implements Filter {
                 httpRequest.setAttribute("role", role);
                 httpRequest.setAttribute("authenticated", true);
                 
-                System.out.println("✅ Authenticated: " + username + " (Role: " + role + ")");
-                
                 // Continue with request
                 chain.doFilter(request, response);
             } catch (Exception e) {
-                System.out.println("❌ Token validation error: " + e.getMessage());
                 redirectToLogin(httpRequest, httpResponse);
             }
         } else {
             // No token or invalid token - redirect to login
-            System.out.println("❌ No valid token - Redirect to login");
             redirectToLogin(httpRequest, httpResponse);
         }
     }

@@ -173,16 +173,21 @@ public class MqttSubscriber implements MqttCallback {
                 messageType = "upload";
             }
             
-            // Track device activity for status checking
+            // Update device activity and heartbeat timestamps in Redis (same as ApiController)
+            long now = System.currentTimeMillis();
+
+            // Update device activity (checked by getDeviceStatus) - 25 minutes timeout
             String activityKey = "device_activity:" + deviceName;
             BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
-            activityOps.set(System.currentTimeMillis(), 25, TimeUnit.MINUTES);
+            activityOps.set(now, 25, TimeUnit.MINUTES);
+
+            // Update device heartbeat (checked by getDeviceStatus) - 5 minutes timeout
+            String heartbeatKey = "device_heartbeat:" + deviceName;
+            BoundValueOperations heartbeatOps = redisTemplate.boundValueOps(heartbeatKey);
+            heartbeatOps.set(now, 5, TimeUnit.MINUTES);
             
             // Handle heartbeat messages specially (both "heart" and "status" indicate heartbeat)
             if ("status".equals(messageType) || "heart".equals(messageType)) {
-                String heartbeatKey = "device_heartbeat:" + deviceName;
-                BoundValueOperations heartbeatOps = redisTemplate.boundValueOps(heartbeatKey);
-                heartbeatOps.set(System.currentTimeMillis(), 5, TimeUnit.MINUTES);
                 System.out.println("Heartbeat received from device: " + deviceName + " (type: " + messageType + ")");
             }
             
