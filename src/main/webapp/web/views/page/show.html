@@ -542,16 +542,29 @@
                         icon: 3,
                         title: 'Confirm Logout'
                     }, function (index) {
+                        // Clear all client-side storage first
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        
                         $.ajax({
                             type: 'POST',
                             url: '${_contextPath}/api/auth/logout',
                             success: function () {
-                                localStorage.removeItem('jwt_token');
-                                localStorage.removeItem('user');
+                                // Clear any remaining storage
+                                localStorage.clear();
+                                sessionStorage.clear();
+                                
                                 layer.msg('Logged out successfully', { icon: 1 });
                                 setTimeout(function () {
-                                    window.location.href = '${_contextPath}/login';
+                                    // Force redirect to login with cache busting
+                                    window.location.replace('${_contextPath}/login?t=' + Date.now());
                                 }, 1000);
+                            },
+                            error: function() {
+                                // Even if logout fails, clear storage and redirect
+                                localStorage.clear();
+                                sessionStorage.clear();
+                                window.location.replace('${_contextPath}/login?t=' + Date.now());
                             }
                         });
                         layer.close(index);
