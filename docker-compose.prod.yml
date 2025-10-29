@@ -90,7 +90,8 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      # Auto-initialize database with schema on first run
+      # Only initialize database schema if it doesn't exist (first run only)
+      # The init script only runs when /var/lib/mysql is empty
       - ./src/main/resources/db-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     networks:
       - iotdemo-prod-network

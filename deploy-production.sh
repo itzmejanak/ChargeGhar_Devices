@@ -40,15 +40,24 @@ SPRING_PROFILES_ACTIVE=production
 COMPOSE_PROJECT_NAME=iotdemo-prod
 EOF
 
-# Stop existing containers
+# Create database backup before deployment
+if docker ps -q -f name=iotdemo-mysql-prod | grep -q .; then
+    echo "💾 Creating database backup..."
+    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+    mkdir -p /opt/iotdemo-backups
+    docker exec iotdemo-mysql-prod mysqldump -u root -pzaan5060 chargeghar_iot > /opt/iotdemo-backups/db-backup-$TIMESTAMP.sql
+    echo "✅ Database backup saved to /opt/iotdemo-backups/db-backup-$TIMESTAMP.sql"
+fi
+
+# Stop existing containers (but keep volumes)
 echo "🛑 Stopping existing deployment..."
-docker-compose -f docker-compose.prod.yml down --remove-orphans || true
+docker-compose -f docker-compose.prod.yml down || true
 
-# Clean up old images (optional)
+# Clean up old images (optional, but preserve volumes)
 echo "🧹 Cleaning up old Docker images..."
-docker system prune -f
+docker image prune -f
 
-# Build and start services
+# Build and start services (preserve existing volumes)
 echo "🏗️ Building and starting services..."
 docker-compose -f docker-compose.prod.yml up -d --build
 
