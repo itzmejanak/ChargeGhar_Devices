@@ -268,57 +268,6 @@
             }
         });
 
-        // Token validation and auto-refresh
-        function validateAndRefreshToken() {
-            // Check if user data exists (basic check)
-            const user = localStorage.getItem('user');
-            if (!user) {
-                window.location.replace('${_contextPath}/login');
-                return false;
-            }
-
-            // Validate token with server (uses HttpOnly cookie)
-            fetch('${_contextPath}/api/auth/me', {
-                method: 'GET',
-                credentials: 'include' // Include cookies
-            }).then(response => {
-                if (response.status === 401) {
-                    // Token is invalid or expired
-                    localStorage.clear();
-                    sessionStorage.clear();
-                    layer.msg('Session expired. Please login again.', { icon: 2 });
-                    setTimeout(() => {
-                        window.location.replace('${_contextPath}/login');
-                    }, 2000);
-                } else if (response.ok) {
-                    return response.json();
-                }
-            }).then(data => {
-                if (data && data.data) {
-                    // Update user data if refreshed
-                    if (data.data.refreshed) {
-                        console.log('Token refreshed automatically');
-                        if (data.data.user) {
-                            localStorage.setItem('user', JSON.stringify(data.data.user));
-                        }
-                    }
-                }
-            }).catch(error => {
-                console.log('Token validation failed:', error);
-                // Don't redirect on network errors, just log
-            });
-
-            return true;
-        }
-
-        // Validate token on page load
-        if (!validateAndRefreshToken()) {
-            return;
-        }
-
-        // Validate token every 10 minutes (backend handles refresh automatically)
-        setInterval(validateAndRefreshToken, 10 * 60 * 1000);
-
         layui.config({ base: '${_contextPath}/web/layuiadmin/' });
         layui.extend({ index: 'lib/index' });
         layui.use(['index', 'form', 'table'], function () {
