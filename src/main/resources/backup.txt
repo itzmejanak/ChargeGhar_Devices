@@ -1,0 +1,18 @@
+Client Gmail
+
+# EMQX Cloud Configuration
+mqtt.broker=qd081a20.ala.dedicated.aws.emqxcloud.com
+mqtt.port=1883
+mqtt.username=chargeghar
+mqtt.password=5060
+mqtt.clientId=iotdemo-server
+mqtt.ssl=false
+
+# EMQX Management API Configuration
+emqx.api.url=https://qd081a20.ala.dedicated.aws.emqxcloud.com:8443/api/v5
+emqx.api.key=mb450eff10110460
+emqx.api.secret=I0HL2xIoXc.3Qzt5H9A.Wg0yWp395-oC
+# Keep productKey for device identification
+productKey=powerbank
+#\u81EA\u5B9A\u4E49Topic\u8DEF\u5F84\u5E26/user\u4E3Atrue \u4E0D\u5E26/user\u4E3Afalse
+topicType=true
