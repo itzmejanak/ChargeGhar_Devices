@@ -4,11 +4,15 @@ import com.demo.connector.ChargeGharConnector;
 import com.demo.message.ReceiveUpload;
 import com.demo.message.Pinboard;
 import com.demo.message.Powerbank;
+import com.demo.common.DeviceConfig;
+import com.demo.model.Device;
+import com.demo.emqx.EmqxApiClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Helper class for API Controller
@@ -22,6 +26,9 @@ public class ControllerHelper {
     
     @Autowired
     private RedisTemplate redisTemplate;
+    
+    @Autowired
+    private EmqxApiClient emqxApiClient;
     
     /**
      * Sync device upload data to ChargeGhar Main Django app
@@ -163,5 +170,46 @@ public class ControllerHelper {
                 "solenoidValve=" + pb.getSolenoidValveSwitch());
         }
         System.out.println("========================================");
+    }
+    
+    /**
+     * Validate and sync device configuration with EMQX
+     * Ensures password synchronization between database and EMQX platform
+     * 
+     * @param deviceName Device name/serial number
+     * @param device Device entity from database
+     * @param config DeviceConfig from EMQX
+     * @return Validated DeviceConfig with synced password
+     */
+    public DeviceConfig validateAndSyncDeviceConfig(String deviceName, Device device, DeviceConfig config) {
+        // CRITICAL: Ensure password synchronization between database and EMQX
+        String dbPassword = device.getPassword();
+        String emqxPassword = config.getIotToken();
+        
+        // If passwords don't match, sync them using database as source of truth
+        if (!dbPassword.equals(emqxPassword)) {
+            System.out.println("⚠️ Password mismatch for device: " + deviceName);
+            System.out.println("   DB: " + dbPassword + " | EMQX: " + emqxPassword);
+            
+            // Update EMQX password to match database
+            try {
+                boolean updated = emqxApiClient.updateDevicePassword(config.getIotId(), dbPassword);
+                if (updated) {
+                    System.out.println("✅ EMQX password updated to match database");
+                    config.setIotToken(dbPassword);
+                } else {
+                    System.err.println("❌ Failed to update EMQX password - device may fail to connect");
+                }
+            } catch (Exception e) {
+                System.err.println("❌ Error updating EMQX password: " + e.getMessage());
+            }
+        }
+
+        // Cache validated configuration for 1 hour
+        String key = "clientConect:" + deviceName;
+        BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
+        boundValueOps.set(config, 1, TimeUnit.HOURS);
+        
+        return config;
     }
 }

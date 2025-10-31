@@ -88,24 +88,15 @@ public class ApiController {
             }
 
             // Get or create EMQX configuration
-            String key = "clientConect:" + valid.getUuid();
-            BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
-            DeviceConfig config = (DeviceConfig) boundValueOps.get();
-
-            if (config == null || StringUtils.isBlank(config.getTimeStamp())) {
-                config = emqxDeviceService.getOrCreateDeviceConfig(valid.getUuid());
-                if (config != null) {
-                    // Sync password: Use database password as source of truth
-                    config.setIotToken(device.getPassword());
-                    boundValueOps.set(config, 1, TimeUnit.DAYS);
-                }
-            }
-
+            DeviceConfig config = emqxDeviceService.getOrCreateDeviceConfig(valid.getUuid());
             if (config == null) {
                 throw new Exception("Failed to get device configuration. EMQX service may be unavailable.");
             }
 
-            // Return device configuration with database password
+            // Validate and sync device configuration with EMQX
+            config = controllerHelper.validateAndSyncDeviceConfig(valid.getUuid(), device, config);
+
+            // Return device configuration with validated password
             String[] arrStr = new String[]{
                 valid.getUuid(),
                 config.getProductKey(),
