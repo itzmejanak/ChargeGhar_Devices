@@ -60,26 +60,41 @@ public class JwtAuthenticationFilter implements Filter {
         // Extract JWT token from request
         String token = extractToken(httpRequest);
         
-        if (token != null && jwtUtil != null && jwtUtil.validateToken(token)) {
-            // Token is valid - extract user information
+        if (token != null && jwtUtil != null) {
             try {
-                String username = jwtUtil.extractUsername(token);
-                Integer userId = jwtUtil.extractUserId(token);
-                String role = jwtUtil.extractRole(token);
-                
-                // Add user info to request attributes
-                httpRequest.setAttribute("username", username);
-                httpRequest.setAttribute("userId", userId);
-                httpRequest.setAttribute("role", role);
-                httpRequest.setAttribute("authenticated", true);
-                
-                // Continue with request
-                chain.doFilter(request, response);
+                if (jwtUtil.validateToken(token)) {
+                    // Token is valid - extract user information
+                    String username = jwtUtil.extractUsername(token);
+                    Integer userId = jwtUtil.extractUserId(token);
+                    String role = jwtUtil.extractRole(token);
+                    
+                    // Check if token needs refresh
+                    boolean needsRefresh = jwtUtil.needsRefresh(token);
+                    
+                    // Add user info to request attributes
+                    httpRequest.setAttribute("username", username);
+                    httpRequest.setAttribute("userId", userId);
+                    httpRequest.setAttribute("role", role);
+                    httpRequest.setAttribute("authenticated", true);
+                    httpRequest.setAttribute("needsRefresh", needsRefresh);
+                    
+                    // Continue with request
+                    chain.doFilter(request, response);
+                } else if (jwtUtil.isTokenExpired(token)) {
+                    // Token is expired - clear cookie and redirect
+                    clearTokenCookie(httpResponse);
+                    redirectToLogin(httpRequest, httpResponse);
+                } else {
+                    // Token is invalid - redirect to login
+                    redirectToLogin(httpRequest, httpResponse);
+                }
             } catch (Exception e) {
+                System.err.println("JWT processing error: " + e.getMessage());
+                clearTokenCookie(httpResponse);
                 redirectToLogin(httpRequest, httpResponse);
             }
         } else {
-            // No token or invalid token - redirect to login
+            // No token - redirect to login
             redirectToLogin(httpRequest, httpResponse);
         }
     }
@@ -154,11 +169,34 @@ public class JwtAuthenticationFilter implements Filter {
     }
 
     /**
+     * Clear JWT token cookie
+     */
+    private void clearTokenCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("JWT_TOKEN", "");
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // Delete cookie
+        response.addCookie(cookie);
+    }
+
+    /**
      * Redirect to login page
      */
     private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String contextPath = request.getContextPath();
-        response.sendRedirect(contextPath + "/login");
+        
+        // For AJAX requests, return 401 status instead of redirect
+        String requestedWith = request.getHeader("X-Requested-With");
+        String accept = request.getHeader("Accept");
+        
+        if ("XMLHttpRequest".equals(requestedWith) || 
+            (accept != null && accept.contains("application/json"))) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"Authentication required\",\"code\":401}");
+        } else {
+            response.sendRedirect(contextPath + "/login");
+        }
     }
 
     @Override

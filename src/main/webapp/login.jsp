@@ -501,19 +501,26 @@
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include', // Include cookies
                     body: JSON.stringify({ username, password })
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    localStorage.setItem('jwt_token', data.token);
+                    // Clear any existing storage first
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    
+                    // Store user data (token is in HttpOnly cookie)
                     localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('login_time', Date.now().toString());
+                    
                     successMessage.textContent = '✅ Login successful! Redirecting to dashboard...';
                     successMessage.style.display = 'block';
 
                     setTimeout(() => {
-                        window.location.href = '/';
+                        window.location.replace('/');
                     }, 1000);
                 } else {
                     showMessage(errorMessage, data.message || 'Invalid credentials. Please try again.');
@@ -526,11 +533,30 @@
             }
         });
 
-        // Auto-redirect if already logged in
-        window.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('jwt_token');
-            if (token) {
-                window.location.href = '/';
+        // Auto-redirect if already logged in with valid token
+        window.addEventListener('DOMContentLoaded', async () => {
+            const user = localStorage.getItem('user');
+            if (user) {
+                try {
+                    // Validate token with server (uses HttpOnly cookie)
+                    const response = await fetch('/api/auth/me', {
+                        method: 'GET',
+                        credentials: 'include' // Include cookies
+                    });
+                    
+                    if (response.ok) {
+                        // Token is valid, redirect to dashboard
+                        window.location.replace('/');
+                    } else {
+                        // Token is invalid, clear storage
+                        localStorage.clear();
+                        sessionStorage.clear();
+                    }
+                } catch (error) {
+                    // Network error or invalid token, clear storage
+                    localStorage.clear();
+                    sessionStorage.clear();
+                }
             }
         });
 

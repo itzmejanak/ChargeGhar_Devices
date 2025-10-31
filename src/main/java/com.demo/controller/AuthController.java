@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/auth")
@@ -62,23 +64,107 @@ public class AuthController {
     }
 
     /**
-     * Get current user info
+     * Get current user info and validate token
      */
     @ResponseBody
     @GetMapping("/me")
-    public HttpResult getCurrentUser(HttpServletRequest request) {
+    public HttpResult getCurrentUser(HttpServletRequest request, HttpServletResponse response) {
         Integer userId = (Integer) request.getAttribute("userId");
+        String username = (String) request.getAttribute("username");
         
-        if (userId == null) {
-            return HttpResult.error("Not authenticated");
+        if (userId == null || username == null) {
+            return HttpResult.error(401, "Not authenticated");
         }
         
         AdminUser user = adminUserService.getAdminById(userId);
         if (user == null) {
-            return HttpResult.error("User not found");
+            return HttpResult.error(404, "User not found");
+        }
+        
+        // Check if token needs refresh (handled by filter)
+        Boolean needsRefresh = (Boolean) request.getAttribute("needsRefresh");
+        if (needsRefresh != null && needsRefresh) {
+            // Generate new token
+            String newToken = authService.refreshToken(user);
+            if (newToken != null) {
+                // Set new token in cookie
+                Cookie cookie = new Cookie("JWT_TOKEN", newToken);
+                cookie.setHttpOnly(true);
+                cookie.setPath("/");
+                cookie.setMaxAge(24 * 60 * 60); // 24 hours
+                response.addCookie(cookie);
+                
+                // Add new token to response
+                Map<String, Object> responseData = new HashMap<>();
+                responseData.put("user", user);
+                responseData.put("newToken", newToken);
+                responseData.put("refreshed", true);
+                
+                return HttpResult.ok(responseData);
+            }
         }
         
         return HttpResult.ok(user);
+    }
+
+    /**
+     * Validate token endpoint
+     */
+    @ResponseBody
+    @PostMapping("/validate")
+    public HttpResult validateToken(HttpServletRequest request) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        String username = (String) request.getAttribute("username");
+        String role = (String) request.getAttribute("role");
+        
+        if (userId == null) {
+            return HttpResult.error(401, "Invalid or expired token");
+        }
+        
+        Map<String, Object> tokenInfo = new HashMap<>();
+        tokenInfo.put("valid", true);
+        tokenInfo.put("userId", userId);
+        tokenInfo.put("username", username);
+        tokenInfo.put("role", role);
+        
+        return HttpResult.ok(tokenInfo);
+    }
+
+    /**
+     * Refresh token endpoint
+     */
+    @ResponseBody
+    @PostMapping("/refresh")
+    public HttpResult refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        
+        if (userId == null) {
+            return HttpResult.error(401, "Not authenticated");
+        }
+        
+        AdminUser user = adminUserService.getAdminById(userId);
+        if (user == null) {
+            return HttpResult.error(404, "User not found");
+        }
+        
+        // Generate new token
+        String newToken = authService.refreshToken(user);
+        if (newToken == null) {
+            return HttpResult.error(500, "Failed to refresh token");
+        }
+        
+        // Set new token in cookie
+        Cookie cookie = new Cookie("JWT_TOKEN", newToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(24 * 60 * 60); // 24 hours
+        response.addCookie(cookie);
+        
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("token", newToken);
+        responseData.put("user", user);
+        
+        return HttpResult.ok(responseData);
     }
 
     /**

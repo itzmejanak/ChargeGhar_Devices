@@ -89,6 +89,52 @@ public class AuthService {
     }
 
     /**
+     * Refresh JWT token
+     */
+    public String refreshToken(AdminUser user) {
+        try {
+            // Verify user is still active
+            if (!user.getIsActive()) {
+                return null;
+            }
+            
+            // Generate new token
+            String newToken = jwtUtil.generateToken(user);
+            
+            // Update last login time
+            adminUserDao.updateLastLogin(user.getId());
+            
+            return newToken;
+        } catch (Exception e) {
+            System.err.println("Error refreshing token: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Validate token and check if refresh is needed
+     */
+    public TokenValidationResult validateTokenWithRefresh(String token) {
+        try {
+            if (!jwtUtil.validateToken(token)) {
+                return new TokenValidationResult(false, false, null);
+            }
+            
+            boolean needsRefresh = jwtUtil.needsRefresh(token);
+            String username = jwtUtil.extractUsername(token);
+            AdminUser user = adminUserDao.findByUsername(username);
+            
+            if (user == null || !user.getIsActive()) {
+                return new TokenValidationResult(false, false, null);
+            }
+            
+            return new TokenValidationResult(true, needsRefresh, user);
+        } catch (Exception e) {
+            return new TokenValidationResult(false, false, null);
+        }
+    }
+
+    /**
      * Change password
      */
     public boolean changePassword(Integer userId, String oldPassword, String newPassword) {
@@ -110,5 +156,24 @@ public class AuthService {
         adminUserDao.changePassword(userId, hashedPassword);
         
         return true;
+    }
+
+    /**
+     * Token validation result class
+     */
+    public static class TokenValidationResult {
+        private final boolean valid;
+        private final boolean needsRefresh;
+        private final AdminUser user;
+        
+        public TokenValidationResult(boolean valid, boolean needsRefresh, AdminUser user) {
+            this.valid = valid;
+            this.needsRefresh = needsRefresh;
+            this.user = user;
+        }
+        
+        public boolean isValid() { return valid; }
+        public boolean needsRefresh() { return needsRefresh; }
+        public AdminUser getUser() { return user; }
     }
 }
