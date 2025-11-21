@@ -183,12 +183,12 @@ public class ApiController {
 
     @RequestMapping("/api/rentbox/upload/data")
     public HttpResult rentboxOrderReturnEnd(@RequestBody byte[] bytes,
-                                            @RequestParam String rentboxSN,
-                                            @RequestParam String sign,
-                                            @RequestParam(defaultValue = "0") String signal,
-                                            @RequestParam(required = false) Integer io,
-                                            @RequestParam(required = false) String ssid,
-                                            HttpServletResponse response) throws Exception {
+        @RequestParam String rentboxSN,
+        @RequestParam String sign,
+        @RequestParam(defaultValue = "0") String signal,
+        @RequestParam(required = false) Integer io,
+        @RequestParam(required = false) String ssid,
+        HttpServletResponse response) throws Exception {
         HttpResult httpResult = new HttpResult();
         MessageBody messageBody = new MessageBody();
 

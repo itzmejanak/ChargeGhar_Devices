@@ -1,0 +1,737 @@
+demo-app-prod  | 2025-11-12T00:06:11.126495888Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:06:11.126724536Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:06:11.126751386Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T00:06:11.126756436Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T00:06:11.127133094Z Payload: {"type":"full","timestamp":1762905971,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T00:06:11.126Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:06:11.126Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:06:11.126Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:06:11.126Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:06:11.126Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":50,"current":2,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T00:06:11.127166114Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T00:06:11.134798705Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T00:06:11.134827976Z Signature: P+tCOVWn/rOACq4hOJJ0G2wk23ZMNLt3aBtkcFmI9EE=
+iotdemo-app-prod  | 2025-11-12T00:06:11.134831476Z Timestamp: 1762905971
+iotdemo-app-prod  | 2025-11-12T00:06:11.298742652Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T00:06:11.298767692Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T00:06:11.295366+00:00"}}
+iotdemo-app-prod  | 2025-11-12T00:06:11.298977610Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T00:06:11.298993640Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:06:11.298996490Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T00:16:10.518925740Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T00:26:10.538559654Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T00:26:11.354618033Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:26:11.354652253Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T00:26:11.354657753Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T00:26:11.354860162Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T00:26:11.354898093Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T00:26:11.354905872Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T00:26:11.354910822Z   io: null
+iotdemo-app-prod  | 2025-11-12T00:26:11.354915483Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T00:26:11.354924103Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T00:26:11.354949933Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E3 49 02 6E D5 84 64 16 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D3
+iotdemo-app-prod  | 2025-11-12T00:26:11.354955113Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T00:26:11.354957973Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T00:26:11.354960783Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T00:26:11.354964673Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T00:26:11.354967053Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T00:26:11.354970343Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T00:26:11.354973053Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=22°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T00:26:11.354975723Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T00:26:11.354978723Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:26:11.355115783Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:26:11.355122313Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T00:26:11.355125043Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T00:26:11.355127093Z Token expired or missing, re-authenticating...
+iotdemo-app-prod  | 2025-11-12T00:26:11.355129163Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:26:11.355131133Z AUTHENTICATING WITH CHARGEGHAR MAIN API
+iotdemo-app-prod  | 2025-11-12T00:26:11.357482218Z Login URL: https://main.chargeghar.com/api/admin/login
+iotdemo-app-prod  | 2025-11-12T00:26:11.357501688Z Login Email: janak@powerbank.com
+iotdemo-app-prod  | 2025-11-12T00:26:11.993604103Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T00:26:11.993632452Z Response Body: {"success":true,"message":"Admin login successful","data":{"user_id":"1","access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1NDk5MTcxLCJpYXQiOjE3NjI5MDcxNzEsImp0aSI6IjZmNjcyYTNkMDNkNzQyMDNiZWJiMDA0MzY1ZTVkMmFmIiwidXNlcl9pZCI6IjEiLCJpc3MiOiJDaGFyZ2VHaGFyLUFQSSJ9.3y6HCtcyyWM3AvPQrPBG5OeM3e3LFIIjzQVWAwsbuWU","refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDY4MzE3MSwiaWF0IjoxNzYyOTA3MTcxLCJqdGkiOiI0NmZjZWJlNWRjNjM0NzM2YTVkODQ1MTNkNjA1MGNlOCIsInVzZXJfaWQiOiIxIiwiaXNzIjoiQ2hhcmdlR2hhci1BUEkifQ.r9buoq-Zptrs6vesKzhnGb2CtqRlN0RWfxOX9w7EY04","user":{"id":"1","email":"janak@powerbank.com","username":"janak","is_staff":true,"is_superuser":true,"role":"super_admin"},"message":"Admin login successful"}}
+iotdemo-app-prod  | 2025-11-12T00:26:11.998228204Z ✅ Authentication successful!
+iotdemo-app-prod  | 2025-11-12T00:26:11.998247985Z Access Token: eyJhbGciOiJIUzI1NiIs...
+iotdemo-app-prod  | 2025-11-12T00:26:11.998251895Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:26:11.998739193Z Payload: {"type":"full","timestamp":1762907171,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T00:26:11.998Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:26:11.998Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:26:11.998Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:26:11.998Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:26:11.998Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T00:26:11.998784014Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T00:26:11.999160893Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T00:26:11.999199472Z Signature: cTXG+fCGhTACSKDbtS+Lz69JwsGYPOOu67OyaeZo/X0=
+iotdemo-app-prod  | 2025-11-12T00:26:11.999204382Z Timestamp: 1762907171
+iotdemo-app-prod  | 2025-11-12T00:26:12.045901858Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T00:26:12.045919688Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T00:26:12.042176+00:00"}}
+iotdemo-app-prod  | 2025-11-12T00:26:12.046231768Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T00:26:12.046244598Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:26:12.046247468Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T00:36:10.720151258Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T00:46:10.762408025Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T00:46:11.620394878Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:46:11.620453828Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T00:46:11.620459608Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T00:46:11.620464228Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T00:46:11.620468487Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T00:46:11.620472727Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T00:46:11.620477607Z   io: null
+iotdemo-app-prod  | 2025-11-12T00:46:11.620481777Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T00:46:11.620485927Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T00:46:11.620490167Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E3 49 02 6E D5 84 64 16 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D3
+iotdemo-app-prod  | 2025-11-12T00:46:11.620496198Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T00:46:11.620500718Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T00:46:11.620521167Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T00:46:11.620524087Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T00:46:11.620526897Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T00:46:11.620530358Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T00:46:11.620533028Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=22°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T00:46:11.620535997Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T00:46:11.620538948Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:46:11.620545897Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:46:11.620548847Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T00:46:11.620551727Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T00:46:11.620973727Z Payload: {"type":"full","timestamp":1762908371,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T00:46:11.620Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:46:11.620Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:46:11.620Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:46:11.620Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T00:46:11.620Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T00:46:11.620996097Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T00:46:11.623620098Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T00:46:11.623653857Z Signature: cWb6EzpZdeeHtdgPP1kZynYWoRSwh7C9Ux15zANrqfA=
+iotdemo-app-prod  | 2025-11-12T00:46:11.623657878Z Timestamp: 1762908371
+iotdemo-app-prod  | 2025-11-12T00:46:11.797599218Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T00:46:11.797633508Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T00:46:11.790946+00:00"}}
+iotdemo-app-prod  | 2025-11-12T00:46:11.797737038Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T00:46:11.797742609Z ========================================
+iotdemo-app-prod  | 2025-11-12T00:46:11.797872809Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T00:56:10.970031502Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T01:06:11.002440583Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T01:06:11.914707781Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:06:11.914739362Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T01:06:11.914748272Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T01:06:11.914753461Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T01:06:11.914758021Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T01:06:11.914762592Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T01:06:11.914766961Z   io: null
+iotdemo-app-prod  | 2025-11-12T01:06:11.914771491Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T01:06:11.914780661Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T01:06:11.914829712Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E3 49 02 6E D5 84 64 16 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D3
+iotdemo-app-prod  | 2025-11-12T01:06:11.914868041Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T01:06:11.914872201Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T01:06:11.914875671Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T01:06:11.914878821Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T01:06:11.914882061Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:06:11.914886221Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:06:11.914889771Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=22°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:06:11.914939571Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:06:11.914948221Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:06:11.915230272Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:06:11.915239741Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T01:06:11.915243771Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T01:06:11.915952121Z Payload: {"type":"full","timestamp":1762909571,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T01:06:11.915Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:06:11.915Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:06:11.915Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:06:11.915Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:06:11.915Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T01:06:11.915996191Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T01:06:11.929480020Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T01:06:11.929521800Z Signature: 3bPVXbD9MSU/tdlWQ0UXITZ9aunOqcm7CaODGyDn7yI=
+iotdemo-app-prod  | 2025-11-12T01:06:11.929525560Z Timestamp: 1762909571
+iotdemo-app-prod  | 2025-11-12T01:06:11.993778520Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T01:06:11.993796051Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T01:06:11.990233+00:00"}}
+iotdemo-app-prod  | 2025-11-12T01:06:11.994061480Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T01:06:11.994070571Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:06:11.994073990Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T01:16:11.228909748Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T01:26:11.258104308Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T01:26:12.073080171Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:26:12.073109151Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T01:26:12.073113311Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T01:26:12.073116691Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T01:26:12.073121151Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T01:26:12.073126821Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T01:26:12.073135061Z   io: null
+iotdemo-app-prod  | 2025-11-12T01:26:12.073140161Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T01:26:12.073144501Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T01:26:12.073153271Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E3 49 02 6E D5 84 64 15 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T01:26:12.073158401Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T01:26:12.073162091Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T01:26:12.073165721Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T01:26:12.073169541Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T01:26:12.073177321Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:26:12.073182511Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:26:12.073205631Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=21°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:26:12.073208290Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:26:12.073210501Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:26:12.073474291Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:26:12.073511231Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T01:26:12.073514721Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T01:26:12.073517451Z Token expired or missing, re-authenticating...
+iotdemo-app-prod  | 2025-11-12T01:26:12.073519891Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:26:12.073522381Z AUTHENTICATING WITH CHARGEGHAR MAIN API
+iotdemo-app-prod  | 2025-11-12T01:26:12.085688891Z Login URL: https://main.chargeghar.com/api/admin/login
+iotdemo-app-prod  | 2025-11-12T01:26:12.085717421Z Login Email: janak@powerbank.com
+iotdemo-app-prod  | 2025-11-12T01:26:12.758283671Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T01:26:12.758325921Z Response Body: {"success":true,"message":"Admin login successful","data":{"user_id":"1","access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1NTAyNzcyLCJpYXQiOjE3NjI5MTA3NzIsImp0aSI6IjE0YWMyYmY4NzcxYjRhYzZhYjcwZmI0NzM5OTE2MzRiIiwidXNlcl9pZCI6IjEiLCJpc3MiOiJDaGFyZ2VHaGFyLUFQSSJ9.ZwW4WXr1gxGLsMvhyBDtm7EoHGAoZqbid2sCirNVbmY","refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDY4Njc3MiwiaWF0IjoxNzYyOTEwNzcyLCJqdGkiOiI4YmRlYWM1MjZlODY0NjJjYjUwYjQzNzQ5OTY5Mjk5OCIsInVzZXJfaWQiOiIxIiwiaXNzIjoiQ2hhcmdlR2hhci1BUEkifQ.RLT5rOZlSNzctVAxj-7w2fa-sQMaf0R5rJS3yzUzV50","user":{"id":"1","email":"janak@powerbank.com","username":"janak","is_staff":true,"is_superuser":true,"role":"super_admin"},"message":"Admin login successful"}}
+iotdemo-app-prod  | 2025-11-12T01:26:12.758484291Z ✅ Authentication successful!
+iotdemo-app-prod  | 2025-11-12T01:26:12.758492300Z Access Token: eyJhbGciOiJIUzI1NiIs...
+iotdemo-app-prod  | 2025-11-12T01:26:12.758495151Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:26:12.758962292Z Payload: {"type":"full","timestamp":1762910772,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T01:26:12.758Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:26:12.758Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:26:12.758Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:26:12.758Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:26:12.758Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":21,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T01:26:12.758992391Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T01:26:12.760106782Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T01:26:12.760119472Z Signature: Y3isDBCu4mDWGUukaYyqsH+Op6/e3Qyws6d63hzTWcA=
+iotdemo-app-prod  | 2025-11-12T01:26:12.760123022Z Timestamp: 1762910772
+iotdemo-app-prod  | 2025-11-12T01:26:12.852006870Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T01:26:12.852024440Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T01:26:12.848415+00:00"}}
+iotdemo-app-prod  | 2025-11-12T01:26:12.852501661Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T01:26:12.852546131Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:26:12.852549861Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T01:36:11.471849668Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T01:46:11.504436202Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T01:46:12.480407640Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:46:12.480449329Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T01:46:12.480453689Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T01:46:12.480457280Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T01:46:12.480461169Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T01:46:12.480465100Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T01:46:12.480468340Z   io: null
+iotdemo-app-prod  | 2025-11-12T01:46:12.480471580Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T01:46:12.480474740Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T01:46:12.480477950Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E3 49 02 6E D5 84 64 15 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T01:46:12.480485470Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T01:46:12.480488609Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T01:46:12.480491889Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T01:46:12.480495350Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T01:46:12.480498700Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:46:12.480502769Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:46:12.480506180Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=21°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:46:12.480509558Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T01:46:12.480514459Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:46:12.480705757Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:46:12.480728227Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T01:46:12.480731467Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T01:46:12.481618171Z Payload: {"type":"full","timestamp":1762911972,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T01:46:12.480Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:46:12.480Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:46:12.480Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:46:12.480Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T01:46:12.480Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":21,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T01:46:12.481665060Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T01:46:12.492571649Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T01:46:12.492604868Z Signature: jKB1zmKdGjvZgGXjXWNu5pRW8QuxpqpdtB9ZgIooDc0=
+iotdemo-app-prod  | 2025-11-12T01:46:12.492608489Z Timestamp: 1762911972
+iotdemo-app-prod  | 2025-11-12T01:46:12.555751764Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T01:46:12.555772255Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T01:46:12.552423+00:00"}}
+iotdemo-app-prod  | 2025-11-12T01:46:12.556159151Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T01:46:12.556173081Z ========================================
+iotdemo-app-prod  | 2025-11-12T01:46:12.556176641Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T01:56:11.736374013Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T02:06:11.726716424Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T02:06:12.628407973Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:06:12.628438513Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T02:06:12.628443553Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T02:06:12.628447743Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T02:06:12.628452164Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T02:06:12.628456483Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T02:06:12.628474873Z   io: null
+iotdemo-app-prod  | 2025-11-12T02:06:12.628477653Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T02:06:12.628480393Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T02:06:12.628483263Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E3 49 02 6E D5 84 64 15 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T02:06:12.628487253Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T02:06:12.628490193Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T02:06:12.628492933Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T02:06:12.628495583Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T02:06:12.628498373Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:06:12.628502113Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:06:12.628504943Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=21°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:06:12.628511973Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:06:12.628515003Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:06:12.628723163Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:06:12.628730943Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T02:06:12.628733663Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T02:06:12.629960311Z Payload: {"type":"full","timestamp":1762913172,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T02:06:12.628Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:06:12.629Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:06:12.629Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:06:12.629Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:06:12.629Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":21,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T02:06:12.629992931Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T02:06:12.646038799Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T02:06:12.646082099Z Signature: ryZmc6xwXx0/lDTC2GkMTWWLFkdPYQiGeHq2kx7ZEfc=
+iotdemo-app-prod  | 2025-11-12T02:06:12.646107059Z Timestamp: 1762913172
+iotdemo-app-prod  | 2025-11-12T02:06:12.776789216Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T02:06:12.776815896Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T02:06:12.771371+00:00"}}
+iotdemo-app-prod  | 2025-11-12T02:06:12.777155365Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T02:06:12.777172615Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:06:12.777175595Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T02:16:11.939482489Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T02:26:11.977094926Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T02:26:12.920740154Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:26:12.920784315Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T02:26:12.920789664Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T02:26:12.920794014Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T02:26:12.920798075Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T02:26:12.920802115Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T02:26:12.920806094Z   io: null
+iotdemo-app-prod  | 2025-11-12T02:26:12.920810044Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T02:26:12.920814044Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T02:26:12.920818004Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E3 49 02 6E D5 84 64 15 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T02:26:12.920824214Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T02:26:12.920828054Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T02:26:12.920831754Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T02:26:12.920836094Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T02:26:12.920840314Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:26:12.920845514Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:26:12.920849294Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=21°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:26:12.920852784Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:26:12.920856234Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:26:12.921134645Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:26:12.921167214Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T02:26:12.921172224Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T02:26:12.921222964Z Token expired or missing, re-authenticating...
+iotdemo-app-prod  | 2025-11-12T02:26:12.921233214Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:26:12.921255684Z AUTHENTICATING WITH CHARGEGHAR MAIN API
+iotdemo-app-prod  | 2025-11-12T02:26:12.924542019Z Login URL: https://main.chargeghar.com/api/admin/login
+iotdemo-app-prod  | 2025-11-12T02:26:12.924559229Z Login Email: janak@powerbank.com
+iotdemo-app-prod  | 2025-11-12T02:26:13.224179156Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T02:26:13.224341977Z Response Body: {"success":true,"message":"Admin login successful","data":{"user_id":"1","access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1NTA2MzczLCJpYXQiOjE3NjI5MTQzNzMsImp0aSI6ImZjMWE3OTg4ZmIxMDQxYTY4MjhiNjc3ZGFjY2YyYjZkIiwidXNlcl9pZCI6IjEiLCJpc3MiOiJDaGFyZ2VHaGFyLUFQSSJ9.hHhfyMMeIc-gZMc9iN41pid00Mj0PP4bTFUMR81ZIas","refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDY5MDM3MywiaWF0IjoxNzYyOTE0MzczLCJqdGkiOiJlNDc2MTUxNDk0NGY0NTA2YTg1YjU1YWY4YzVmYjI2OSIsInVzZXJfaWQiOiIxIiwiaXNzIjoiQ2hhcmdlR2hhci1BUEkifQ.yqo-rDfq3S3PCqINmqJnO1CKgjhJ11nKVloT-LsBpLo","user":{"id":"1","email":"janak@powerbank.com","username":"janak","is_staff":true,"is_superuser":true,"role":"super_admin"},"message":"Admin login successful"}}
+iotdemo-app-prod  | 2025-11-12T02:26:13.226161539Z ✅ Authentication successful!
+iotdemo-app-prod  | 2025-11-12T02:26:13.226175500Z Access Token: eyJhbGciOiJIUzI1NiIs...
+iotdemo-app-prod  | 2025-11-12T02:26:13.226307149Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:26:13.227020611Z Payload: {"type":"full","timestamp":1762914373,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T02:26:13.226Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:26:13.226Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:26:13.226Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:26:13.226Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:26:13.226Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":21,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T02:26:13.227092030Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T02:26:13.227981062Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T02:26:13.227993262Z Signature: Yret3AMEOtaTsUrvxfFFeUziAn98Ik+lQVd97YdYdE4=
+iotdemo-app-prod  | 2025-11-12T02:26:13.227996321Z Timestamp: 1762914373
+iotdemo-app-prod  | 2025-11-12T02:26:13.280836231Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T02:26:13.280853791Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T02:26:13.277816+00:00"}}
+iotdemo-app-prod  | 2025-11-12T02:26:13.281085501Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T02:26:13.281095871Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:26:13.281099441Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T02:36:12.227042463Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T02:46:12.266112924Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T02:46:13.126072369Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:46:13.126099739Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T02:46:13.126104199Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T02:46:13.126108030Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T02:46:13.126111230Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T02:46:13.126114459Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T02:46:13.126117649Z   io: null
+iotdemo-app-prod  | 2025-11-12T02:46:13.126120779Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T02:46:13.126123879Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T02:46:13.126127149Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E3 49 02 6E D5 84 64 15 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T02:46:13.126130629Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T02:46:13.126133689Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T02:46:13.126136909Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T02:46:13.126139979Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T02:46:13.126143099Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:46:13.126147109Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:46:13.126150389Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=21°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:46:13.126311779Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T02:46:13.126340549Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:46:13.126531719Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:46:13.126557270Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T02:46:13.126561639Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T02:46:13.127583809Z Payload: {"type":"full","timestamp":1762915573,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T02:46:13.126Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:46:13.126Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:46:13.126Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:46:13.126Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T02:46:13.126Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":21,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T02:46:13.127624599Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T02:46:13.140195739Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T02:46:13.140225829Z Signature: PVnDmIuwVcIswY3z6Dib1/5afrZztfR2VmMaLvHaKSc=
+iotdemo-app-prod  | 2025-11-12T02:46:13.140229049Z Timestamp: 1762915573
+iotdemo-app-prod  | 2025-11-12T02:46:13.205668947Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T02:46:13.205689307Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T02:46:13.202841+00:00"}}
+iotdemo-app-prod  | 2025-11-12T02:46:13.205890136Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T02:46:13.205898606Z ========================================
+iotdemo-app-prod  | 2025-11-12T02:46:13.205901987Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T02:56:12.659010692Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T03:06:12.488709492Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T03:06:13.392629900Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:06:13.392656189Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T03:06:13.392684909Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T03:06:13.392700229Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T03:06:13.392705650Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T03:06:13.392710259Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T03:06:13.392714600Z   io: null
+iotdemo-app-prod  | 2025-11-12T03:06:13.392718810Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T03:06:13.392723050Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T03:06:13.392727389Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E3 49 02 6E D5 84 64 16 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D3
+iotdemo-app-prod  | 2025-11-12T03:06:13.392733840Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T03:06:13.392738189Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T03:06:13.392742579Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T03:06:13.392872859Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T03:06:13.392882359Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:06:13.392903379Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:06:13.392906809Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=22°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:06:13.393082779Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:06:13.393112819Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:06:13.393193298Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:06:13.393203759Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T03:06:13.393207609Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T03:06:13.394561736Z Payload: {"type":"full","timestamp":1762916773,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T03:06:13.393Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:06:13.393Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:06:13.393Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:06:13.393Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:06:13.393Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T03:06:13.394593917Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T03:06:13.406376442Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T03:06:13.406411572Z Signature: ytBBCIEgjjIQfkoc1+mr6zGIkR/TUEhYmUarHxy78aE=
+iotdemo-app-prod  | 2025-11-12T03:06:13.406415182Z Timestamp: 1762916773
+iotdemo-app-prod  | 2025-11-12T03:06:13.499429345Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T03:06:13.499580514Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T03:06:13.496494+00:00"}}
+iotdemo-app-prod  | 2025-11-12T03:06:13.500015533Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T03:06:13.500024213Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:06:13.500027843Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T03:16:12.700558970Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T03:26:12.735159633Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T03:26:13.753941820Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:26:13.753983130Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T03:26:13.753987380Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T03:26:13.753990930Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T03:26:13.753994930Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T03:26:13.753998180Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T03:26:13.754004610Z   io: null
+iotdemo-app-prod  | 2025-11-12T03:26:13.754007850Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T03:26:13.754011030Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T03:26:13.754014290Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E2 49 02 6E D5 84 64 16 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T03:26:13.754019570Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T03:26:13.754023290Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T03:26:13.754026470Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T03:26:13.754029690Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T03:26:13.754033160Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:26:13.754037280Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:26:13.754040530Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=22°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:26:13.754043820Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:26:13.754047110Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:26:13.754083001Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:26:13.754112831Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T03:26:13.754118021Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T03:26:13.754122720Z Token expired or missing, re-authenticating...
+iotdemo-app-prod  | 2025-11-12T03:26:13.754276160Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:26:13.754284340Z AUTHENTICATING WITH CHARGEGHAR MAIN API
+iotdemo-app-prod  | 2025-11-12T03:26:13.767060671Z Login URL: https://main.chargeghar.com/api/admin/login
+iotdemo-app-prod  | 2025-11-12T03:26:13.767096091Z Login Email: janak@powerbank.com
+iotdemo-app-prod  | 2025-11-12T03:26:14.043548042Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T03:26:14.043570492Z Response Body: {"success":true,"message":"Admin login successful","data":{"user_id":"1","access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1NTA5OTc0LCJpYXQiOjE3NjI5MTc5NzQsImp0aSI6IjBmNjQwODg2M2M1MjQ4MjE4Nzg1MzZhNWE4M2UwMDc4IiwidXNlcl9pZCI6IjEiLCJpc3MiOiJDaGFyZ2VHaGFyLUFQSSJ9.79OgKrQEP3TfEMt1upCkhXS5Sj5YsmACeJWTJIaFNuE","refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDY5Mzk3NCwiaWF0IjoxNzYyOTE3OTc0LCJqdGkiOiJkYmJjOWRmNjdmZTE0NDYxYTE1NTg4OWY2ZWZkOGI4ZCIsInVzZXJfaWQiOiIxIiwiaXNzIjoiQ2hhcmdlR2hhci1BUEkifQ.2EMuql1XBKfJd9_vxYQlYtWjeT3-UeLT05qKvZl4bRE","user":{"id":"1","email":"janak@powerbank.com","username":"janak","is_staff":true,"is_superuser":true,"role":"super_admin"},"message":"Admin login successful"}}
+iotdemo-app-prod  | 2025-11-12T03:26:14.045984791Z ✅ Authentication successful!
+iotdemo-app-prod  | 2025-11-12T03:26:14.046001051Z Access Token: eyJhbGciOiJIUzI1NiIs...
+iotdemo-app-prod  | 2025-11-12T03:26:14.046003821Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:26:14.046933680Z Payload: {"type":"full","timestamp":1762917974,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T03:26:14.046Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:26:14.046Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:26:14.046Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:26:14.046Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:26:14.046Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T03:26:14.046965160Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T03:26:14.048215419Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T03:26:14.048229199Z Signature: ZNz2gjz4mZcgu9reUurQWYI+JpHTq+IPcqCf5a+gw94=
+iotdemo-app-prod  | 2025-11-12T03:26:14.048232079Z Timestamp: 1762917974
+iotdemo-app-prod  | 2025-11-12T03:26:14.414342137Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T03:26:14.414368937Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T03:26:14.397671+00:00"}}
+iotdemo-app-prod  | 2025-11-12T03:26:14.414568396Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T03:26:14.414578246Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:26:14.414581906Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T03:36:12.949784009Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T03:46:12.988685048Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T03:46:13.906351339Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:46:13.906394909Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T03:46:13.906409149Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T03:46:13.906429699Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T03:46:13.906431819Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T03:46:13.906433839Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T03:46:13.906436199Z   io: null
+iotdemo-app-prod  | 2025-11-12T03:46:13.906438279Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T03:46:13.906440199Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T03:46:13.906442629Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E2 49 02 6E D5 84 64 16 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T03:46:13.906446639Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T03:46:13.906448549Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T03:46:13.906450409Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T03:46:13.906452359Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T03:46:13.906454539Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:46:13.906457519Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:46:13.906459579Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=22°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:46:13.906461859Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T03:46:13.906463929Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:46:13.906494939Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:46:13.906523499Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T03:46:13.906527059Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T03:46:13.907114188Z Payload: {"type":"full","timestamp":1762919173,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T03:46:13.906Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:46:13.906Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:46:13.906Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:46:13.906Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T03:46:13.906Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T03:46:13.907139698Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T03:46:13.920572579Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T03:46:13.920606640Z Signature: 3uN8BsU9xX2XRQIAY3hlxcZ/cGxauwuiZHEVGCRU8SI=
+iotdemo-app-prod  | 2025-11-12T03:46:13.920609569Z Timestamp: 1762919173
+iotdemo-app-prod  | 2025-11-12T03:46:14.060104071Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T03:46:14.060121781Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T03:46:14.056556+00:00"}}
+iotdemo-app-prod  | 2025-11-12T03:46:14.060434870Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T03:46:14.060447720Z ========================================
+iotdemo-app-prod  | 2025-11-12T03:46:14.060450920Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T03:56:13.288051149Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T04:06:13.224854109Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T04:06:14.124506005Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:06:14.124559764Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T04:06:14.124564294Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T04:06:14.124568554Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T04:06:14.124572534Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T04:06:14.124575774Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T04:06:14.124578934Z   io: null
+iotdemo-app-prod  | 2025-11-12T04:06:14.124582074Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T04:06:14.124585184Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T04:06:14.124588324Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E2 49 02 6E D5 84 64 16 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T04:06:14.124591784Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T04:06:14.124594874Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T04:06:14.124598054Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T04:06:14.124701404Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T04:06:14.124710814Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:06:14.124715914Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:06:14.124722944Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=22°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:06:14.124730614Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:06:14.124735294Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:06:14.124976654Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:06:14.124987445Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T04:06:14.125011944Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T04:06:14.126729213Z Payload: {"type":"full","timestamp":1762920374,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T04:06:14.124Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:06:14.125Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:06:14.125Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:06:14.125Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:06:14.125Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T04:06:14.126756312Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T04:06:14.138958144Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T04:06:14.139001634Z Signature: yqFQ47IDXZdQseA+ZTpyP677dJfgeRSztnXK3+0BlJs=
+iotdemo-app-prod  | 2025-11-12T04:06:14.139006284Z Timestamp: 1762920374
+iotdemo-app-prod  | 2025-11-12T04:06:14.220976337Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T04:06:14.221021417Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T04:06:14.216713+00:00"}}
+iotdemo-app-prod  | 2025-11-12T04:06:14.221178966Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T04:06:14.221203136Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:06:14.221205916Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T04:16:13.436107781Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T04:26:13.493679921Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T04:26:14.592153976Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:26:14.592196876Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T04:26:14.592200976Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T04:26:14.592204316Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T04:26:14.592207726Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T04:26:14.592210876Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T04:26:14.592214296Z   io: null
+iotdemo-app-prod  | 2025-11-12T04:26:14.592217446Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T04:26:14.592220706Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T04:26:14.592245616Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E2 49 02 6E D5 84 64 16 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T04:26:14.592247996Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T04:26:14.592249856Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T04:26:14.592251696Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T04:26:14.592253526Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T04:26:14.592255506Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:26:14.592309906Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:26:14.592329486Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=22°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:26:14.592333646Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:26:14.592336946Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:26:14.592622636Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:26:14.592629536Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T04:26:14.592632176Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T04:26:14.592742036Z Token expired or missing, re-authenticating...
+iotdemo-app-prod  | 2025-11-12T04:26:14.592745156Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:26:14.592747186Z AUTHENTICATING WITH CHARGEGHAR MAIN API
+iotdemo-app-prod  | 2025-11-12T04:26:14.607017516Z Login URL: https://main.chargeghar.com/api/admin/login
+iotdemo-app-prod  | 2025-11-12T04:26:14.607047696Z Login Email: janak@powerbank.com
+iotdemo-app-prod  | 2025-11-12T04:26:15.239921319Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T04:26:15.239958829Z Response Body: {"success":true,"message":"Admin login successful","data":{"user_id":"1","access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1NTEzNTc1LCJpYXQiOjE3NjI5MjE1NzUsImp0aSI6IjUxNmE5M2JjYjMwMTRlNjJiYTU0MmNkOGFmNTViY2Y0IiwidXNlcl9pZCI6IjEiLCJpc3MiOiJDaGFyZ2VHaGFyLUFQSSJ9.fFkb6k-zNXWkrrvl1vgwY1FjPfPzrA5dOdkkz-4R_N0","refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDY5NzU3NSwiaWF0IjoxNzYyOTIxNTc1LCJqdGkiOiI5Yjk1Y2FjOTk1ODk0NTFhYmY1MDY0OWYyYTYzZDVmOSIsInVzZXJfaWQiOiIxIiwiaXNzIjoiQ2hhcmdlR2hhci1BUEkifQ.YFgiz_5rbWZkxVFH1TYFiCx2sy-5rcjZlZVpdbzbPoM","user":{"id":"1","email":"janak@powerbank.com","username":"janak","is_staff":true,"is_superuser":true,"role":"super_admin"},"message":"Admin login successful"}}
+iotdemo-app-prod  | 2025-11-12T04:26:15.246207914Z ✅ Authentication successful!
+iotdemo-app-prod  | 2025-11-12T04:26:15.246266404Z Access Token: eyJhbGciOiJIUzI1NiIs...
+iotdemo-app-prod  | 2025-11-12T04:26:15.246270404Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:26:15.247257184Z Payload: {"type":"full","timestamp":1762921575,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T04:26:15.246Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:26:15.246Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:26:15.246Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:26:15.246Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:26:15.246Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T04:26:15.247370814Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T04:26:15.248183533Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T04:26:15.248207233Z Signature: LTZjZFGwcj0k4uaGcy/Z0nsnD0SkcR0mqB39QQ/JAnY=
+iotdemo-app-prod  | 2025-11-12T04:26:15.248210613Z Timestamp: 1762921575
+iotdemo-app-prod  | 2025-11-12T04:26:15.304731143Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T04:26:15.304747183Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T04:26:15.301251+00:00"}}
+iotdemo-app-prod  | 2025-11-12T04:26:15.305480232Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T04:26:15.305490872Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:26:15.305493543Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T04:36:13.667144619Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T04:46:13.667765525Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T04:46:14.883891023Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:46:14.883931843Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T04:46:14.883935913Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T04:46:14.883939283Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T04:46:14.883942542Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T04:46:14.883945782Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T04:46:14.883949833Z   io: null
+iotdemo-app-prod  | 2025-11-12T04:46:14.883953043Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T04:46:14.883956243Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T04:46:14.883959513Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E2 49 02 6E D5 84 64 16 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T04:46:14.883963633Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T04:46:14.883985632Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T04:46:14.883987752Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T04:46:14.884081630Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T04:46:14.884089979Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:46:14.884093319Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:46:14.884095619Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=22°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:46:14.884097709Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T04:46:14.884099879Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:46:14.884306724Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:46:14.884311374Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T04:46:14.884313414Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T04:46:14.884870760Z Payload: {"type":"full","timestamp":1762922774,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T04:46:14.884Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:46:14.884Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:46:14.884Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:46:14.884Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T04:46:14.884Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T04:46:14.884886011Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T04:46:14.898138704Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T04:46:14.898177603Z Signature: Tm0/UaPU+XEk3+ffAjd9yRsrCvYkrvPBwn2urWSpVzo=
+iotdemo-app-prod  | 2025-11-12T04:46:14.898181963Z Timestamp: 1762922774
+iotdemo-app-prod  | 2025-11-12T04:46:14.960870390Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T04:46:14.960909489Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T04:46:14.956727+00:00"}}
+iotdemo-app-prod  | 2025-11-12T04:46:14.961370148Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T04:46:14.961420536Z ========================================
+iotdemo-app-prod  | 2025-11-12T04:46:14.961424487Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T04:56:13.861686046Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T05:06:13.897033370Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T05:06:14.930319067Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:06:14.930346017Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T05:06:14.930350297Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T05:06:14.930353777Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T05:06:14.930357487Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T05:06:14.930360757Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T05:06:14.930363917Z   io: null
+iotdemo-app-prod  | 2025-11-12T05:06:14.930366997Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T05:06:14.930370127Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T05:06:14.930373377Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E2 49 02 6E D5 84 64 16 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D4
+iotdemo-app-prod  | 2025-11-12T05:06:14.930384436Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T05:06:14.930387846Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T05:06:14.930391116Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T05:06:14.930394126Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T05:06:14.930397286Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:06:14.930401255Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:06:14.930404526Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=22°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:06:14.930408596Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:06:14.930411986Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:06:14.930558244Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:06:14.930569804Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T05:06:14.930573804Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T05:06:14.931189086Z Payload: {"type":"full","timestamp":1762923974,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T05:06:14.930Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:06:14.930Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:06:14.930Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:06:14.930Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:06:14.930Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":22,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T05:06:14.931240356Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T05:06:14.943473561Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T05:06:14.943516330Z Signature: xyFmC1sNMu3YZ2UPxVoMPK63R1BND8Wd15fv772MG6c=
+iotdemo-app-prod  | 2025-11-12T05:06:14.943526271Z Timestamp: 1762923974
+iotdemo-app-prod  | 2025-11-12T05:06:15.010346047Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T05:06:15.010369578Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T05:06:15.007285+00:00"}}
+iotdemo-app-prod  | 2025-11-12T05:06:15.010911670Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T05:06:15.010935800Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:06:15.010939410Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T05:16:14.093857551Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T05:26:14.171573954Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T05:26:15.471060789Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:26:15.471092354Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T05:26:15.471097585Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T05:26:15.471101646Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T05:26:15.471106037Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T05:26:15.471110497Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T05:26:15.471114818Z   io: null
+iotdemo-app-prod  | 2025-11-12T05:26:15.471118979Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T05:26:15.471123189Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T05:26:15.471133501Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E2 49 02 6E D5 84 64 17 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D3
+iotdemo-app-prod  | 2025-11-12T05:26:15.471144083Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T05:26:15.471149334Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T05:26:15.471176018Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T05:26:15.471180569Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T05:26:15.471184989Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:26:15.471190070Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:26:15.471282074Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=23°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:26:15.471307249Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:26:15.471310410Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:26:15.471541997Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:26:15.471547438Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T05:26:15.471549908Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T05:26:15.471551968Z Token expired or missing, re-authenticating...
+iotdemo-app-prod  | 2025-11-12T05:26:15.471554069Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:26:15.471556079Z AUTHENTICATING WITH CHARGEGHAR MAIN API
+iotdemo-app-prod  | 2025-11-12T05:26:15.476148309Z Login URL: https://main.chargeghar.com/api/admin/login
+iotdemo-app-prod  | 2025-11-12T05:26:15.476197937Z Login Email: janak@powerbank.com
+iotdemo-app-prod  | 2025-11-12T05:26:15.756510221Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T05:26:15.756531705Z Response Body: {"success":true,"message":"Admin login successful","data":{"user_id":"1","access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1NTE3MTc1LCJpYXQiOjE3NjI5MjUxNzUsImp0aSI6IjdjMTAxZDg0NjIwMzRlZDQ5OWZmNDBhM2ExMDNlMzJiIiwidXNlcl9pZCI6IjEiLCJpc3MiOiJDaGFyZ2VHaGFyLUFQSSJ9.uAZPjJvEUULyFwawFkT9nVFag0Er4x6ZPcZbNIKc0fU","refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDcwMTE3NSwiaWF0IjoxNzYyOTI1MTc1LCJqdGkiOiIwNWUxM2JmOWQ1NTY0NDRiYTc1YzE2MDJiMTBlMDVlMyIsInVzZXJfaWQiOiIxIiwiaXNzIjoiQ2hhcmdlR2hhci1BUEkifQ.ikLIBKEEaaKpAbTbPHjtxmb5xkWSJpCufJVTLxjcKlA","user":{"id":"1","email":"janak@powerbank.com","username":"janak","is_staff":true,"is_superuser":true,"role":"super_admin"},"message":"Admin login successful"}}
+iotdemo-app-prod  | 2025-11-12T05:26:15.757982008Z ✅ Authentication successful!
+iotdemo-app-prod  | 2025-11-12T05:26:15.758020585Z Access Token: eyJhbGciOiJIUzI1NiIs...
+iotdemo-app-prod  | 2025-11-12T05:26:15.758023395Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:26:15.759055762Z Payload: {"type":"full","timestamp":1762925175,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T05:26:15.758Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:26:15.758Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:26:15.758Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:26:15.758Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:26:15.758Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":23,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T05:26:15.759089417Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T05:26:15.760101429Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T05:26:15.760116072Z Signature: EkHaOc5Cf+6YrHV8Rxv1KrWylJNLNjvUvwxwA5WfWt8=
+iotdemo-app-prod  | 2025-11-12T05:26:15.760119303Z Timestamp: 1762925175
+iotdemo-app-prod  | 2025-11-12T05:26:15.810067649Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T05:26:15.810206172Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T05:26:15.807231+00:00"}}
+iotdemo-app-prod  | 2025-11-12T05:26:15.810598955Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T05:26:15.810613437Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:26:15.810616497Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T05:36:14.491431345Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T05:46:14.505208652Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T05:46:15.570118178Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:46:15.570157297Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T05:46:15.570161396Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T05:46:15.570164826Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T05:46:15.570168007Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T05:46:15.570171287Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T05:46:15.570174447Z   io: null
+iotdemo-app-prod  | 2025-11-12T05:46:15.570177636Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T05:46:15.570180986Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T05:46:15.570185016Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E2 49 02 6E D5 84 64 17 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D3
+iotdemo-app-prod  | 2025-11-12T05:46:15.570189656Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T05:46:15.570198696Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T05:46:15.570203807Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T05:46:15.570245586Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T05:46:15.570260146Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:46:15.570265266Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:46:15.570269056Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=23°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:46:15.570272556Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T05:46:15.570312346Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:46:15.570527134Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:46:15.570535024Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T05:46:15.570538073Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T05:46:15.571028700Z Payload: {"type":"full","timestamp":1762926375,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T05:46:15.570Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:46:15.570Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:46:15.570Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:46:15.570Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T05:46:15.570Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":23,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T05:46:15.571045041Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T05:46:15.573465382Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T05:46:15.573477831Z Signature: XhU3Q2N8sY46mki5jH4M7UR9FBecq2Uso/VBBKLrNa0=
+iotdemo-app-prod  | 2025-11-12T05:46:15.573481011Z Timestamp: 1762926375
+iotdemo-app-prod  | 2025-11-12T05:46:15.622270697Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T05:46:15.622298227Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T05:46:15.619530+00:00"}}
+iotdemo-app-prod  | 2025-11-12T05:46:15.622711644Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T05:46:15.622730414Z ========================================
+iotdemo-app-prod  | 2025-11-12T05:46:15.622737164Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T05:56:14.697876415Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T06:06:14.770007686Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T06:06:15.845185020Z ========================================
+iotdemo-app-prod  | 2025-11-12T06:06:15.845213161Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T06:06:15.845217281Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T06:06:15.845220630Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T06:06:15.845223931Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T06:06:15.845328403Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T06:06:15.845336992Z   io: null
+iotdemo-app-prod  | 2025-11-12T06:06:15.845339822Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T06:06:15.845342152Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T06:06:15.845344452Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E2 49 02 6E D5 84 64 17 00 00 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 D3
+iotdemo-app-prod  | 2025-11-12T06:06:15.845346972Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T06:06:15.845350113Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T06:06:15.845352393Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T06:06:15.845354833Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T06:06:15.845362463Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T06:06:15.845365893Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T06:06:15.845368283Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=23°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T06:06:15.845370893Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T06:06:15.845373423Z ========================================
+iotdemo-app-prod  | 2025-11-12T06:06:15.845554457Z ========================================
+iotdemo-app-prod  | 2025-11-12T06:06:15.845562157Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T06:06:15.845695479Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T06:06:15.846717151Z Payload: {"type":"full","timestamp":1762927575,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T06:06:15.845Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T06:06:15.845Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T06:06:15.845Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T06:06:15.845Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T06:06:15.845Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":23,"voltage":0,"current":0,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T06:06:15.846735591Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T06:06:15.863357300Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T06:06:15.863409851Z Signature: OJSKBEL1JNHzSNBtiAJrKPFTsG4uRZHNtVhHFINMD9k=
+iotdemo-app-prod  | 2025-11-12T06:06:15.863413092Z Timestamp: 1762927575
+iotdemo-app-prod  | 2025-11-12T06:06:17.198562233Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T06:06:17.198589593Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T06:06:17.195311+00:00"}}
+iotdemo-app-prod  | 2025-11-12T06:06:17.199231916Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T06:06:17.199248516Z ========================================
+iotdemo-app-prod  | 2025-11-12T06:06:17.199252627Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T06:16:14.911128489Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T06:26:14.897437688Z Heartbeat received from device: 864601069946994 (type: heart)
+iotdemo-app-prod  | 2025-11-12T06:26:16.237205537Z ========================================
+iotdemo-app-prod  | 2025-11-12T06:26:16.237256285Z DEVICE UPLOAD DATA RECEIVED
+iotdemo-app-prod  | 2025-11-12T06:26:16.237260804Z REQUEST PARAMETERS:
+iotdemo-app-prod  | 2025-11-12T06:26:16.237264284Z   rentboxSN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T06:26:16.237268224Z   signal: CSQ:31
+iotdemo-app-prod  | 2025-11-12T06:26:16.237271494Z   sign: 4f8f934042c84159cbfe360ed2c90d89
+iotdemo-app-prod  | 2025-11-12T06:26:16.237274724Z   io: null
+iotdemo-app-prod  | 2025-11-12T06:26:16.237277793Z   ssid: null
+iotdemo-app-prod  | 2025-11-12T06:26:16.237280883Z   data length: 71 bytes
+iotdemo-app-prod  | 2025-11-12T06:26:16.237284043Z   hex data: A8 00 47 10 01 04 00 00 04 0F 01 00 00 00 00 00 00 00 00 00 01 00 00 00 80 02 00 00 00 00 00 00 00 00 00 01 00 00 00 80 03 01 00 E4 49 02 6E D5 84 64 18 32 02 19 00 04 00 00 00 00 00 00 00 00 00 01 00 00 00 80 9C
+iotdemo-app-prod  | 2025-11-12T06:26:16.237302351Z PARSED DATA:
+iotdemo-app-prod  | 2025-11-12T06:26:16.237306652Z   Pinboard count: 1
+iotdemo-app-prod  | 2025-11-12T06:26:16.237309932Z   Powerbank count: 4
+iotdemo-app-prod  | 2025-11-12T06:26:16.237313402Z   Pinboard[0]: index=1, io=0
+iotdemo-app-prod  | 2025-11-12T06:26:16.237467174Z   Powerbank[0]: index=1, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T06:26:16.237497292Z   Powerbank[1]: index=2, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T06:26:16.237502112Z   Powerbank[2]: index=3, pinboardIndex=1, SN=40818052, status=1, power=100%, area=73, temp=24°C, microSwitch=0, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T06:26:16.237506712Z   Powerbank[3]: index=4, pinboardIndex=1, SN=0, status=0, power=0%, area=0, temp=1°C, microSwitch=1, solenoidValve=0
+iotdemo-app-prod  | 2025-11-12T06:26:16.237511092Z ========================================
+iotdemo-app-prod  | 2025-11-12T06:26:16.237865545Z ========================================
+iotdemo-app-prod  | 2025-11-12T06:26:16.237901023Z SENDING DEVICE DATA TO CHARGEGHAR MAIN
+iotdemo-app-prod  | 2025-11-12T06:26:16.237905952Z Station SN: 864601069946994
+iotdemo-app-prod  | 2025-11-12T06:26:16.237973129Z Token expired or missing, re-authenticating...
+iotdemo-app-prod  | 2025-11-12T06:26:16.238037536Z ========================================
+iotdemo-app-prod  | 2025-11-12T06:26:16.238070665Z AUTHENTICATING WITH CHARGEGHAR MAIN API
+iotdemo-app-prod  | 2025-11-12T06:26:16.247507085Z Login URL: https://main.chargeghar.com/api/admin/login
+iotdemo-app-prod  | 2025-11-12T06:26:16.247536624Z Login Email: janak@powerbank.com
+iotdemo-app-prod  | 2025-11-12T06:26:16.497229642Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T06:26:16.497254661Z Response Body: {"success":true,"message":"Admin login successful","data":{"user_id":"1","access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1NTIwNzc2LCJpYXQiOjE3NjI5Mjg3NzYsImp0aSI6ImIxMmVmOTkyNjExMzQ1NDI5Y2MwNjJlMjYzMDM3YjI4IiwidXNlcl9pZCI6IjEiLCJpc3MiOiJDaGFyZ2VHaGFyLUFQSSJ9.TMCZd4zf8J6jsXW3nbGRh3E4_sBx7j8q6afVX9j7zzI","refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MDcwNDc3NiwiaWF0IjoxNzYyOTI4Nzc2LCJqdGkiOiJmZTcxMDEwZTJlOWE0NjA4YWZjYTY0YTY1YjRkY2I1YSIsInVzZXJfaWQiOiIxIiwiaXNzIjoiQ2hhcmdlR2hhci1BUEkifQ.YycSWSrhZXPd7nF3U_zp8wUtR603G5udS3QDJ26E0kg","user":{"id":"1","email":"janak@powerbank.com","username":"janak","is_staff":true,"is_superuser":true,"role":"super_admin"},"message":"Admin login successful"}}
+iotdemo-app-prod  | 2025-11-12T06:26:16.508105022Z ✅ Authentication successful!
+iotdemo-app-prod  | 2025-11-12T06:26:16.508425466Z Access Token: eyJhbGciOiJIUzI1NiIs...
+iotdemo-app-prod  | 2025-11-12T06:26:16.508694693Z ========================================
+iotdemo-app-prod  | 2025-11-12T06:26:16.509874937Z Payload: {"type":"full","timestamp":1762928776,"device":{"serial_number":"864601069946994","imei":"864601069946994","signal_strength":"31","wifi_ssid":"","last_heartbeat":"2025-11-12T06:26:16.509Z","status":"ONLINE","hardware_info":{"firmware_version":"2.1.5","protocol_version":"0xA8"}},"station":{"serial_number":"864601069946994","total_slots":4,"pinboards":[{"index":1,"io":0,"temperature":0,"soft_version":4,"hard_version":15}]},"slots":[{"slot_number":1,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T06:26:16.509Z"}},{"slot_number":2,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T06:26:16.509Z"}},{"slot_number":3,"status":"OCCUPIED","battery_level":100,"power_bank_serial":"40818052","slot_metadata":{"micro_switch":"0","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T06:26:16.509Z"}},{"slot_number":4,"status":"AVAILABLE","battery_level":0,"slot_metadata":{"micro_switch":"1","solenoid_valve":"0","lock_count":0,"last_updated":"2025-11-12T06:26:16.509Z"}}],"power_banks":[{"serial_number":"40818052","status":"AVAILABLE","battery_level":100,"current_slot":3,"hardware_info":{"temperature":24,"voltage":50,"current":2,"soft_version":25,"hard_version":0,"micro_switch":"0","solenoid_valve":"0","area_code":73}}]}
+iotdemo-app-prod  | 2025-11-12T06:26:16.509911214Z Attempt 1/3
+iotdemo-app-prod  | 2025-11-12T06:26:16.511527896Z POST URL: https://main.chargeghar.com/api/internal/stations/data
+iotdemo-app-prod  | 2025-11-12T06:26:16.511568754Z Signature: RgSvEx3VISng9zDIQcnLviWv8tpdClM5q2D6Z88NSQ8=
+iotdemo-app-prod  | 2025-11-12T06:26:16.511572543Z Timestamp: 1762928776
+iotdemo-app-prod  | 2025-11-12T06:26:16.566393013Z Response Status: 200
+iotdemo-app-prod  | 2025-11-12T06:26:16.566411322Z Response Body: {"success":true,"message":"IoT data processed successfully","data":{"station_id":"fbcaf260-850e-4231-958d-e48241d28f9a","station_serial":"864601069946994","slots_updated":4,"powerbanks_updated":1,"timestamp":"2025-11-12T06:26:16.564090+00:00"}}
+iotdemo-app-prod  | 2025-11-12T06:26:16.566992684Z ✅ Data sent successfully
+iotdemo-app-prod  | 2025-11-12T06:26:16.567001824Z ========================================
+iotdemo-app-prod  | 2025-11-12T06:26:16.567005013Z ✅ Data synced to ChargeGhar Main successfully
+iotdemo-app-prod  | 2025-11-12T06:31:49.830214365Z Message sent to device powerbank on topic: /powerbank/864601069946994/user/get
+iotdemo-app-prod  | 2025-11-12T06:31:49.832663633Z ✅ Message delivered successfully to topic: /powerbank/864601069946994/user/get
+iotdemo-app-prod  | 2025-11-12T06:32:27.162487623Z Message sent to device powerbank on topic: /powerbank/864601069946994/user/get
+iotdemo-app-prod  | 2025-11-12T06:32:27.162596889Z ✅ Message delivered successfully to topic: /powerbank/864601069946994/user/get
+iotdemo-app-prod  | 2025-11-12T06:36:15.111908803Z Heartbeat received from device: 864601069946994 (type: heart)
+
+
