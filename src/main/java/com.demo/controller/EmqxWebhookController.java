@@ -34,25 +34,30 @@ public class EmqxWebhookController {
             System.out.println("Action: " + action);
             System.out.println("Client ID: " + clientId);
             
-            // Only process device clients (15-digit numbers)
-            if (!clientId.matches("\\d{15}")) {
-                System.out.println("⚠️  SKIPPED: Not a device client (not 15 digits)");
+            // Extract device ID (remove device_ prefix if present)
+            String deviceId = clientId;
+            if (clientId.startsWith("device_")) {
+                deviceId = clientId.substring(7); // Remove "device_" prefix
+            }
+            
+            // Only process device clients (numeric, up to 20 digits)
+            if (!deviceId.matches("\\d{1,20}")) {
+                System.out.println("⚠️  SKIPPED: Not a device client (not numeric)");
                 System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
                 return;
             }
             
-            String deviceName = clientId;
             long now = System.currentTimeMillis();
             
             if ("client.connected".equals(action)) {
-                System.out.println("🟢 Device CONNECTED: " + deviceName);
-                updateDeviceStatus(deviceName, now);
-                System.out.println("✅ Redis updated for device: " + deviceName);
+                System.out.println("🟢 Device CONNECTED: " + deviceId);
+                updateDeviceStatus(deviceId, now);
+                System.out.println("✅ Redis updated for device: " + deviceId);
             }
             else if ("client.disconnected".equals(action)) {
-                System.out.println("🔴 Device DISCONNECTED: " + deviceName);
-                updateDeviceStatus(deviceName, now);
-                System.out.println("✅ Redis updated for device: " + deviceName);
+                System.out.println("🔴 Device DISCONNECTED: " + deviceId);
+                updateDeviceStatus(deviceId, now);
+                System.out.println("✅ Redis updated for device: " + deviceId);
             }
             else {
                 System.out.println("⚠️  Unknown action: " + action);
