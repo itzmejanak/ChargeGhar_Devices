@@ -15,7 +15,7 @@
         <property name="port" value="${redis.port}" />
         <property name="password" value="${redis.pass}" />
         <property name="poolConfig" ref="jedisPoolConfig" />
-        <property name="database" value="3" />
+        <property name="database" value="5" />
     </bean>
 
     <!--线程池配置-->

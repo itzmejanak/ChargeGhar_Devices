@@ -48,11 +48,11 @@ public class ShowController {
 
         DeviceOnline deviceOnline = mqttPublisher.getDeviceStatus(appConfig.getProductKey(), deviceName);
         mv.addObject("deviceOnline", deviceOnline);
-        // FIX: Display actual topics device uses (with leading slash)
-        // Device subscribes to: /powerbank/{deviceName}/user/get
-        // Device publishes to: /powerbank/{deviceName}/user/upload (or similar)
+        // Display actual topics device uses
+        // Device subscribes to: /{productKey}/{deviceName}/user/get
+        // Device publishes to: /{productKey}/{deviceName}/user/update
         mv.addObject("getTopic", "/" + appConfig.getProductKey() + "/" + deviceName + "/user/get");
-        mv.addObject("updateTopic", "/" + appConfig.getProductKey() + "/" + deviceName + "/user/upload");
+        mv.addObject("updateTopic", "/" + appConfig.getProductKey() + "/" + deviceName + "/user/update");
 
         //MQTT CONNECT API
         String contextPath = HttpServletUtils.getRealContextpath();
