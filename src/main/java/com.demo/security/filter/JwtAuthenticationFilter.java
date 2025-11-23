@@ -136,6 +136,7 @@ public class JwtAuthenticationFilter implements Filter {
                uri.equals("/login.jsp") ||
                uri.startsWith("/api/auth/login") ||
                uri.startsWith("/api/auth/logout") ||
+               uri.startsWith("/api/emqx/webhook") ||
                uri.equals("/health") ||
                uri.equals("/test");
     }
