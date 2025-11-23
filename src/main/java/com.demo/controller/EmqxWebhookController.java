@@ -56,8 +56,8 @@ public class EmqxWebhookController {
             }
             else if ("client.disconnected".equals(action)) {
                 System.out.println("🔴 Device DISCONNECTED: " + deviceId);
-                updateDeviceStatus(deviceId, now);
-                System.out.println("✅ Redis updated for device: " + deviceId);
+                deleteDeviceStatus(deviceId);
+                System.out.println("✅ Redis keys deleted for device: " + deviceId);
             }
             else {
                 System.out.println("⚠️  Unknown action: " + action);
@@ -80,5 +80,12 @@ public class EmqxWebhookController {
         String activityKey = "device_activity:" + deviceName;
         BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
         activityOps.set(timestamp, 25, TimeUnit.MINUTES);
+    }
+    
+    private void deleteDeviceStatus(String deviceName) {
+        String heartbeatKey = "device_heartbeat:" + deviceName;
+        String activityKey = "device_activity:" + deviceName;
+        redisTemplate.delete(heartbeatKey);
+        redisTemplate.delete(activityKey);
     }
 }
