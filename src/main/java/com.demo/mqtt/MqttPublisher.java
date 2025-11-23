@@ -117,44 +117,36 @@ public class MqttPublisher implements MqttCallback {
         }
     }
 
-    // Enhanced device status check with multiple indicators
+    // Device status check based on heartbeat and activity
     public DeviceOnline getDeviceStatus(String productKey, String deviceName) {
-        // Check multiple indicators for device status
-        
         // 1. Check last heartbeat in Redis
         String heartbeatKey = "device_heartbeat:" + deviceName;
         BoundValueOperations heartbeatOps = redisTemplate.boundValueOps(heartbeatKey);
         Long lastSeen = (Long) heartbeatOps.get();
         
-        // 2. Check if device has active connection config
-        String configKey = "clientConect:" + deviceName;
-        BoundValueOperations configOps = redisTemplate.boundValueOps(configKey);
-        Object deviceConfig = configOps.get();
-        
-        // 3. Check recent message activity
+        // 2. Check recent message activity
         String activityKey = "device_activity:" + deviceName;
         BoundValueOperations activityOps = redisTemplate.boundValueOps(activityKey);
         Long lastActivity = (Long) activityOps.get();
         
         long now = System.currentTimeMillis();
         
-        // Device is considered ONLINE if:
-        // - Has recent heartbeat (within 2 minutes) OR
-        // - Has recent activity (within 5 minutes) AND has valid config
-        if (lastSeen != null && (now - lastSeen < 120000)) { // 2 minute threshold for heartbeat
+        // Device is ONLINE if has recent heartbeat (within 5 minutes)
+        if (lastSeen != null && (now - lastSeen < 300000)) {
             return DeviceOnline.ONLINE;
         }
         
-        if (deviceConfig != null && lastActivity != null && (now - lastActivity < 1500000)) { // 25 minute threshold for activity (devices upload every 20 min)
+        // Device is ONLINE if has recent activity (within 25 minutes - devices upload every 20 min)
+        if (lastActivity != null && (now - lastActivity < 1500000)) {
             return DeviceOnline.ONLINE;
         }
         
-        // If device has config but no recent activity, it's registered but offline
-        if (deviceConfig != null) {
+        // If has any activity in past, device exists but is offline
+        if (lastSeen != null || lastActivity != null) {
             return DeviceOnline.OFFLINE;
         }
         
-        // No device registration found
+        // No activity ever recorded
         return DeviceOnline.NO_DEVICE;
     }
 
