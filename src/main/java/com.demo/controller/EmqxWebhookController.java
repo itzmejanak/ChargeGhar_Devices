@@ -20,14 +20,24 @@ public class EmqxWebhookController {
 
     @PostMapping("/webhook")
     public void handleWebhook(@RequestBody String payload) {
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println("📥 EMQX WEBHOOK RECEIVED");
+        System.out.println("Raw Payload: " + payload);
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        
         try {
             JsonNode event = objectMapper.readTree(payload);
             
             String action = event.get("action").asText();
             String clientId = event.get("clientid").asText();
             
+            System.out.println("Action: " + action);
+            System.out.println("Client ID: " + clientId);
+            
             // Only process device clients (15-digit numbers)
             if (!clientId.matches("\\d{15}")) {
+                System.out.println("⚠️  SKIPPED: Not a device client (not 15 digits)");
+                System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
                 return;
             }
             
@@ -37,14 +47,23 @@ public class EmqxWebhookController {
             if ("client.connected".equals(action)) {
                 System.out.println("🟢 Device CONNECTED: " + deviceName);
                 updateDeviceStatus(deviceName, now);
+                System.out.println("✅ Redis updated for device: " + deviceName);
             }
             else if ("client.disconnected".equals(action)) {
                 System.out.println("🔴 Device DISCONNECTED: " + deviceName);
                 updateDeviceStatus(deviceName, now);
+                System.out.println("✅ Redis updated for device: " + deviceName);
+            }
+            else {
+                System.out.println("⚠️  Unknown action: " + action);
             }
             
+            System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            
         } catch (Exception e) {
-            System.err.println("Error processing webhook: " + e.getMessage());
+            System.err.println("❌ ERROR processing webhook: " + e.getMessage());
+            e.printStackTrace();
+            System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }
     }
     
