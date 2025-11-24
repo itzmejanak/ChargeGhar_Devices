@@ -56,6 +56,10 @@ public class EmqxWebhookController {
                 System.out.println("🟢 Device CONNECTED: " + deviceId);
                 updateDeviceStatus(deviceId, now);
                 System.out.println("✅ Redis updated for device: " + deviceId);
+                
+                // Send online status to Django
+                chargeGharConnector.sendDeviceStatus(deviceId, "ONLINE");
+                System.out.println("✅ Status sent to Django for device: " + deviceId);
             }
             else if ("client.disconnected".equals(action)) {
                 System.out.println("🔴 Device DISCONNECTED: " + deviceId);

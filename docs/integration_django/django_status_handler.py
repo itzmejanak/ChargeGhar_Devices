@@ -1,83 +1,124 @@
-# Add this to your existing StationDataInternalView in Django
-
-def post(self, request):
-    """
-    Process incoming station data from IoT system
-    """
-    try:
-        data = request.data
-        data_type = data.get('type')
-        
-        logger.info(f"Received IoT data sync request: type={data_type}")
-        
-        if data_type == 'full':
-            return self._handle_full_sync(data)
-        elif data_type == 'returned':
-            return self._handle_return_event(data)
-        elif data_type == 'status':  # <-- ADD THIS
-            return self._handle_status(data)  # <-- ADD THIS
-        else:
-            return Response({
-                'success': False,
-                'message': f'Invalid data type: {data_type}',
-                'error': 'INVALID_TYPE'
-            }, status=status.HTTP_400_BAD_REQUEST)
-    
-    except Exception as e:
-        logger.error(f"Error processing IoT data: {str(e)}", exc_info=True)
-        return Response({
-            'success': False,
-            'message': f'Internal server error: {str(e)}',
-            'error': 'INTERNAL_ERROR'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-# Add this new method to handle status updates
 def _handle_status(self, data):
     """
-    Handle device status change (online/offline)
+    Handle device status change (online/offline/maintenance)
     """
     try:
-        device_data = data.get('device', {})
-        serial_number = device_data.get('serial_number')
-        new_status = device_data.get('status')
+        service = StationSyncService()
         
-        if not serial_number or not new_status:
-            return Response({
-                'success': False,
-                'message': 'Missing serial_number or status',
-                'error': 'MISSING_DATA'
-            }, status=status.HTTP_400_BAD_REQUEST)
+        with transaction.atomic():
+            result = service.update_station_status(data)
         
-        # Update station status in database
-        try:
-            station = Station.objects.get(serial_number=serial_number)
-            station.status = new_status  # 'ONLINE' or 'OFFLINE'
-            station.last_heartbeat = timezone.now()
-            station.save()
-            
-            logger.info(f"Station {serial_number} status updated to {new_status}")
-            
-            return Response({
-                'success': True,
-                'message': f'Station status updated to {new_status}',
-                'data': {
-                    'station_id': str(station.id),
-                    'serial_number': station.serial_number,
-                    'status': station.status
-                }
-            }, status=status.HTTP_200_OK)
-            
-        except Station.DoesNotExist:
-            return Response({
-                'success': False,
-                'message': f'Station {serial_number} not found',
-                'error': 'STATION_NOT_FOUND'
-            }, status=status.HTTP_404_NOT_FOUND)
-    
+        logger.info(f"Status update processed: {result}")
+        return result
+        
+    except ServiceException:
+        # Re-raise service exceptions to be handled by parent
+        raise
     except Exception as e:
         logger.error(f"Error processing status update: {str(e)}", exc_info=True)
-        return Response({
-            'success': False,
-            'message': f'Status update failed: {str(e)}',
-            'error': 'STATUS_UPDATE_ERROR'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        raise ServiceException(
+            detail=f'Status update failed: {str(e)}',
+            code="status_update_error"
+        )    
+
+
+
+@transaction.atomic
+def update_station_status(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Update station status (online/offline/maintenance)
+    
+    Args:
+        data: Status update payload from IoT system
+        
+    Returns:
+        Summary of status update
+        
+    Raises:
+        ServiceException: If validation or update fails
+    """
+    try:
+        # Validate input data
+        self._validate_status_data(data)
+        
+        device_data = data.get('device', {})
+        serial_number = device_data.get('serial_number')
+        imei = device_data.get('imei')
+        new_status = device_data.get('status')
+        
+        # Find station by serial_number (could be IMEI or actual serial)
+        identifier = imei or serial_number
+        if not identifier:
+            raise ServiceException(
+                detail="Missing device identifier (imei or serial_number)",
+                code="missing_device_identifier"
+            )
+        
+        # Check if identifier matches IMEI or serial_number field
+        station = Station.objects.filter(
+            Q(imei=identifier) | Q(serial_number=identifier)
+        ).first()
+        
+        if not station:
+            raise ServiceException(
+                detail=f"Station with identifier {identifier} not found",
+                code="station_not_found"
+            )
+        
+        # Validate status value
+        if new_status not in self.STATION_STATUS_MAP:
+            raise ServiceException(
+                detail=f"Invalid status '{new_status}'. Must be one of: {', '.join(self.STATION_STATUS_MAP.keys())}",
+                code="invalid_status"
+            )
+        
+        # Update station status and heartbeat
+        station.status = self.STATION_STATUS_MAP.get(new_status, 'OFFLINE')
+        station.last_heartbeat = timezone.now()
+        
+        # Update hardware info if provided
+        if device_data.get('hardware_info'):
+            station.hardware_info.update(device_data['hardware_info'])
+        
+        station.save(update_fields=['status', 'last_heartbeat', 'hardware_info'])
+        
+        result = {
+            'station_id': str(station.id),
+            'serial_number': station.serial_number,
+            'status': station.status,
+            'last_heartbeat': station.last_heartbeat.isoformat(),
+            'updated_at': timezone.now().isoformat()
+        }
+        
+        identifier = imei or serial_number
+        self.log_info(f"Station {identifier} status updated to {station.status}")
+        return result
+    
+    except ServiceException:
+        # Re-raise service exceptions
+        raise
+    except Exception as e:
+        identifier = data.get('device', {}).get('imei') or data.get('device', {}).get('serial_number', 'unknown')
+        self.handle_service_error(e, f"Failed to update station status for {identifier}")
+
+def _validate_status_data(self, data: Dict[str, Any]) -> None:
+    """Validate status update data structure"""
+    if not isinstance(data, dict):
+        raise ServiceException(
+            detail="Data must be a dictionary",
+            code="invalid_data_format"
+        )
+    
+    device_data = data.get('device', {})
+    # Accept either IMEI or serial_number as device identifier
+    if not device_data.get('imei') and not device_data.get('serial_number'):
+        raise ServiceException(
+            detail="Missing device imei or serial_number",
+            code="missing_device_identifier"
+        )
+    
+    if not device_data.get('status'):
+        raise ServiceException(
+            detail="Missing device status",
+            code="missing_status"
+        )
