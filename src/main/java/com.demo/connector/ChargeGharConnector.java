@@ -228,6 +228,45 @@ public class ChargeGharConnector {
             return false;
         }
     }
+
+    /**
+     * Send device status to Django API
+     * Called when device connects/disconnects via webhook
+     * 
+     * @param rentboxSN Station serial number
+     * @param status "ONLINE" or "OFFLINE"
+     * @return true if notification successful
+     */
+    public boolean sendDeviceStatus(String rentboxSN, String status) {
+        // Ensure authentication
+        if (!ensureAuthenticated()) {
+            System.err.println("❌ Failed to authenticate");
+            return false;
+        }
+        
+        // Build simple status payload
+        try {
+            ObjectNode payload = objectMapper.createObjectNode();
+            payload.put("type", "status");
+            payload.put("timestamp", SignChargeGharMain.getCurrentTimestamp());
+            
+            ObjectNode device = objectMapper.createObjectNode();
+            device.put("serial_number", rentboxSN);
+            device.put("status", status);
+            payload.set("device", device);
+            
+            String jsonPayload = objectMapper.writeValueAsString(payload);
+            System.out.println("Status Payload: " + jsonPayload);
+            
+            // Send with retry logic
+            return sendWithRetry(stationDataEndpoint, jsonPayload);
+            
+        } catch (Exception e) {
+            System.err.println("❌ Error sending status: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
     
     /**
      * Ensure we have valid authentication token

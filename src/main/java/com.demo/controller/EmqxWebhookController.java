@@ -16,6 +16,9 @@ public class EmqxWebhookController {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private com.demo.connector.ChargeGharConnector chargeGharConnector;
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/webhook")
@@ -58,6 +61,10 @@ public class EmqxWebhookController {
                 System.out.println("🔴 Device DISCONNECTED: " + deviceId);
                 deleteDeviceStatus(deviceId);
                 System.out.println("✅ Redis keys deleted for device: " + deviceId);
+                
+                // Send offline status to Django
+                chargeGharConnector.sendDeviceStatus(deviceId, "OFFLINE");
+                System.out.println("✅ Status sent to Django for device: " + deviceId);
             }
             else {
                 System.out.println("⚠️  Unknown action: " + action);

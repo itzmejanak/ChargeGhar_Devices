@@ -87,8 +87,8 @@ public class ApiController {
                 throw new Exception("Device not registered. Please register the device first.");
             }
 
-            // Get or create EMQX configuration
-            DeviceConfig config = emqxDeviceService.getOrCreateDeviceConfig(valid.getUuid());
+            // Get or create EMQX configuration using database password
+            DeviceConfig config = emqxDeviceService.getOrCreateDeviceConfig(valid.getUuid(), device.getPassword());
             if (config == null) {
                 throw new Exception("Failed to get device configuration. EMQX service may be unavailable.");
             }

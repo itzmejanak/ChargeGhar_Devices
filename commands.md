@@ -96,3 +96,19 @@ docker logs iotdemo-app 2>&1 | tail -5 | grep "Message sent"
 - **Publisher:** `iotdemo-server-publisher-{timestamp}`
 - **Subscriber:** `iotdemo-server-subscriber-{timestamp}`
 - **Count:** 2 active connections
+
+
+SQL Query:
+sql
+SELECT
+  clientid,
+  username,
+  event,
+  timestamp
+FROM
+  "$events/client_connected", "$events/client_disconnected"
+
+
+### 2. Add Action: HTTP Server
+
+- **URL:** https://api.chargeghar.com/api/emqx/webhook

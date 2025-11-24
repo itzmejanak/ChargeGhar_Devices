@@ -33,8 +33,10 @@ public class EmqxDeviceService {
     
     /**
      * Register or get existing device configuration
+     * @param deviceName Device name/serial number
+     * @param dbPassword Password from database (source of truth)
      */
-    public DeviceConfig getOrCreateDeviceConfig(String deviceName) throws Exception {
+    public DeviceConfig getOrCreateDeviceConfig(String deviceName, String dbPassword) throws Exception {
         // Check if EMQX API connection is validated
         if (!emqxApiClient.isConnectionValidated()) {
             System.err.println("EMQX API connection not validated. Attempting to validate...");
@@ -49,8 +51,8 @@ public class EmqxDeviceService {
         DeviceCredentials credentials = (DeviceCredentials) credentialsOps.get();
         
         if (credentials == null) {
-            // Create new device credentials
-            credentials = createDeviceCredentials(deviceName);
+            // Create new device credentials using database password
+            credentials = createDeviceCredentials(deviceName, dbPassword);
             
             // Register device with EMQX platform
             boolean registered = emqxApiClient.registerDevice(credentials.getUsername(), credentials.getPassword());
@@ -60,8 +62,21 @@ public class EmqxDeviceService {
             
             // Cache credentials for 7 days
             credentialsOps.set(credentials, 7, TimeUnit.DAYS);
-            System.out.println("New device registered: " + deviceName);
+            System.out.println("New device registered in EMQX: " + deviceName);
         } else {
+            // Check if password matches database
+            if (!credentials.getPassword().equals(dbPassword)) {
+                System.out.println("⚠️ Cached password mismatch, updating to database password");
+                credentials.setPassword(dbPassword);
+                
+                // Update EMQX with database password
+                boolean updated = emqxApiClient.updateDevicePassword(credentials.getUsername(), dbPassword);
+                if (updated) {
+                    credentialsOps.set(credentials, 7, TimeUnit.DAYS);
+                    System.out.println("✅ EMQX password synced with database");
+                }
+            }
+            
             // Verify device still exists in EMQX
             if (!emqxApiClient.deviceExists(credentials.getUsername())) {
                 // Re-register device if it doesn't exist
@@ -69,7 +84,7 @@ public class EmqxDeviceService {
                 if (!registered) {
                     throw new Exception("Failed to re-register device with EMQX platform: " + deviceName);
                 }
-                System.out.println("Device re-registered: " + deviceName);
+                System.out.println("Device re-registered in EMQX: " + deviceName);
             }
         }
         
@@ -78,15 +93,29 @@ public class EmqxDeviceService {
     }
     
     /**
-     * Create new device credentials
+     * Backward compatibility - generates random password if not provided
      */
-    private DeviceCredentials createDeviceCredentials(String deviceName) {
+    public DeviceConfig getOrCreateDeviceConfig(String deviceName) throws Exception {
+        return getOrCreateDeviceConfig(deviceName, generateSecurePassword());
+    }
+    
+    /**
+     * Create new device credentials with provided password
+     */
+    private DeviceCredentials createDeviceCredentials(String deviceName, String password) {
         DeviceCredentials credentials = new DeviceCredentials();
         credentials.setDeviceName(deviceName);
         credentials.setUsername("device_" + deviceName);
-        credentials.setPassword(generateSecurePassword());
+        credentials.setPassword(password);
         credentials.setCreatedTime(new Date());
         return credentials;
+    }
+    
+    /**
+     * Create new device credentials with random password
+     */
+    private DeviceCredentials createDeviceCredentials(String deviceName) {
+        return createDeviceCredentials(deviceName, generateSecurePassword());
     }
     
     /**
