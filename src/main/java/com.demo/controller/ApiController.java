@@ -259,7 +259,8 @@ public class ApiController {
     @RequestMapping("/api/rentbox/config/data")
     public HttpResult rentboxConfigData() {
         HttpResult httpResult = new HttpResult();
-        httpResult.setData("{\"dRotationRefer\":\"15\",\"dReturnLocked\":\"0\",\"dHeadConfig\":\"43\",\"dRotationNumber\":\"5\",\"dRotationEnable\":\"1\",\"dMotorEnable\":\"1\",\"dAreaConfig\":\"07\"}");
+        // Updated dAreaConfig to use your region code 0x165 (357 decimal)
+        httpResult.setData("{\"dRotationRefer\":\"15\",\"dReturnLocked\":\"0\",\"dHeadConfig\":\"43\",\"dRotationNumber\":\"5\",\"dRotationEnable\":\"1\",\"dMotorEnable\":\"1\",\"dAreaConfig\":\"357\"}");
         return httpResult;
     }
 

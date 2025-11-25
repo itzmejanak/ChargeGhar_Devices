@@ -21,8 +21,6 @@ def _handle_status(self, data):
             code="status_update_error"
         )    
 
-
-
 @transaction.atomic
 def update_station_status(self, data: Dict[str, Any]) -> Dict[str, Any]:
     """
