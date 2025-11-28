@@ -81,11 +81,7 @@ public class ApiController {
 
             this.checkSign(valid, valid.getSign());
 
-            // Check if device exists in database
             Device device = deviceService.getDeviceByName(valid.getUuid());
-            if (device == null) {
-                throw new Exception("Device not registered. Please register the device first.");
-            }
 
             // Get or create EMQX configuration using database password
             DeviceConfig config = emqxDeviceService.getOrCreateDeviceConfig(valid.getUuid(), device.getPassword());
