@@ -121,7 +121,7 @@ public class EmqxDeviceService {
     /**
      * Generate secure random password
      */
-    private String generateSecurePassword() {
+    public String generateSecurePassword() {
         SecureRandom random = new SecureRandom();
         StringBuilder password = new StringBuilder(PASSWORD_LENGTH);
         

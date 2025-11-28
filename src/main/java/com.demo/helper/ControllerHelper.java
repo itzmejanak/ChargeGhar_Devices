@@ -7,11 +7,14 @@ import com.demo.message.Powerbank;
 import com.demo.common.DeviceConfig;
 import com.demo.model.Device;
 import com.demo.emqx.EmqxApiClient;
+import com.demo.emqx.EmqxDeviceService;
+import com.demo.service.DeviceService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,6 +33,47 @@ public class ControllerHelper {
     @Autowired
     private EmqxApiClient emqxApiClient;
     
+    @Autowired
+    private EmqxDeviceService emqxDeviceService;
+    
+    @Autowired
+    private DeviceService deviceService;
+    
+    /**
+     * Get existing device or auto-register new device
+     * Called during device authentication (/api/iot/client/con)
+     * 
+     * @param uuid Device UUID (IMEI)
+     * @return Device from database (existing or newly created)
+     * @throws Exception if auto-registration fails
+     */
+    public Device getOrCreateDevice(String uuid) throws Exception {
+        // Check if device exists in database
+        Device device = deviceService.getDeviceByName(uuid);
+        
+        if (device != null) {
+            System.out.println("✅ Device found in database: " + uuid);
+            return device;
+        }
+        
+        // Auto-register new device
+        System.out.println("📱 New device detected, auto-registering: " + uuid);
+        String generatedPassword = emqxDeviceService.generateSecurePassword();
+        
+        Device newDevice = new Device();
+        newDevice.setDeviceName(uuid);
+        newDevice.setImei(uuid);
+        newDevice.setPassword(generatedPassword);
+        
+        device = deviceService.createDevice(newDevice, null);
+        if (device == null) {
+            throw new Exception("Failed to auto-register device: " + uuid);
+        }
+        
+        System.out.println("✅ Device auto-registered successfully: " + uuid);
+        return device;
+    }
+
     /**
      * Sync device upload data to ChargeGhar Main Django app
      * Called when hardware uploads data every 20 minutes

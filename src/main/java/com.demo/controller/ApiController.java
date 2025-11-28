@@ -81,7 +81,8 @@ public class ApiController {
 
             this.checkSign(valid, valid.getSign());
 
-            Device device = deviceService.getDeviceByName(valid.getUuid());
+            // Get existing device or auto-register if not found
+            Device device = controllerHelper.getOrCreateDevice(valid.getUuid());
 
             // Get or create EMQX configuration using database password
             DeviceConfig config = emqxDeviceService.getOrCreateDeviceConfig(valid.getUuid(), device.getPassword());
@@ -272,4 +273,5 @@ public class ApiController {
             throw new Exception("ERROR SIGN");
         }
     }
+
 }
