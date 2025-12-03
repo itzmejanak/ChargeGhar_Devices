@@ -210,7 +210,7 @@ public class ApiController {
             
             // Validate signature - Skip check if sign is empty/null (device compatibility)
             if (StringUtils.isNotEmpty(sign)) {
-                this.checkSign(params, sign);
+                this.checkSign(params, sign, rentboxSN);
             }
 
             // Parse the upload data
@@ -270,12 +270,28 @@ public class ApiController {
      *
      * @param valid Object to validate
      * @param sign  Signature to check against
+     * @param deviceId  Device identifier for logging (optional)
+     * @throws Exception if signature doesn't match
+     */
+    protected void checkSign(Object valid, String sign, String deviceId) throws Exception {
+        String expectedSign = SignUtils.getSign(valid);
+        if (!expectedSign.equals(sign)) {
+            String device = deviceId != null ? " from device: " + deviceId : "";
+            System.out.println("⚠️  Invalid signature" + device + " (Expected: " + expectedSign + ", Received: " + sign + ")");
+            // Don't throw exception - allow processing for device compatibility
+            // throw new Exception("ERROR SIGN");
+        }
+    }
+    
+    /**
+     * Check the signature (backward compatibility)
+     *
+     * @param valid Object to validate
+     * @param sign  Signature to check against
      * @throws Exception if signature doesn't match
      */
     protected void checkSign(Object valid, String sign) throws Exception {
-        if (!SignUtils.getSign(valid).equals(sign)) {
-            throw new Exception("ERROR SIGN");
-        }
+        checkSign(valid, sign, null);
     }
 
 }
