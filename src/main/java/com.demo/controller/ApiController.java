@@ -207,7 +207,11 @@ public class ApiController {
             if (StringUtils.isNotEmpty(ssid)) {
                 params.put("ssid", ssid);
             }
-            this.checkSign(params, sign);
+            
+            // Validate signature - Skip check if sign is empty/null (device compatibility)
+            if (StringUtils.isNotEmpty(sign)) {
+                this.checkSign(params, sign);
+            }
 
             // Parse the upload data
             ReceiveUpload receiveUpload = new ReceiveUpload(bytes);
