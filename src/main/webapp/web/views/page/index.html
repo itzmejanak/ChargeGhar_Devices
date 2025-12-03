@@ -107,6 +107,10 @@
                         limit: Number.MAX_SAFE_INTEGER,
                         page: true,
                         limits: [50, 100, 200, 500, 1000],
+                        text: {
+                            none: 'No data available'
+                        },
+                        lang: 'en',
                         cols: [[
                             { type: 'numbers', width: 80, title: '#' },
                             { field: 'deviceName', title: 'Device Name', sort: true, minWidth: 200 },
@@ -272,6 +276,18 @@
         layui.config({ base: '${_contextPath}/web/layuiadmin/' });
         layui.extend({ index: 'lib/index' });
         layui.use(['index', 'form', 'table'], function () {
+            // Set English language for layui table pagination
+            layui.table.config.text = {
+                none: 'No data available'
+            };
+            layui.table.config.page = {
+                prev: 'Previous',
+                next: 'Next',
+                first: 'First',
+                last: 'Last',
+                skip: 'Go to page',
+                button: 'Go'
+            };
             vue1.init();
         });
     </script>
