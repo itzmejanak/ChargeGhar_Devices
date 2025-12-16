@@ -31,10 +31,19 @@ public class EmqxWebhookController {
         try {
             JsonNode event = objectMapper.readTree(payload);
             
-            String action = event.get("action").asText();
-            String clientId = event.get("clientid").asText();
+            JsonNode eventNode = event.get("event");
+            JsonNode clientIdNode = event.get("clientid");
             
-            System.out.println("Action: " + action);
+            if (eventNode == null || clientIdNode == null) {
+                System.out.println("⚠️  SKIPPED: Missing 'event' or 'clientid' field");
+                System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                return;
+            }
+            
+            String action = eventNode.asText();
+            String clientId = clientIdNode.asText();
+            
+            System.out.println("Event: " + action);
             System.out.println("Client ID: " + clientId);
             
             // Extract device ID (remove device_ prefix if present)
