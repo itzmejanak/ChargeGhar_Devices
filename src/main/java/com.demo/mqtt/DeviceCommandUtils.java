@@ -6,6 +6,7 @@ import com.demo.common.AppConfig;
 import com.demo.message.Powerbank;
 import com.demo.message.ReceivePopupSN;
 import com.demo.message.ReceiveUpload;
+import com.demo.message.ReceiveWifi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,6 +25,10 @@ public class DeviceCommandUtils {
     public static final String SEND_CHECK_ALL = "{\"cmd\":\"check_all\"}";
     public static final String SEND_PUISH_VERSION_PUBLISH = "{\"cmd\":\"push_version_publish\"}";
     public static final String SEND_POPUP = "{\"cmd\":\"popup_sn\",\"data\":\"%s\"}";
+    public static final String SEND_GET_WIFI = "{\"cmd\":\"getWifi\"}";
+    public static final String SEND_SET_WIFI = "{\"cmd\":\"setWifi\",\"username\":\"%s\",\"password\":\"%s\"}";
+    public static final String SEND_SET_MODE = "{\"cmd\":\"setMode\",\"data\":\"%s\"}";
+    public static final String SEND_SET_VOLUME = "{\"cmd\":\"volume\",\"data\":\"%s\"}";
 
     @Autowired
     MqttPublisher mqttPublisher;
@@ -73,6 +78,33 @@ public class DeviceCommandUtils {
         // Popup the selected powerbank
         ReceivePopupSN receivePopupSN = popup(rentboxSN, powerbank.getSnAsString());
         return receivePopupSN;
+    }
+
+    public ReceiveWifi getWifiList(String rentboxSN) throws Exception {
+        String key = "getwifi:" + rentboxSN;
+        byte[] data = sendPopupWait(key, rentboxSN, SEND_GET_WIFI, 15);
+        return new ReceiveWifi(data);
+    }
+
+    public void setWifi(String rentboxSN, String ssid, String password) throws Exception {
+        this.checkOnlineStatus(rentboxSN);
+        String message = String.format(SEND_SET_WIFI, ssid, password != null ? password : "");
+        String emqxTopic = "/" + appConfig.getProductKey() + "/" + rentboxSN + "/user/get";
+        mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message, 1);
+    }
+
+    public void setMode(String rentboxSN, String mode) throws Exception {
+        this.checkOnlineStatus(rentboxSN);
+        String message = String.format(SEND_SET_MODE, mode);
+        String emqxTopic = "/" + appConfig.getProductKey() + "/" + rentboxSN + "/user/get";
+        mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message, 1);
+    }
+
+    public void setVolume(String rentboxSN, String volume) throws Exception {
+        this.checkOnlineStatus(rentboxSN);
+        String message = String.format(SEND_SET_VOLUME, volume);
+        String emqxTopic = "/" + appConfig.getProductKey() + "/" + rentboxSN + "/user/get";
+        mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message, 1);
     }
 
     private byte[] sendPopupWait(String key, String rentboxSN, String message, int overSecond) throws Exception {

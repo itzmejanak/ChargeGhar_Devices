@@ -10,7 +10,9 @@ import com.demo.connector.ChargeGharConnector;
 import com.demo.emqx.EmqxDeviceService;
 import com.demo.helper.ControllerHelper;
 import com.demo.message.ReceiveUpload;
+import com.demo.message.ReceiveWifi;
 import com.demo.model.Device;
+import com.demo.mqtt.DeviceCommandUtils;
 import com.demo.mqtt.MqttPublisher;
 import com.demo.mqtt.MqttSubscriber;
 import com.demo.service.DeviceService;
@@ -63,9 +65,75 @@ public class ApiController {
     @Autowired
     private DeviceService deviceService;
 
+    @Autowired
+    DeviceCommandUtils deviceCommandUtils;
+
     // ========================================================================================
     // API ENDPOINTS
     // ========================================================================================
+
+    @RequestMapping("/api/device/wifi/scan")
+    public HttpResult wifiScan(@RequestParam String deviceName) {
+        HttpResult result = new HttpResult();
+        try {
+            ReceiveWifi wifiList = deviceCommandUtils.getWifiList(deviceName);
+            result.setData(wifiList.getNames());
+        } catch (Exception e) {
+            result.setCode(500);
+            result.setMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    @RequestMapping("/api/device/wifi/connect")
+    public HttpResult wifiConnect(@RequestParam String deviceName, 
+                                  @RequestParam String ssid, 
+                                  @RequestParam(required = false) String password) {
+        HttpResult result = new HttpResult();
+        try {
+            deviceCommandUtils.setWifi(deviceName, ssid, password);
+            result.setMsg("WiFi configuration sent successfully");
+        } catch (Exception e) {
+            result.setCode(500);
+            result.setMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    @RequestMapping("/api/device/mode/set")
+    public HttpResult setNetworkMode(@RequestParam String deviceName, 
+                                      @RequestParam String mode) {
+        HttpResult result = new HttpResult();
+        try {
+            if (!"wifi".equals(mode) && !"4g".equals(mode)) {
+                throw new Exception("Mode must be 'wifi' or '4g'");
+            }
+            deviceCommandUtils.setMode(deviceName, mode);
+            result.setMsg("Network mode set to: " + mode);
+        } catch (Exception e) {
+            result.setCode(500);
+            result.setMsg(e.getMessage());
+        }
+        return result;
+    }
+
+    @RequestMapping("/api/device/volume/set")
+    public HttpResult setVolume(@RequestParam String deviceName, 
+                                @RequestParam String volume) {
+        HttpResult result = new HttpResult();
+        try {
+            int vol = Integer.parseInt(volume);
+            if (vol < 0 || vol > 100) {
+                throw new Exception("Volume must be between 0 and 100");
+            }
+            deviceCommandUtils.setVolume(deviceName, volume);
+            result.setMsg("Volume set to: " + volume);
+        } catch (Exception e) {
+            result.setCode(500);
+            result.setMsg(e.getMessage());
+        }
+        return result;
+    }
 
     @RequestMapping("/api/iot/client/con")
     public HttpResult iotClientCon(ApiIotClientConValid valid, HttpServletResponse response, HttpServletRequest request) throws Exception {

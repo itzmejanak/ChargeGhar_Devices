@@ -215,6 +215,14 @@ public class MqttSubscriber implements MqttCallback {
                     // Power bank return event - process immediately
                     System.out.println("Power bank return detected for device: " + messageBody.getDeviceName());
                     break;
+                case 0xCF: // WiFi Scan Result
+                    key = "getwifi:" + messageBody.getDeviceName();
+                    boundValueOps = redisTemplate.boundValueOps(key);
+                    time = boundValueOps.getExpire();
+                    if (time <= 0) break;
+                    boundValueOps.set(messageBody.getPayloadAsBytes(), time, TimeUnit.SECONDS);
+                    System.out.println("📶 WiFi scan result received for device: " + messageBody.getDeviceName());
+                    break;
             }
         }
     }

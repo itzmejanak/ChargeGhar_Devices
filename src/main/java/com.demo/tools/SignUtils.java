@@ -15,9 +15,9 @@ public class SignUtils {
             return "";
         }
 
-        Map orderedMap = MapUtils.orderedMap(map);
+        Map<String, Object> orderedMap = MapUtils.orderedMap(map);
         List<String> list = new ArrayList<>();
-        for (Object key : orderedMap.keySet()) {
+        for (String key : orderedMap.keySet()) {
             if (key.equals("sign")) {
                 continue;
             }
@@ -41,12 +41,12 @@ public class SignUtils {
             return "";
         }
 
-        Map map = BeanToMapUtils.toMap(bean);
+        Map<String, Object> map = BeanToMapUtils.toMap(bean);
         return getSign(map);
     }
 
     public static String getSign(String[] fieldNames, Object... values) {
-        Map map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         for(int i = 0; i < fieldNames.length; i ++){
             map.put(fieldNames[i], values[i]);
         }

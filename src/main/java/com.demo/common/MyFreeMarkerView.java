@@ -33,7 +33,7 @@ public class MyFreeMarkerView extends org.springframework.web.servlet.view.freem
         model.put("_module", module);
 
         //注入HTTP ParametS
-        Map _params = new HashMap();
+        Map<String, String> _params = new HashMap<>();
         Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             String key = parameterNames.nextElement();

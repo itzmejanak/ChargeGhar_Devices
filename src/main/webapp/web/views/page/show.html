@@ -170,6 +170,42 @@
                                     Logs</button>
                             </div>
                         </div>
+
+                        <!-- WiFi Settings -->
+                        <div class="action-card">
+                            <div class="action-card-title">WiFi Settings</div>
+                            <div class="action-grid">
+                                <button class="action-btn primary" v-on:click="scanWifi()">Scan WiFi</button>
+                                <button class="action-btn success" v-on:click="openWifiModal()">Connect WiFi</button>
+                                <button class="action-btn warning" v-on:click="setMode('wifi')">WiFi Priority</button>
+                                <button class="action-btn info" v-on:click="setMode('4g')">4G Priority</button>
+                                <button class="action-btn warning" v-on:click="openVolumeModal()">Set Volume</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WiFi Connection Modal -->
+                <div id="wifi-modal" style="display:none; padding: 20px;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Select WiFi Network:</label>
+                        <select id="wifi-ssid-select" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                            <option value="">-- Click "Scan WiFi" first --</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Password (optional):</label>
+                        <input type="password" id="wifi-password" placeholder="Enter WiFi password" 
+                               style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <!-- Volume Modal -->
+                <div id="volume-modal" style="display:none; padding: 20px;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Volume (0-100):</label>
+                        <input type="number" id="volume-input" value="50" min="0" max="100"
+                               style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; box-sizing: border-box;">
                     </div>
                 </div>
 
@@ -589,6 +625,175 @@
                         infoBtn.classList.remove('active');
                         this.addConsoleLog('Device information panel closed', 'info');
                     }
+                },
+                // WiFi Methods
+                scanWifi: function() {
+                    var self = this;
+                    self.addConsoleLog('Scanning for WiFi networks...', 'info');
+                    
+                    $.ajax({
+                        type: 'GET',
+                        url: '${_contextPath}/api/device/wifi/scan',
+                        data: { deviceName: '${_params.deviceName}' },
+                        cache: false,
+                        dataType: 'json',
+                        loading: true,
+                        success: function(result) {
+                            if (result.code === 0 || result.code === 200 || !result.code) {
+                                var networks = result.data || [];
+                                self.addConsoleLog('✓ Found ' + networks.length + ' WiFi networks', 'success');
+                                
+                                // Update dropdown
+                                var select = document.getElementById('wifi-ssid-select');
+                                select.innerHTML = '<option value="">-- Select a network --</option>';
+                                networks.forEach(function(ssid) {
+                                    var option = document.createElement('option');
+                                    option.value = ssid;
+                                    option.textContent = ssid;
+                                    select.appendChild(option);
+                                });
+                                
+                                layer.msg('Found ' + networks.length + ' networks');
+                            } else {
+                                self.addConsoleLog('✗ Scan failed: ' + result.msg, 'error');
+                                layer.msg('Scan failed: ' + result.msg);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            self.addConsoleLog('✗ Scan error: ' + error, 'error');
+                            layer.msg('Error: ' + error);
+                        }
+                    });
+                },
+
+                openWifiModal: function() {
+                    var self = this;
+                    layer.open({
+                        type: 1,
+                        title: 'Connect to WiFi',
+                        area: ['400px', '280px'],
+                        content: $('#wifi-modal'),
+                        btn: ['Connect', 'Cancel'],
+                        yes: function(index) {
+                            var ssid = document.getElementById('wifi-ssid-select').value;
+                            var password = document.getElementById('wifi-password').value;
+                            
+                            if (!ssid) {
+                                layer.msg('Please select a WiFi network');
+                                return;
+                            }
+                            
+                            self.connectWifi(ssid, password);
+                            layer.close(index);
+                        }
+                    });
+                },
+
+                connectWifi: function(ssid, password) {
+                    var self = this;
+                    self.addConsoleLog('Connecting to WiFi: ' + ssid, 'info');
+                    
+                    $.ajax({
+                        type: 'POST',
+                        url: '${_contextPath}/api/device/wifi/connect',
+                        data: { 
+                            deviceName: '${_params.deviceName}',
+                            ssid: ssid,
+                            password: password || ''
+                        },
+                        cache: false,
+                        dataType: 'json',
+                        loading: true,
+                        success: function(result) {
+                            if (result.code === 0 || result.code === 200 || !result.code) {
+                                self.addConsoleLog('✓ WiFi configuration sent: ' + ssid, 'success');
+                                layer.msg('WiFi configuration sent successfully');
+                            } else {
+                                self.addConsoleLog('✗ Connect failed: ' + result.msg, 'error');
+                                layer.msg('Failed: ' + result.msg);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            self.addConsoleLog('✗ Connect error: ' + error, 'error');
+                            layer.msg('Error: ' + error);
+                        }
+                    });
+                },
+
+                setMode: function(mode) {
+                    var self = this;
+                    self.addConsoleLog('Setting network priority to: ' + mode.toUpperCase(), 'info');
+                    
+                    $.ajax({
+                        type: 'POST',
+                        url: '${_contextPath}/api/device/mode/set',
+                        data: { 
+                            deviceName: '${_params.deviceName}',
+                            mode: mode
+                        },
+                        cache: false,
+                        dataType: 'json',
+                        loading: true,
+                        success: function(result) {
+                            if (result.code === 0 || result.code === 200 || !result.code) {
+                                self.addConsoleLog('✓ Network priority set to: ' + mode.toUpperCase(), 'success');
+                                layer.msg('Network priority: ' + mode.toUpperCase());
+                            } else {
+                                self.addConsoleLog('✗ Failed: ' + result.msg, 'error');
+                                layer.msg('Failed: ' + result.msg);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            self.addConsoleLog('✗ Error: ' + error, 'error');
+                            layer.msg('Error: ' + error);
+                        }
+                    });
+                },
+
+                openVolumeModal: function() {
+                    var self = this;
+                    layer.open({
+                        type: 1,
+                        title: 'Set Device Volume',
+                        area: ['400px', '200px'],
+                        content: $('#volume-modal'),
+                        btn: ['Set', 'Cancel'],
+                        yes: function(index) {
+                            var volume = document.getElementById('volume-input').value;
+                            self.setVolume(volume);
+                            layer.close(index);
+                        }
+                    });
+                },
+
+                setVolume: function(volume) {
+                    var self = this;
+                    self.addConsoleLog('Setting volume to: ' + volume + '%', 'info');
+                    
+                    $.ajax({
+                        type: 'POST',
+                        url: '${_contextPath}/api/device/volume/set',
+                        data: { 
+                            deviceName: '${_params.deviceName}',
+                            volume: volume
+                        },
+                        cache: false,
+                        dataType: 'json',
+                        loading: true,
+                        success: function(result) {
+                            if (result.code === 0 || result.code === 200 || !result.code) {
+                                self.addConsoleLog('✓ Volume set to: ' + volume + '%', 'success');
+                                layer.msg('Volume set to: ' + volume + '%');
+                            } else {
+                                self.addConsoleLog('✗ Failed: ' + result.msg, 'error');
+                                layer.msg('Failed: ' + result.msg);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            self.addConsoleLog('✗ Error: ' + error, 'error');
+                            layer.msg('Error: ' + error);
+                        }
+                    });
                 }
             },
             mounted: function () {
