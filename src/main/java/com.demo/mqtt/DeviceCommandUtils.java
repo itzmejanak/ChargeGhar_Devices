@@ -82,12 +82,14 @@ public class DeviceCommandUtils {
 
     public ReceiveWifi getWifiList(String rentboxSN) throws Exception {
         String key = "getwifi:" + rentboxSN;
+        // Use JSON command like manufacturer demo - NOT binary packet
         byte[] data = sendPopupWait(key, rentboxSN, SEND_GET_WIFI, 15);
         return new ReceiveWifi(data);
     }
 
     public void setWifi(String rentboxSN, String ssid, String password) throws Exception {
         this.checkOnlineStatus(rentboxSN);
+        // Use JSON command like manufacturer demo
         String message = String.format(SEND_SET_WIFI, ssid, password != null ? password : "");
         String emqxTopic = "/" + appConfig.getProductKey() + "/" + rentboxSN + "/user/get";
         mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message, 1);
@@ -95,6 +97,7 @@ public class DeviceCommandUtils {
 
     public void setMode(String rentboxSN, String mode) throws Exception {
         this.checkOnlineStatus(rentboxSN);
+        // Use JSON command like manufacturer demo: {"cmd":"setMode","data":"wifi"} or {"cmd":"setMode","data":"4g"}
         String message = String.format(SEND_SET_MODE, mode);
         String emqxTopic = "/" + appConfig.getProductKey() + "/" + rentboxSN + "/user/get";
         mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message, 1);
@@ -102,26 +105,26 @@ public class DeviceCommandUtils {
 
     public void setVolume(String rentboxSN, String volume) throws Exception {
         this.checkOnlineStatus(rentboxSN);
+        // Use JSON command like manufacturer demo: {"cmd":"volume","data":"50"}
         String message = String.format(SEND_SET_VOLUME, volume);
         String emqxTopic = "/" + appConfig.getProductKey() + "/" + rentboxSN + "/user/get";
         mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message, 1);
     }
 
-    private byte[] sendPopupWait(String key, String rentboxSN, String message, int overSecond) throws Exception {
+    private byte[] sendPopupWait(String key, String rentboxSN, Object message, int overSecond) throws Exception {
         this.checkOnlineStatus(rentboxSN);
 
-        // PUT REDIS - same logic as original
         BoundValueOperations operations = redisTemplate.boundValueOps(key);
         operations.set(null, overSecond, TimeUnit.SECONDS);
 
-        // FIX: Use the exact topic device is subscribed to
-        // Device subscribes to: /powerbank/{deviceName}/user/get (with leading slash)
-        // This matches the EMQX Cloud subscription shown in device client details
         String emqxTopic = "/" + appConfig.getProductKey() + "/" + rentboxSN + "/user/get";
         
-        mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message, 1);
+        if (message instanceof byte[]) {
+            mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, (byte[]) message, 1);
+        } else {
+            mqttPublisher.sendMsgAsync(appConfig.getProductKey(), emqxTopic, message.toString(), 1);
+        }
 
-        // Same waiting logic - no changes needed
         byte[] bytes = null;
         for (int i = 0; i < overSecond * 2; i++) {
             Thread.sleep(500);

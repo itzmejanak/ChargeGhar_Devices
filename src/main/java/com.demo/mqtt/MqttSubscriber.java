@@ -196,6 +196,9 @@ public class MqttSubscriber implements MqttCallback {
         String type = messageBody.getMessageType();
         if ("upload".equals(type)) {
             int cmd = SerialPortData.checkCMD(messageBody.getPayloadAsBytes());
+            // Debug: Log ALL received commands to identify what device is sending
+            System.out.println("📨 Received CMD: 0x" + Integer.toHexString(cmd).toUpperCase() + " from device: " + messageBody.getDeviceName());
+            
             switch (cmd) {
                 case 0x10:
                     String key = "check:" + messageBody.getDeviceName();
@@ -203,6 +206,7 @@ public class MqttSubscriber implements MqttCallback {
                     long time = boundValueOps.getExpire();
                     if (time <= 0) break;
                     boundValueOps.set(messageBody.getPayloadAsBytes(), time, TimeUnit.SECONDS);
+                    System.out.println("✅ Check response cached for device: " + messageBody.getDeviceName());
                     break;
                 case 0x31:
                     key = "popup_sn:" + messageBody.getDeviceName();
@@ -219,9 +223,16 @@ public class MqttSubscriber implements MqttCallback {
                     key = "getwifi:" + messageBody.getDeviceName();
                     boundValueOps = redisTemplate.boundValueOps(key);
                     time = boundValueOps.getExpire();
-                    if (time <= 0) break;
+                    System.out.println("📶 WiFi scan result received for device: " + messageBody.getDeviceName() + " (Redis key TTL: " + time + ")");
+                    if (time <= 0) {
+                        System.out.println("⚠️ WiFi result ignored - Redis key expired or not set");
+                        break;
+                    }
                     boundValueOps.set(messageBody.getPayloadAsBytes(), time, TimeUnit.SECONDS);
-                    System.out.println("📶 WiFi scan result received for device: " + messageBody.getDeviceName());
+                    System.out.println("✅ WiFi scan result cached successfully");
+                    break;
+                default:
+                    System.out.println("⚠️ Unknown CMD: 0x" + Integer.toHexString(cmd).toUpperCase() + " - not handled");
                     break;
             }
         }
