@@ -39,4 +39,8 @@ public class ReceivePopupSN extends SerialPortData {
     public int getStatus() {
         return status;
     }
+
+    public int getPinboardIndex() {
+        return pinboardIndex;
+    }
 }

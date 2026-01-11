@@ -1,38 +1,59 @@
 # Spring Boot API Endpoints
 
-**Generated on:** 2025-10-28 15:17:57  
-**Project Directory:** `/home/revdev/Desktop/Daily/Devalaya/PowerBank/Emqx/ChargeGhar_Devices`  
-**Total Endpoints:** 37
+**Generated on:** 2026-01-10 19:37:12  
+**Project Directory:** `E:\Companies\DEVALAYA\Deva_ChargeGhar\Emqx\ChargeGhar_Devices`  
+**Total Endpoints:** 54
 
 ---
 
 ## Table of Contents
 - [ApiController](#apicontroller)
+- [AuthController](#authcontroller)
 - [EmqxTestController](#emqxtestcontroller)
+- [EmqxWebhookController](#emqxwebhookcontroller)
 - [IndexController](#indexcontroller)
 - [ListenController](#listencontroller)
+- [LoginController](#logincontroller)
 - [ShowController](#showcontroller)
 - [TestController](#testcontroller)
 - [VersionController](#versioncontroller)
-- [WelcomeController](#welcomecontroller)
 
 ---
 
-## ApiController (Dont secure use by hardware)
+## ApiController
 
-**File:** `src/main/java/com.demo/controller/ApiController.java`
+**File:** `src\main\java\com.demo\controller\ApiController.java`
 
 | Method | Endpoint | Handler |
 |--------|----------|----------|
+| **GET** | `/api/device/mode/set` | `setNetworkMode()` |
+| **GET** | `/api/device/volume/set` | `setVolume()` |
+| **GET** | `/api/device/wifi/connect` | `wifiConnect()` |
+| **GET** | `/api/device/wifi/scan` | `wifiScan()` |
 | **GET** | `/api/iot/client/clear` | `deviceCreate()` |
 | **GET** | `/api/iot/client/con` | `iotClientCon()` |
 | **GET** | `/api/rentbox/config/data` | `rentboxConfigData()` |
 | **GET** | `/api/rentbox/order/return` | `powerbankReturn()` |
 | **GET** | `/api/rentbox/upload/data` | `rentboxOrderReturnEnd()` |
 
-## EmqxTestController (dont focus for now)
+## AuthController
 
-**File:** `src/main/java/com.demo/controller/EmqxTestController.java`
+**File:** `src\main\java\com.demo\controller\AuthController.java`
+
+| Method | Endpoint | Handler |
+|--------|----------|----------|
+| **GET** | `/api/auth/admins` | `getAllAdmins()` |
+| **POST** | `/api/auth/admins` | `createAdmin()` |
+| **GET** | `/api/auth/api/auth` | `()` |
+| **POST** | `/api/auth/login` | `login()` |
+| **POST** | `/api/auth/logout` | `logout()` |
+| **GET** | `/api/auth/me` | `getCurrentUser()` |
+| **POST** | `/api/auth/refresh` | `refreshToken()` |
+| **POST** | `/api/auth/validate` | `validateToken()` |
+
+## EmqxTestController
+
+**File:** `src\main\java\com.demo\controller\EmqxTestController.java`
 
 | Method | Endpoint | Handler |
 |--------|----------|----------|
@@ -43,19 +64,31 @@
 | **GET** | `/emqx/test/register` | `testDeviceRegistration()` |
 | **GET** | `/emqx/test/remove` | `removeDevice()` |
 
-## IndexController (Need to secure)
+## EmqxWebhookController
 
-**File:** `src/main/java/com.demo/controller/IndexController.java`
+**File:** `src\main\java\com.demo\controller\EmqxWebhookController.java`
+
+| Method | Endpoint | Handler |
+|--------|----------|----------|
+| **GET** | `/api/emqx/api/emqx` | `()` |
+| **POST** | `/api/emqx/webhook` | `handleWebhook()` |
+
+## IndexController
+
+**File:** `src\main\java\com.demo\controller\IndexController.java`
 
 | Method | Endpoint | Handler |
 |--------|----------|----------|
 | **GET** | `/` | `root()` |
+| **GET** | `/admin/panel` | `adminPanel()` |
+| **GET** | `/api/admin/statistics` | `getAdminStatistics()` |
 | **GET** | `/device/create` | `deviceCreate()` |
+| **GET** | `/device/delete` | `deviceDelete()` |
 | **GET** | `/index.html` | `indexHtml()` |
 
-## ListenController (Need to secure)
+## ListenController
 
-**File:** `src/main/java/com.demo/controller/ListenController.java`
+**File:** `src\main\java\com.demo\controller\ListenController.java`
 
 | Method | Endpoint | Handler |
 |--------|----------|----------|
@@ -66,9 +99,17 @@
 | **GET** | `/listen/start` | `listenStart()` |
 | **GET** | `/listen/stop` | `listenStop()` |
 
-## ShowController (Need to secure)
+## LoginController
 
-**File:** `src/main/java/com.demo/controller/ShowController.java`
+**File:** `src\main\java\com.demo\controller\LoginController.java`
+
+| Method | Endpoint | Handler |
+|--------|----------|----------|
+| **GET** | `/login` | `loginPage()` |
+
+## ShowController
+
+**File:** `src\main\java\com.demo\controller\ShowController.java`
 
 | Method | Endpoint | Handler |
 |--------|----------|----------|
@@ -78,18 +119,18 @@
 | **GET** | `/send` | `send()` |
 | **GET** | `/show.html` | `showHtml()` |
 
-## TestController (Need to secure)
+## TestController
 
-**File:** `src/main/java/com.demo/controller/TestController.java`
+**File:** `src\main\java\com.demo\controller\TestController.java`
 
 | Method | Endpoint | Handler |
 |--------|----------|----------|
 | **GET** | `/health` | `health()` |
 | **GET** | `/test` | `test()` |
 
-## VersionController (Dont secure use by hardware)
+## VersionController
 
-**File:** `src/main/java/com.demo/controller/VersionController.java`
+**File:** `src\main\java\com.demo\controller\VersionController.java`
 
 | Method | Endpoint | Handler |
 |--------|----------|----------|
@@ -103,14 +144,6 @@
 | **GET** | `/version/clear` | `versionClear()` |
 | **GET** | `/version/update` | `versionUpdate()` |
 
-## WelcomeController (Remove this comoletely witgpout lefting any code related to it)
-
-**File:** `src/main/java/com.demo/controller/WelcomeController.java`
-
-| Method | Endpoint | Handler |
-|--------|----------|----------|
-| **GET** | `/welcome` | `welcome()` |
-
 ---
 
 ## Complete Endpoint List
@@ -118,6 +151,22 @@
 | Method | Endpoint | Controller | Handler |
 |--------|----------|------------|----------|
 | **GET** | `/` | IndexController | `root()` |
+| **GET** | `/admin/panel` | IndexController | `adminPanel()` |
+| **GET** | `/api/admin/statistics` | IndexController | `getAdminStatistics()` |
+| **GET** | `/api/auth/admins` | AuthController | `getAllAdmins()` |
+| **POST** | `/api/auth/admins` | AuthController | `createAdmin()` |
+| **GET** | `/api/auth/api/auth` | AuthController | `()` |
+| **POST** | `/api/auth/login` | AuthController | `login()` |
+| **POST** | `/api/auth/logout` | AuthController | `logout()` |
+| **GET** | `/api/auth/me` | AuthController | `getCurrentUser()` |
+| **POST** | `/api/auth/refresh` | AuthController | `refreshToken()` |
+| **POST** | `/api/auth/validate` | AuthController | `validateToken()` |
+| **GET** | `/api/device/mode/set` | ApiController | `setNetworkMode()` |
+| **GET** | `/api/device/volume/set` | ApiController | `setVolume()` |
+| **GET** | `/api/device/wifi/connect` | ApiController | `wifiConnect()` |
+| **GET** | `/api/device/wifi/scan` | ApiController | `wifiScan()` |
+| **GET** | `/api/emqx/api/emqx` | EmqxWebhookController | `()` |
+| **POST** | `/api/emqx/webhook` | EmqxWebhookController | `handleWebhook()` |
 | **GET** | `/api/iot/app/version/publish` | VersionController | `iotAppVersion()` |
 | **GET** | `/api/iot/app/version/publish/chip` | VersionController | `iotAppVersionPublishChip()` |
 | **GET** | `/api/iot/app/version/publish/mcu` | VersionController | `iotAppVersionPublichMcu()` |
@@ -132,6 +181,7 @@
 | **GET** | `/check` | ShowController | `check()` |
 | **GET** | `/check_all` | ShowController | `checkAll()` |
 | **GET** | `/device/create` | IndexController | `deviceCreate()` |
+| **GET** | `/device/delete` | IndexController | `deviceDelete()` |
 | **GET** | `/emqx/test/connection` | EmqxTestController | `testConnection()` |
 | **GET** | `/emqx/test/credentials` | EmqxTestController | `getDeviceCredentials()` |
 | **GET** | `/emqx/test/password` | EmqxTestController | `getDevicePassword()` |
@@ -146,6 +196,7 @@
 | **GET** | `/listen/clear` | ListenController | `listenClear()` |
 | **GET** | `/listen/start` | ListenController | `listenStart()` |
 | **GET** | `/listen/stop` | ListenController | `listenStop()` |
+| **GET** | `/login` | LoginController | `loginPage()` |
 | **GET** | `/popup_random` | ShowController | `checkAll()` |
 | **GET** | `/send` | ShowController | `send()` |
 | **GET** | `/show.html` | ShowController | `showHtml()` |
@@ -153,7 +204,3 @@
 | **GET** | `/version.html` | VersionController | `versionHtml()` |
 | **GET** | `/version/clear` | VersionController | `versionClear()` |
 | **GET** | `/version/update` | VersionController | `versionUpdate()` |
-| **GET** | `/welcome` | WelcomeController | `welcome()` |
-
-
-Note: We have entry file index.jsp find its usages and do accuare flow anaysis and make sure it will open after only login successful

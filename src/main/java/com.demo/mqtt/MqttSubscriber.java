@@ -2,7 +2,9 @@ package com.demo.mqtt;
 
 import com.demo.common.MessageBody;
 import com.demo.common.AppConfig;
+import com.demo.mqtt.handler.CommandHandlerRegistry;
 import com.demo.serialport.SerialPortData;
+import com.demo.tools.ByteUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * MQTT Subscriber for receiving device messages
+ * 
+ * Subscribes to device topics and dispatches messages to appropriate handlers.
+ * Uses CommandHandlerRegistry for scalable command processing.
+ */
 @Component
 public class MqttSubscriber implements MqttCallback {
     
@@ -23,12 +31,15 @@ public class MqttSubscriber implements MqttCallback {
     private AppConfig appConfig;
 
     @Autowired
-    RedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private CommandHandlerRegistry commandHandlerRegistry;
 
     private MqttClient mqttClient;
     private Exception exception;
     private boolean isRunning = false;
-    private List<MessageBody> messageBodys = new ArrayList<>();
+    private final List<MessageBody> messageBodys = new ArrayList<>();
 
     /**
      * Auto-start MQTT Subscriber on application startup
@@ -188,54 +199,27 @@ public class MqttSubscriber implements MqttCallback {
         // Not used for subscriber
     }
 
-    // Keep same handlerMessage logic as original MnsUtils
+    /**
+     * Handle incoming MQTT message
+     * 
+     * Delegates to CommandHandlerRegistry for command-specific processing.
+     * Only processes "upload" type messages (device responses).
+     */
     public void handlerMessage(MessageBody messageBody) {
-        // Same Redis caching logic - no changes needed
+        // Store in message buffer for /listen endpoint
         putMessageBody(messageBody);
 
-        String type = messageBody.getMessageType();
-        if ("upload".equals(type)) {
-            int cmd = SerialPortData.checkCMD(messageBody.getPayloadAsBytes());
-            // Debug: Log ALL received commands to identify what device is sending
-            System.out.println("📨 Received CMD: 0x" + Integer.toHexString(cmd).toUpperCase() + " from device: " + messageBody.getDeviceName());
-            
-            switch (cmd) {
-                case 0x10:
-                    String key = "check:" + messageBody.getDeviceName();
-                    BoundValueOperations boundValueOps = redisTemplate.boundValueOps(key);
-                    long time = boundValueOps.getExpire();
-                    if (time <= 0) break;
-                    boundValueOps.set(messageBody.getPayloadAsBytes(), time, TimeUnit.SECONDS);
-                    System.out.println("✅ Check response cached for device: " + messageBody.getDeviceName());
-                    break;
-                case 0x31:
-                    key = "popup_sn:" + messageBody.getDeviceName();
-                    boundValueOps = redisTemplate.boundValueOps(key);
-                    time = boundValueOps.getExpire();
-                    if (time <= 0) break;
-                    boundValueOps.set(messageBody.getPayloadAsBytes(), time, TimeUnit.SECONDS);
-                    break;
-                case 0x40:
-                    // Power bank return event - process immediately
-                    System.out.println("Power bank return detected for device: " + messageBody.getDeviceName());
-                    break;
-                case 0xCF: // WiFi Scan Result
-                    key = "getwifi:" + messageBody.getDeviceName();
-                    boundValueOps = redisTemplate.boundValueOps(key);
-                    time = boundValueOps.getExpire();
-                    System.out.println("📶 WiFi scan result received for device: " + messageBody.getDeviceName() + " (Redis key TTL: " + time + ")");
-                    if (time <= 0) {
-                        System.out.println("⚠️ WiFi result ignored - Redis key expired or not set");
-                        break;
-                    }
-                    boundValueOps.set(messageBody.getPayloadAsBytes(), time, TimeUnit.SECONDS);
-                    System.out.println("✅ WiFi scan result cached successfully");
-                    break;
-                default:
-                    System.out.println("⚠️ Unknown CMD: 0x" + Integer.toHexString(cmd).toUpperCase() + " - not handled");
-                    break;
-            }
+        // Only process upload messages (device command responses)
+        if (!"upload".equals(messageBody.getMessageType())) {
+            return;
         }
+        
+        byte[] bytes = messageBody.getPayloadAsBytes();
+        int cmd = SerialPortData.checkCMD(bytes);
+        String rawHex = ByteUtils.to16Hexs(bytes);
+        
+        // Dispatch to appropriate handler
+        commandHandlerRegistry.dispatch(cmd, messageBody, bytes, rawHex);
     }
 
     // Keep compatibility with existing code

@@ -6,6 +6,7 @@ import com.demo.common.AppConfig;
 import com.demo.common.DeviceConfig;
 import com.demo.common.HttpResult;
 import com.demo.common.MessageBody;
+import com.demo.common.TransactionLogger;
 import com.demo.connector.ChargeGharConnector;
 import com.demo.emqx.EmqxDeviceService;
 import com.demo.helper.ControllerHelper;
@@ -68,9 +69,49 @@ public class ApiController {
     @Autowired
     DeviceCommandUtils deviceCommandUtils;
 
+    @Autowired
+    TransactionLogger transactionLogger;
+
     // ========================================================================================
     // API ENDPOINTS
     // ========================================================================================
+
+    /**
+     * Get device transaction logs
+     * GET /api/device/{sn}/logs?limit=20&cmd=0x10
+     */
+    @RequestMapping("/api/device/{sn}/logs")
+    public HttpResult getDeviceLogs(
+        @org.springframework.web.bind.annotation.PathVariable String sn,
+        @RequestParam(defaultValue = "20") int limit,
+        @RequestParam(required = false) String cmd
+    ) {
+        HttpResult result = new HttpResult();
+        result.setData(transactionLogger.getDeviceLogs(sn, limit, cmd));
+        return result;
+    }
+
+    /**
+     * Get specific transaction by messageId
+     * GET /api/device/{sn}/logs/{messageId}
+     */
+    @RequestMapping("/api/device/{sn}/logs/{messageId}")
+    public HttpResult getTransaction(
+        @org.springframework.web.bind.annotation.PathVariable String sn,
+        @org.springframework.web.bind.annotation.PathVariable String messageId,
+        HttpServletResponse response
+    ) {
+        HttpResult result = new HttpResult();
+        java.util.Map<String, Object> txn = transactionLogger.getTransaction(sn, messageId);
+        if (txn == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            result.setCode(404);
+            result.setMsg("Transaction not found");
+        } else {
+            result.setData(txn);
+        }
+        return result;
+    }
 
     @RequestMapping("/api/device/wifi/scan")
     public HttpResult wifiScan(@RequestParam String deviceName) {

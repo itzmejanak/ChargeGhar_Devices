@@ -117,7 +117,7 @@ public class ShowController {
     }
 
     @RequestMapping("/popup_random")
-    public HttpResult checkAll(@RequestParam String deviceName, @RequestParam Integer minPower, HttpServletResponse response) throws Exception {
+    public HttpResult popupRandom(@RequestParam String deviceName, @RequestParam Integer minPower, HttpServletResponse response) throws Exception {
         HttpResult httpResult = new HttpResult();
         try {
             ReceivePopupSN receivePopupSN = deviceCommandUtils.popupByRandom(deviceName, minPower);
@@ -130,6 +130,38 @@ public class ShowController {
             response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             httpResult.setCode(response.getStatus());
             httpResult.setMsg(e.toString());
+        }
+        return httpResult;
+    }
+
+    /**
+     * Popup specific powerbank by SN (SYNC - 15s timeout)
+     * 
+     * @param rentboxSN  Station serial number
+     * @param singleSN   Powerbank serial number to eject
+     * @return Popup result with slot, powerbankSN, status, success
+     */
+    @RequestMapping("/popup_sn")
+    public HttpResult popupBySn(
+        @RequestParam String rentboxSN,
+        @RequestParam String singleSN,
+        HttpServletResponse response
+    ) {
+        HttpResult httpResult = new HttpResult();
+        try {
+            ReceivePopupSN result = deviceCommandUtils.popup(rentboxSN, singleSN);
+            
+            java.util.Map<String, Object> data = new java.util.HashMap<>();
+            data.put("slot", result.getPinboardIndex());
+            data.put("powerbankSN", result.getSnAsString());
+            data.put("status", result.getStatus());
+            data.put("success", result.getStatus() == 0x01);
+            
+            httpResult.setData(data);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.SC_REQUEST_TIMEOUT);
+            httpResult.setCode(408);
+            httpResult.setMsg(e.getMessage());
         }
         return httpResult;
     }
